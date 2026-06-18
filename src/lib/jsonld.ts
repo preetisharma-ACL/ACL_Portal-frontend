@@ -89,6 +89,21 @@ export function collegeLd(d: CollegeDetail, path: string) {
   };
 }
 
+/** Course schema for each programme a college offers, with the college as provider. */
+export function collegeCoursesLd(d: CollegeDetail, path: string) {
+  return d.courses_fees.map((c) => ({
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: `${c.course} at ${d.header.name}`,
+    description: `${c.course} programme (${c.duration}) at ${d.header.name}, ${d.header.city}.`,
+    url: abs(path),
+    provider: {
+      "@type": "CollegeOrUniversity",
+      name: d.header.name,
+    },
+  }));
+}
+
 export function courseLd(d: CourseDetail, path: string) {
   return {
     "@context": "https://schema.org",
