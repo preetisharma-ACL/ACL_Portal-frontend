@@ -5,7 +5,7 @@ import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeCardItem from "~/components/CollegeCardItem";
 import LeadForm from "~/components/LeadForm";
 import { Card, Section } from "~/components/ui";
-import { NotFound } from "~/components/states";
+import { EmptyState, NotFound } from "~/components/states";
 import { examQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
 import { humanize } from "~/lib/slug";
@@ -91,11 +91,21 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
 
             <Section bg="surface">
               <h2 class="text-2xl font-bold mb-6">Colleges accepting {e().name}</h2>
-              <div class="grid gap-4">
-                <For each={d().accepting_colleges}>
-                  {(c) => <CollegeCardItem college={c} />}
-                </For>
-              </div>
+              <Show
+                when={d().accepting_colleges.length}
+                fallback={
+                  <EmptyState title="Colleges are being added">
+                    We are still compiling colleges that accept this exam. Check back soon or
+                    browse colleges by city.
+                  </EmptyState>
+                }
+              >
+                <div class="grid gap-4">
+                  <For each={d().accepting_colleges}>
+                    {(c) => <CollegeCardItem college={c} />}
+                  </For>
+                </div>
+              </Show>
             </Section>
           </>
         );

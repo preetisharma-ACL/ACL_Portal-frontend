@@ -6,7 +6,7 @@ import "./app.css";
 import Header from "~/components/layout/Header";
 import Footer from "~/components/layout/Footer";
 import Analytics from "~/components/Analytics";
-import { NotFound } from "~/components/states";
+import { ErrorState, LoadingBlock, NotFound } from "~/components/states";
 
 export default function App() {
   return (
@@ -22,18 +22,17 @@ export default function App() {
           <Header />
           <main id="main" class="min-h-[60vh]">
             <ErrorBoundary
-              fallback={(err) => (
-                <NotFound
-                  title="Something went wrong"
-                  message={
-                    err?.status === 404
-                      ? "We could not find what you were looking for."
-                      : "We hit a problem loading this page. Please try again."
-                  }
-                />
-              )}
+              fallback={(err, reset) =>
+                err?.status === 404 ? (
+                  <NotFound message="We could not find what you were looking for." />
+                ) : (
+                  <ErrorState reset={reset} />
+                )
+              }
             >
-              <Suspense>{props.children}</Suspense>
+              <Suspense fallback={<LoadingBlock label="Loading page" />}>
+                {props.children}
+              </Suspense>
             </ErrorBoundary>
           </main>
           <Footer />

@@ -73,7 +73,11 @@ export default function Listing() {
               title={`${m().course} Colleges in ${m().city}: Fees, Admission and Ranking`}
               description={`Compare ${m().total_colleges} ${m().course} colleges in ${m().city} by fees (${m().fee_range}), approvals, accepted exams and student rating. Filter and shortlist the right institute.`}
               canonical={path()}
-              jsonLd={[breadcrumbLd(crumbs()), faqLd(d().faqs)]}
+              jsonLd={
+                d().faqs.length
+                  ? [breadcrumbLd(crumbs()), faqLd(d().faqs)]
+                  : [breadcrumbLd(crumbs())]
+              }
             />
 
             {/* Header */}
@@ -139,7 +143,35 @@ export default function Listing() {
                     when={d().results.length}
                     fallback={
                       <EmptyState title="No colleges match these filters">
-                        Try widening the fee range or clearing a filter to see more results.
+                        <p>
+                          Try widening the fee range or clearing a filter to see more results.
+                        </p>
+                        <div class="mt-4 flex flex-wrap justify-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSp({
+                                course: undefined,
+                                type: undefined,
+                                exam: undefined,
+                                approval: undefined,
+                                fees_min: undefined,
+                                fees_max: undefined,
+                                sort: undefined,
+                                page: undefined,
+                              })
+                            }
+                            class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 border border-primary-600 text-primary-700 hover:bg-primary-50"
+                          >
+                            Clear all filters
+                          </button>
+                          <A
+                            href={`/${params.stream}`}
+                            class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 text-primary-700 hover:bg-primary-50"
+                          >
+                            Browse {m().course} by city
+                          </A>
+                        </div>
                       </EmptyState>
                     }
                   >

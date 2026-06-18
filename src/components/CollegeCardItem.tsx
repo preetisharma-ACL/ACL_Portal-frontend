@@ -18,28 +18,31 @@ export default function CollegeCardItem(props: {
   return (
     <article class="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[var(--radius-lg)] p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
       <img
-        src={c.logo}
+        src={c.logo || "/placeholders/college-logo.svg"}
         alt={`${c.name} logo`}
         width="64"
         height="64"
         loading="lazy"
         decoding="async"
+        onError={(e) => (e.currentTarget.src = "/placeholders/college-logo.svg")}
         class="w-16 h-16 rounded-[var(--radius-md)] border border-[var(--color-line)] object-contain bg-white shrink-0"
       />
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-3">
-          <div>
-            <h3 class="font-semibold text-lg leading-snug">
+          <div class="min-w-0">
+            <h3 class="font-semibold text-lg leading-snug break-words">
               <A href={href} onClick={onCardClick} class="hover:text-primary-700 hover:underline">
                 {c.name}
               </A>
             </h3>
-            <p class="text-sm text-[var(--color-muted)]">
+            <p class="text-sm text-[var(--color-muted)] break-words">
               {c.city} · {c.type}
             </p>
           </div>
           <Show when={c.rating > 0}>
-            <Rating value={c.rating} />
+            <span class="shrink-0">
+              <Rating value={c.rating} />
+            </span>
           </Show>
         </div>
 

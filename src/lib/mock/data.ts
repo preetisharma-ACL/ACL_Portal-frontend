@@ -73,6 +73,30 @@ export const COLLEGE_CARDS: CollegeCard[] = [
   card(47, "Heritage School of Commerce and Management", "Varanasi", "Private", "INR 5.0L - 7.5L", 4.2, ["AICTE", "NAAC A"], ["MBA", "MBA (Finance)"]),
 ];
 
+/**
+ * Edge-case fixtures (data only) to exercise sparse and awkward real-world data:
+ * a very long name/city, and a record with no logo. Kept out of COLLEGE_CARDS so
+ * the default listings stay clean; reachable by direct id and via dedicated city
+ * slugs in buildListing.
+ */
+const LONG_NAME_CARD: CollegeCard = card(
+  91,
+  "International Institute of Advanced Management Studies and Postgraduate Research in Business Administration",
+  "Greater Visakhapatnam Metropolitan Region",
+  "Private",
+  "INR 8.0L - 14.5L",
+  4.2,
+  ["AICTE", "NAAC A+", "NBA"],
+  ["MBA", "PGDM in Business Analytics and Artificial Intelligence Applications"],
+);
+
+const NO_LOGO_CARD: CollegeCard = {
+  ...card(92, "Riverside Polytechnic and Management College", "Noida", "Private", "INR 2.5L - 4.0L", 3.9, ["AICTE"], ["MBA"]),
+  logo: "",
+};
+
+const EDGE_CARDS: CollegeCard[] = [LONG_NAME_CARD, NO_LOGO_CARD];
+
 export const STREAM_DETAIL: Record<string, StreamDetail> = {
   mba: {
     stream: STREAMS[0],
@@ -175,14 +199,25 @@ export function buildListing(course: string, city: string): ListingResponse {
     .split("-")
     .map((w) => w[0]?.toUpperCase() + w.slice(1))
     .join(" ");
+
+  // Edge-case city slugs let QA reach sparse result sets the live DB will produce.
+  let results: CollegeCard[];
+  if (city === "emptyville") results = [];
+  else if (city === "onlyone") results = [COLLEGE_CARDS[0]];
+  else if (city === "longtown") results = [LONG_NAME_CARD, NO_LOGO_CARD, ...COLLEGE_CARDS];
+  else results = COLLEGE_CARDS;
+
+  const total = results.length;
   return {
     meta: {
       course: courseLabel,
       city: cityLabel,
-      total_colleges: COLLEGE_CARDS.length,
-      fee_range: "INR 1.2L - 11L",
+      total_colleges: total,
+      fee_range: total ? "INR 1.2L - 11L" : "Not available yet",
       popular_courses: ["MBA", "PGDM", "Executive MBA", "MBA in Finance"],
-      intro: `Compare ${courseLabel} colleges in ${cityLabel} by fees, approvals, accepted exams and student rating. Our directory lists ${COLLEGE_CARDS.length} institutes offering ${courseLabel} programmes, with full course and fee detail on each college page.`,
+      intro: total
+        ? `Compare ${courseLabel} colleges in ${cityLabel} by fees, approvals, accepted exams and student rating. Our directory lists ${total} institutes offering ${courseLabel} programmes, with full course and fee detail on each college page.`
+        : `We are still adding ${courseLabel} colleges in ${cityLabel}. Explore nearby cities or other courses while we expand this list.`,
     },
     filters: {
       types: [
@@ -207,16 +242,17 @@ export function buildListing(course: string, city: string): ListingResponse {
         { value: "1000000-", label: "Above INR 10L" },
       ],
     },
-    results: COLLEGE_CARDS,
-    pagination: { page: 1, page_size: 4, total: COLLEGE_CARDS.length, has_next: true },
-    faqs: FAQS,
+    results,
+    pagination: { page: 1, page_size: 4, total, has_next: total > 4 },
+    faqs: total ? FAQS : [],
   };
 }
 
 export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
-  const found = COLLEGE_CARDS.find((c) => c.id === id) ?? COLLEGE_CARDS[0];
+  const found =
+    [...COLLEGE_CARDS, ...EDGE_CARDS].find((c) => c.id === id) ?? COLLEGE_CARDS[0];
   const name = found.name;
-  return {
+  const detail: CollegeDetail = {
     header: {
       id,
       slug,
@@ -224,7 +260,7 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
       short_name: name.split(" ").slice(0, 2).join(" "),
       city: found.city,
       state: "Uttar Pradesh",
-      logo: PLACEHOLDER_LOGO,
+      logo: found.logo,
       cover: "/placeholders/campus-cover.svg",
       type: found.type,
       established: 1998,
@@ -323,6 +359,23 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
     operator_disclosure:
       "This page is maintained by AAJneeti Connect Ltd. as part of an independent education discovery platform. We are not affiliated with this institution unless explicitly stated. Information is compiled for comparison and should be verified with the institute.",
   };
+
+  // Edge-case override: a sparse college missing every optional block, so the UI
+  // hides those sections and their anchor-nav entries instead of empty shells.
+  if (id === 90) {
+    detail.header.review_count = 0;
+    detail.overview.highlights = [];
+    detail.overview.campus_size = undefined;
+    detail.overview.website = undefined;
+    detail.courses_fees = [];
+    detail.placements = [];
+    detail.rankings = [];
+    detail.cutoffs = [];
+    detail.media = [];
+    detail.overview.description = `${name} is a newly listed institute. We are still compiling its courses, fees, placements and other details. Please confirm directly with the institute.`;
+  }
+
+  return detail;
 }
 
 export function buildSearch(q: string): SearchResults {

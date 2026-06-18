@@ -5,7 +5,7 @@ import Breadcrumbs from "~/components/Breadcrumbs";
 import { Badge, Card, Section } from "~/components/ui";
 import CollegeCardItem from "~/components/CollegeCardItem";
 import LeadForm from "~/components/LeadForm";
-import { NotFound } from "~/components/states";
+import { EmptyState, NotFound } from "~/components/states";
 import { courseQuery } from "~/lib/queries";
 import { breadcrumbLd, courseLd } from "~/lib/jsonld";
 
@@ -99,9 +99,19 @@ export default function CourseInfo(props: { slug: string }) {
 
             <Section bg="surface">
               <h2 class="text-2xl font-bold mb-6">Top colleges offering {c().name}</h2>
-              <div class="grid gap-4">
-                <For each={d().top_colleges}>{(col) => <CollegeCardItem college={col} />}</For>
-              </div>
+              <Show
+                when={d().top_colleges.length}
+                fallback={
+                  <EmptyState title="Colleges are being added">
+                    We are still compiling colleges that offer this course. Meanwhile, explore
+                    colleges by city from the stream pages.
+                  </EmptyState>
+                }
+              >
+                <div class="grid gap-4">
+                  <For each={d().top_colleges}>{(col) => <CollegeCardItem college={col} />}</For>
+                </div>
+              </Show>
             </Section>
           </>
         );

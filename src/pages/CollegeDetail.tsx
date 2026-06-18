@@ -43,6 +43,8 @@ const TAB_ANCHOR: Record<CollegeTab, string> = {
   reviews: "reviews",
 };
 
+const PLACEHOLDER_LOGO = "/placeholders/college-logo.svg";
+
 function Block(props: { id: string; title: string; children: JSX.Element }) {
   return (
     <section id={props.id} class="scroll-mt-28 border-b border-[var(--color-line)] py-8">
@@ -87,6 +89,28 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
           { name: h().name, path: basePath() },
         ];
 
+        // A section shows only when it has data, so missing optional blocks hide
+        // cleanly (and drop out of the anchor nav) instead of rendering empty.
+        const visible: Record<string, () => boolean> = {
+          overview: () => true,
+          "courses-fees": () => d().courses_fees.length > 0,
+          admissions: () =>
+            !!(
+              d().admissions.process ||
+              d().admissions.eligibility ||
+              d().admissions.accepted_exams.length ||
+              d().admissions.important_dates.length
+            ),
+          placements: () => d().placements.length > 0,
+          rankings: () => d().rankings.length > 0,
+          cutoffs: () => d().cutoffs.length > 0,
+          gallery: () => d().media.length > 0,
+          reviews: () => d().header.review_count > 0,
+          news: () => true,
+          contact: () => true,
+        };
+        const navSections = () => SECTIONS.filter((s) => visible[s.id]?.());
+
         return (
           <>
             <Seo
@@ -103,14 +127,17 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 <Breadcrumbs crumbs={crumbs()} />
                 <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-4">
                   <img
-                    src={h().logo}
+                    src={h().logo || PLACEHOLDER_LOGO}
                     alt={`${h().name} logo`}
                     width="72"
                     height="72"
-                    class="w-18 h-18 rounded-[var(--radius-md)] bg-white p-1 shrink-0"
+                    onError={(e) => (e.currentTarget.src = PLACEHOLDER_LOGO)}
+                    class="w-18 h-18 rounded-[var(--radius-md)] bg-white p-1 shrink-0 object-contain"
                   />
-                  <div class="flex-1">
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-white">{h().name}</h1>
+                  <div class="flex-1 min-w-0">
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-white break-words">
+                      {h().name}
+                    </h1>
                     <p class="text-white/80">
                       {h().city}, {h().state} · {h().type} · Established {h().established}
                     </p>
@@ -139,7 +166,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               class="sticky top-16 z-30 bg-[var(--color-surface)] border-b border-[var(--color-line)] overflow-x-auto"
             >
               <div class="container-x flex gap-1">
-                <For each={SECTIONS}>
+                <For each={navSections()}>
                   {(s) => (
                     <a
                       href={`${basePath()}#${s.id}`}
@@ -202,6 +229,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 </Block>
 
                 {/* Courses & Fees */}
+                <Show when={visible["courses-fees"]()}>
                 <Block id="courses-fees" title="Courses & Fees">
                   <div class="space-y-3">
                     <For each={d().courses_fees}>
@@ -243,8 +271,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </For>
                   </div>
                 </Block>
+                </Show>
 
                 {/* Admissions */}
+                <Show when={visible.admissions()}>
                 <Block id="admissions" title="Admissions">
                   <div class="grid gap-6 md:grid-cols-2">
                     <div>
@@ -276,13 +306,12 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </div>
                   </div>
                 </Block>
+                </Show>
 
                 {/* Placements */}
+                <Show when={visible.placements()}>
                 <Block id="placements" title="Placements">
-                  <Show
-                    when={d().placements.length}
-                    fallback={<p class="text-sm text-[var(--color-muted)]">Placement data is being compiled.</p>}
-                  >
+                  <Show when={d().placements.length}>
                     <div class="overflow-x-auto">
                       <table class="w-full text-sm border-collapse">
                         <thead>
@@ -315,8 +344,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </div>
                   </Show>
                 </Block>
+                </Show>
 
                 {/* Rankings */}
+                <Show when={visible.rankings()}>
                 <Block id="rankings" title="Rankings & Ratings">
                   <div class="overflow-x-auto">
                     <table class="w-full text-sm border-collapse">
@@ -343,8 +374,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </table>
                   </div>
                 </Block>
+                </Show>
 
                 {/* Cutoffs */}
+                <Show when={visible.cutoffs()}>
                 <Block id="cutoffs" title="Cutoffs">
                   <div class="overflow-x-auto">
                     <table class="w-full text-sm border-collapse">
@@ -373,18 +406,23 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </table>
                   </div>
                 </Block>
+                </Show>
 
                 {/* Gallery */}
+                <Show when={visible.gallery()}>
                 <Block id="gallery" title="Gallery">
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <For each={d().media}>
                       {(m) => (
                         <figure class="rounded-[var(--radius-md)] overflow-hidden border border-[var(--color-line)]">
                           <img
-                            src={m.url}
+                            src={m.url || "/placeholders/campus-cover.svg"}
                             alt={m.caption}
                             loading="lazy"
                             decoding="async"
+                            onError={(e) =>
+                              (e.currentTarget.src = "/placeholders/campus-cover.svg")
+                            }
                             class="w-full h-32 object-cover bg-[var(--color-canvas)]"
                           />
                           <figcaption class="px-2 py-1 text-xs text-[var(--color-muted)]">
@@ -395,14 +433,17 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </For>
                   </div>
                 </Block>
+                </Show>
 
                 {/* Reviews (placeholder in v1) */}
+                <Show when={visible.reviews()}>
                 <Block id="reviews" title="Reviews & Q&A">
                   <p class="text-sm text-[var(--color-muted)]">
                     Verified student reviews and a questions and answers section are coming soon.
                     We publish reviews only after basic verification to keep this section useful.
                   </p>
                 </Block>
+                </Show>
 
                 {/* News (placeholder) */}
                 <Block id="news" title="News & Updates">

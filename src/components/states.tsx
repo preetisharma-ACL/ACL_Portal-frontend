@@ -1,6 +1,6 @@
 import { HttpStatusCode } from "@solidjs/start";
 import { type ParentProps } from "solid-js";
-import { LinkButton } from "./ui";
+import { Button, LinkButton } from "./ui";
 
 /** Server-rendered 404. Sets the HTTP status so crawlers see a real 404. */
 export function NotFound(props: { title?: string; message?: string }) {
@@ -27,13 +27,39 @@ export function NotFound(props: { title?: string; message?: string }) {
 /** Lightweight skeleton used inside Suspense fallbacks. */
 export function LoadingBlock(props: { label?: string }) {
   return (
-    <div class="container-x py-16">
+    <div class="container-x py-16" role="status" aria-live="polite">
       <div class="animate-pulse space-y-4">
         <div class="h-7 w-1/3 rounded bg-[var(--color-line)]" />
         <div class="h-4 w-2/3 rounded bg-[var(--color-line)]" />
         <div class="h-40 rounded-[var(--radius-lg)] bg-[var(--color-line)]" />
       </div>
       <span class="sr-only">{props.label ?? "Loading"}</span>
+    </div>
+  );
+}
+
+/**
+ * Friendly error state with a retry. Used by the root ErrorBoundary; a thrown
+ * 404 from the API still degrades to NotFound, anything else offers a retry.
+ */
+export function ErrorState(props: { reset?: () => void; message?: string }) {
+  return (
+    <div class="container-x py-20 text-center">
+      <p class="text-sm font-semibold text-accent-600">Something went wrong</p>
+      <h1 class="mt-2 text-3xl font-bold">We could not load this page</h1>
+      <p class="mt-3 text-[var(--color-muted)] max-w-md mx-auto">
+        {props.message ?? "There was a problem reaching our data. Please try again in a moment."}
+      </p>
+      <div class="mt-8 flex items-center justify-center gap-3">
+        {props.reset && (
+          <Button variant="primary" onClick={() => props.reset!()}>
+            Try again
+          </Button>
+        )}
+        <LinkButton href="/" variant="outline">
+          Back to home
+        </LinkButton>
+      </div>
     </div>
   );
 }
