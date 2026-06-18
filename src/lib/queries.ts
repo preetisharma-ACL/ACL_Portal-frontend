@@ -48,3 +48,26 @@ export const searchQuery = query(async (q: string) => {
   if (!q || q.trim().length < 1) return { colleges: [], courses: [], exams: [] };
   return api.search(q.trim());
 }, "search");
+
+/**
+ * Homepage aggregate, composed from contract endpoints so it works against the
+ * live API without a bespoke /home route. Returns streams, popular cities, a
+ * set of top colleges, popular courses and headline counts.
+ */
+export const homeQuery = query(async () => {
+  "use server";
+  const [streams, cities, listing] = await Promise.all([
+    api.getStreams(),
+    api.getCities(),
+    api.getListing({ course: "mba", city: "varanasi" }),
+  ]);
+  const totalColleges = cities.reduce((n, c) => n + c.college_count, 0);
+  const totalCourses = streams.reduce((n, s) => n + s.course_count, 0);
+  return {
+    streams,
+    cities,
+    topColleges: listing.results.slice(0, 4),
+    popularCourses: listing.meta.popular_courses,
+    counts: { colleges: totalColleges, courses: totalCourses, cities: cities.length },
+  };
+}, "home");
