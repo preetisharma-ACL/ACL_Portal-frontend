@@ -171,6 +171,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     <a
                       href={`${basePath()}#${s.id}`}
                       onClick={() => setActive(s.id)}
+                      aria-current={active() === s.id ? "location" : undefined}
                       class="whitespace-nowrap px-3 py-3 text-sm font-medium border-b-2 transition-colors"
                       classList={{
                         "border-primary-600 text-primary-700": active() === s.id,

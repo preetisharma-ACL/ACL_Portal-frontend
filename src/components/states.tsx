@@ -8,7 +8,7 @@ export function NotFound(props: { title?: string; message?: string }) {
     <>
       <HttpStatusCode code={404} />
       <div class="container-x py-20 text-center">
-        <p class="text-sm font-semibold text-accent-600">404</p>
+        <p class="text-sm font-semibold text-[var(--color-danger)]">404</p>
         <h1 class="mt-2 text-3xl font-bold">{props.title ?? "Page not found"}</h1>
         <p class="mt-3 text-[var(--color-muted)] max-w-md mx-auto">
           {props.message ??
@@ -45,7 +45,7 @@ export function LoadingBlock(props: { label?: string }) {
 export function ErrorState(props: { reset?: () => void; message?: string }) {
   return (
     <div class="container-x py-20 text-center">
-      <p class="text-sm font-semibold text-accent-600">Something went wrong</p>
+      <p class="text-sm font-semibold text-[var(--color-danger)]">Something went wrong</p>
       <h1 class="mt-2 text-3xl font-bold">We could not load this page</h1>
       <p class="mt-3 text-[var(--color-muted)] max-w-md mx-auto">
         {props.message ?? "There was a problem reaching our data. Please try again in a moment."}
