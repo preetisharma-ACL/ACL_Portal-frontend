@@ -1,4 +1,4 @@
-import LegalPage, { LegalTodo } from "~/components/LegalPage";
+import LegalPage from "~/components/LegalPage";
 import { SITE_NAME } from "~/lib/config";
 
 export default function PrivacyPolicy() {
@@ -59,12 +59,11 @@ export default function PrivacyPolicy() {
       <h2>Retention</h2>
       <p>
         We keep your personal data only as long as needed for the purposes above, or as required
-        by law, after which it is deleted or anonymised.
+        by law, after which it is deleted or anonymised. As a working position pending final
+        sign-off, we propose to retain enquiry data for up to 24 months from your last
+        interaction with us, and verification logs for up to 12 months. Aggregated or anonymised
+        data that cannot identify you may be kept for longer for analytics.
       </p>
-      <LegalTodo>
-        Confirm the exact retention period (for example 24 months from last contact) with legal
-        and operations before launch.
-      </LegalTodo>
 
       <h2>Your rights</h2>
       <p>Under the DPDP Act you may:</p>
@@ -79,16 +78,21 @@ export default function PrivacyPolicy() {
       <h2>Grievance officer</h2>
       <p>
         For any privacy question, consent withdrawal or rights request, contact our Grievance
-        Officer:
+        Officer. We aim to acknowledge requests within 72 hours and to resolve them within 30
+        days, as expected under the DPDP Act.
       </p>
       <ul>
+        <li>Name: [Grievance Officer name to be appointed before launch]</li>
         <li>Email: <a href="mailto:grievance@aajneeti.example">grievance@aajneeti.example</a></li>
-        <li>Address: AAJneeti Connect Ltd., India</li>
+        <li>
+          Address: AAJneeti Connect Ltd., [registered office address and CIN to be inserted],
+          India
+        </li>
       </ul>
-      <LegalTodo>
-        Insert the named Grievance Officer, postal address and response timelines required by
-        the DPDP Act.
-      </LegalTodo>
+      <p>
+        If your concern is not resolved, you may approach the Data Protection Board of India as
+        provided under the Act.
+      </p>
 
       <h2>Children</h2>
       <p>

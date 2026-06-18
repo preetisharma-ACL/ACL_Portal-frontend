@@ -1,4 +1,4 @@
-import LegalPage, { LegalTodo } from "~/components/LegalPage";
+import LegalPage from "~/components/LegalPage";
 import { SITE_NAME } from "~/lib/config";
 
 export default function Terms() {
@@ -55,13 +55,19 @@ export default function Terms() {
 
       <h2>Limitation of liability</h2>
       <p>
-        To the extent permitted by law, we are not liable for decisions made on the basis of
-        information on the platform, or for the acts of the institutions you choose to contact.
+        To the extent permitted by law, the platform and its content are provided on an "as is"
+        and "as available" basis without warranties of any kind. We are not liable for any
+        indirect, incidental or consequential loss, or for decisions made on the basis of
+        information on the platform, or for the acts or omissions of the institutions you choose
+        to contact. Where liability cannot be excluded, it is limited to the maximum extent
+        permitted by law.
       </p>
-      <LegalTodo>
-        Confirm the limitation of liability, indemnity and governing law and jurisdiction clauses
-        with legal counsel before launch.
-      </LegalTodo>
+
+      <h2>Indemnity</h2>
+      <p>
+        You agree to indemnify AAJneeti Connect Ltd. against claims arising from your misuse of
+        the platform or your breach of these terms.
+      </p>
 
       <h2>Changes to these terms</h2>
       <p>
@@ -69,8 +75,11 @@ export default function Terms() {
         Continued use after a change means you accept the updated terms.
       </p>
 
-      <h2>Governing law</h2>
-      <p>These terms are governed by the laws of India.</p>
+      <h2>Governing law and jurisdiction</h2>
+      <p>
+        These terms are governed by the laws of India. Subject to applicable law, the courts at
+        [jurisdiction city to be confirmed] shall have exclusive jurisdiction over any dispute.
+      </p>
     </LegalPage>
   );
 }
