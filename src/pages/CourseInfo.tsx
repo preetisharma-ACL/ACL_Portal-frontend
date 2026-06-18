@@ -1,9 +1,10 @@
-import { createAsync } from "@solidjs/router";
+import { A, createAsync } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import { Badge, Card, Section } from "~/components/ui";
 import CollegeCardItem from "~/components/CollegeCardItem";
+import LeadForm from "~/components/LeadForm";
 import { NotFound } from "~/components/states";
 import { courseQuery } from "~/lib/queries";
 import { breadcrumbLd, courseLd } from "~/lib/jsonld";
@@ -73,12 +74,24 @@ export default function CourseInfo(props: { slug: string }) {
                       <For each={d().related_exams}>
                         {(e) => (
                           <li class="flex justify-between">
-                            <span>{e.name}</span>
+                            <A
+                              href={`/mba/${e.slug}-exam`}
+                              class="text-primary-700 hover:underline"
+                            >
+                              {e.name}
+                            </A>
                             <span class="text-[var(--color-muted)]">{e.conducting_body}</span>
                           </li>
                         )}
                       </For>
                     </ul>
+                  </Card>
+                  <Card class="p-5 bg-primary-50 border-primary-100">
+                    <LeadForm
+                      sourcePage={path()}
+                      courseInterest={c().name}
+                      heading={`Get free guidance on ${c().name} admissions`}
+                    />
                   </Card>
                 </aside>
               </div>

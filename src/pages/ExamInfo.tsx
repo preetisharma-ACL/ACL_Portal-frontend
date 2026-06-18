@@ -3,6 +3,7 @@ import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeCardItem from "~/components/CollegeCardItem";
+import LeadForm from "~/components/LeadForm";
 import { Card, Section } from "~/components/ui";
 import { NotFound } from "~/components/states";
 import { examQuery } from "~/lib/queries";
@@ -63,7 +64,7 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
                     </ul>
                   </div>
                 </div>
-                <aside>
+                <aside class="space-y-6">
                   <Card class="p-5">
                     <h3 class="font-semibold mb-3">Important dates</h3>
                     <ul class="space-y-2 text-sm">
@@ -76,6 +77,13 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
                         )}
                       </For>
                     </ul>
+                  </Card>
+                  <Card class="p-5 bg-primary-50 border-primary-100">
+                    <LeadForm
+                      sourcePage={path()}
+                      courseInterest={e().name}
+                      heading={`Get guidance for ${e().name} and accepting colleges`}
+                    />
                   </Card>
                 </aside>
               </div>
