@@ -1,11 +1,12 @@
 import { MetaProvider } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { ErrorBoundary, Suspense } from "solid-js";
 import "./app.css";
 import Header from "~/components/layout/Header";
 import Footer from "~/components/layout/Footer";
 import Analytics from "~/components/Analytics";
+import { NotFound } from "~/components/states";
 
 export default function App() {
   return (
@@ -20,7 +21,20 @@ export default function App() {
           </a>
           <Header />
           <main id="main" class="min-h-[60vh]">
-            <Suspense>{props.children}</Suspense>
+            <ErrorBoundary
+              fallback={(err) => (
+                <NotFound
+                  title="Something went wrong"
+                  message={
+                    err?.status === 404
+                      ? "We could not find what you were looking for."
+                      : "We hit a problem loading this page. Please try again."
+                  }
+                />
+              )}
+            >
+              <Suspense>{props.children}</Suspense>
+            </ErrorBoundary>
           </main>
           <Footer />
           <Analytics />
