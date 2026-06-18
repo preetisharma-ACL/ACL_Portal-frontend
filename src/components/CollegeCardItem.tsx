@@ -1,6 +1,7 @@
 import { A } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import type { CollegeCard } from "~/lib/types";
+import { track } from "~/lib/analytics";
 import { Badge, LinkButton, Rating } from "./ui";
 
 /**
@@ -13,6 +14,7 @@ export default function CollegeCardItem(props: {
 }) {
   const c = props.college;
   const href = `/college/${c.slug}-${c.id}`;
+  const onCardClick = () => track("card_click", { college_id: c.id, college: c.name });
   return (
     <article class="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[var(--radius-lg)] p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
       <img
@@ -28,7 +30,7 @@ export default function CollegeCardItem(props: {
         <div class="flex items-start justify-between gap-3">
           <div>
             <h3 class="font-semibold text-lg leading-snug">
-              <A href={href} class="hover:text-primary-700 hover:underline">
+              <A href={href} onClick={onCardClick} class="hover:text-primary-700 hover:underline">
                 {c.name}
               </A>
             </h3>
