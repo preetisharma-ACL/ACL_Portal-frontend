@@ -131,7 +131,7 @@ export default function Listing() {
                 </div>
 
                 {/* Results */}
-                <div>
+                <div class="min-w-0">
                   <div class="flex items-center justify-between mb-4">
                     <p class="text-sm text-[var(--color-muted)]">
                       Showing {d().results.length} of {total()}{" "}

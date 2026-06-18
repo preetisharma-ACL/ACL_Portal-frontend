@@ -185,7 +185,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
             </nav>
 
             <div class="container-x grid gap-8 lg:grid-cols-[1fr_20rem] py-8">
-              <div>
+              <div class="min-w-0">
                 {/* Overview */}
                 <Block id="overview" title="Overview">
                   <p class="text-[var(--color-ink)]/90 max-w-3xl">{d().overview.description}</p>
@@ -236,8 +236,8 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       {(c) => (
                         <details class="group rounded-[var(--radius-md)] border border-[var(--color-line)]">
                           <summary class="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 list-none">
-                            <span class="font-semibold">{c.course}</span>
-                            <span class="flex items-center gap-4 text-sm">
+                            <span class="font-semibold min-w-0 break-words">{c.course}</span>
+                            <span class="flex items-center gap-4 text-sm shrink-0">
                               <span class="text-[var(--color-muted)] hidden sm:inline">
                                 {c.duration}
                               </span>
