@@ -208,7 +208,7 @@ export function buildListing(course: string, city: string): ListingResponse {
       ],
     },
     results: COLLEGE_CARDS,
-    pagination: { page: 1, page_size: 10, total: COLLEGE_CARDS.length, has_next: false },
+    pagination: { page: 1, page_size: 4, total: COLLEGE_CARDS.length, has_next: true },
     faqs: FAQS,
   };
 }

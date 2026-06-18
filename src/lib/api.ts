@@ -134,10 +134,20 @@ function applyMockFilters(base: ListingResponse, q: ListingQuery): ListingRespon
   } else if (q.sort === "fees") {
     results.sort((a, b) => parseFee(a.fee_range) - parseFee(b.fee_range));
   }
+  const total = results.length;
+  const pageSize = base.pagination.page_size;
+  const page = Math.max(1, parseInt(q.page ?? "1", 10) || 1);
+  const start = (page - 1) * pageSize;
+  const paged = results.slice(start, start + pageSize);
   return {
     ...base,
-    results,
-    pagination: { ...base.pagination, total: results.length },
+    results: paged,
+    pagination: {
+      page,
+      page_size: pageSize,
+      total,
+      has_next: start + pageSize < total,
+    },
   };
 }
 
