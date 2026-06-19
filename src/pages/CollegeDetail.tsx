@@ -139,66 +139,65 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 </div>
               </div>
 
-              {/* Profile: logo card + name + badges + actions */}
+              {/* Profile: logo overlaps the cover; name and the rest sit below it */}
               <div class="container-x pb-6">
-                <div class="relative z-10 -mt-10 sm:-mt-12 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                  <div class="flex items-end gap-4 min-w-0">
-                    <div class="grid place-items-center w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-[var(--radius-xl)] bg-white border border-[var(--color-line)] shadow-md p-2.5">
-                      <CollegeLogo
-                        name={h().name}
-                        logo={h().logo}
-                        id={h().id}
-                        class="max-h-full max-w-full text-2xl rounded-[var(--radius-md)]"
-                      />
-                    </div>
-                    <div class="min-w-0 pb-1">
-                      <h1 class="text-2xl md:text-3xl font-extrabold break-words leading-tight">
-                        {h().name}
-                      </h1>
-                      <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-                        <For each={h().approvals}>
-                          {(a) => (
-                            <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-ink)]/80">
-                              {a}
-                            </span>
-                          )}
-                        </For>
-                        <Show when={h().rating > 0}>
-                          <span class="inline-flex items-center gap-1.5">
-                            <span aria-hidden="true" class="text-[var(--color-warning)]">
-                              <For each={[0, 1, 2, 3, 4]}>
-                                {(i) => <span>{i < Math.round(h().rating) ? "★" : "☆"}</span>}
-                              </For>
-                            </span>
-                            <span class="text-sm font-semibold">{h().rating.toFixed(1)}</span>
-                            <span class="text-sm text-[var(--color-muted)]">
-                              {h().review_count} reviews
-                            </span>
+                {/* Logo card overlapping the cover (only the logo overlaps) */}
+                <div class="relative z-10 -mt-10 sm:-mt-12 grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-[var(--radius-xl)] bg-white border border-[var(--color-line)] shadow-md p-2.5">
+                  <CollegeLogo
+                    name={h().name}
+                    logo={h().logo}
+                    id={h().id}
+                    class="max-h-full max-w-full text-2xl rounded-[var(--radius-md)]"
+                  />
+                </div>
+
+                {/* Name + meta + actions, below the cover on white */}
+                <div class="mt-4 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                  <div class="min-w-0">
+                    <h1 class="text-2xl md:text-3xl font-extrabold break-words leading-tight">
+                      {h().name}
+                    </h1>
+                    <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+                      <For each={h().approvals}>
+                        {(a) => (
+                          <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-ink)]/80">
+                            {a}
                           </span>
-                        </Show>
-                      </div>
-                      <p class="mt-2 text-sm text-[var(--color-muted)]">
-                        {h().city}, {h().state} · {h().type} · Established {h().established}
-                      </p>
-                      <div class="mt-2 flex items-center gap-2 text-sm">
-                        <span class="text-[var(--color-muted)]">
-                          Not sure what fits you?
+                        )}
+                      </For>
+                      <Show when={h().rating > 0}>
+                        <span class="inline-flex items-center gap-1.5">
+                          <span aria-hidden="true" class="text-[var(--color-warning)]">
+                            <For each={[0, 1, 2, 3, 4]}>
+                              {(i) => <span>{i < Math.round(h().rating) ? "★" : "☆"}</span>}
+                            </For>
+                          </span>
+                          <span class="text-sm font-semibold">{h().rating.toFixed(1)}</span>
+                          <span class="text-sm text-[var(--color-muted)]">
+                            {h().review_count} reviews
+                          </span>
                         </span>
-                        <LeadTrigger
-                          sourcePage={path()}
-                          courseInterest={d().courses_fees[0]?.course}
-                          defaultCity={h().city}
-                          heading={`Get guidance for ${h().short_name}`}
-                          label="Talk to an advisor"
-                          variant="ghost"
-                          size="sm"
-                        />
-                      </div>
+                      </Show>
+                    </div>
+                    <p class="mt-2 text-sm text-[var(--color-muted)]">
+                      {h().city}, {h().state} · {h().type} · Established {h().established}
+                    </p>
+                    <div class="mt-2 flex items-center gap-2 text-sm">
+                      <span class="text-[var(--color-muted)]">Not sure what fits you?</span>
+                      <LeadTrigger
+                        sourcePage={path()}
+                        courseInterest={d().courses_fees[0]?.course}
+                        defaultCity={h().city}
+                        heading={`Get guidance for ${h().short_name}`}
+                        label="Talk to an advisor"
+                        variant="ghost"
+                        size="sm"
+                      />
                     </div>
                   </div>
 
                   {/* Actions: guidance-level only (compliance: never apply to a college) */}
-                  <div class="flex flex-wrap items-center gap-2 lg:justify-end shrink-0">
+                  <div class="flex flex-wrap items-center gap-2 lg:justify-end lg:pt-1 shrink-0">
                     <LeadTrigger
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
@@ -207,10 +206,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       label="Get admission guidance"
                       variant="accent"
                     />
-                    <LinkButton
-                      href={listingPath("mba", "mba", citySlug())}
-                      variant="outline"
-                    >
+                    <LinkButton href={listingPath("mba", "mba", citySlug())} variant="outline">
                       Compare colleges
                     </LinkButton>
                     <LeadTrigger
