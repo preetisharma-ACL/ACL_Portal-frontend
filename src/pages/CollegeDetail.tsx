@@ -128,15 +128,13 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 <Breadcrumbs crumbs={crumbs()} />
               </div>
 
-              {/* Cover image slider with dissolve */}
-              <div class="container-x mt-3">
-                <div class="relative h-44 sm:h-60 md:h-72 rounded-[var(--radius-xl)] overflow-hidden">
-                  <HeroSlider />
-                  <div
-                    aria-hidden="true"
-                    class="absolute inset-0 z-[1] bg-gradient-to-t from-black/40 via-black/5 to-transparent"
-                  />
-                </div>
+              {/* Cover image slider with dissolve (full width) */}
+              <div class="relative mt-3 h-48 sm:h-64 md:h-80 overflow-hidden">
+                <HeroSlider />
+                <div
+                  aria-hidden="true"
+                  class="absolute inset-0 z-[1] bg-gradient-to-t from-black/40 via-black/5 to-transparent"
+                />
               </div>
 
               {/* Profile: logo overlaps the cover; name and the rest sit below it */}
