@@ -5,7 +5,7 @@ import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import StreamExplorer from "~/components/StreamExplorer";
-import CollegeCardItem from "~/components/CollegeCardItem";
+import TopCollegeCard from "~/components/TopCollegeCard";
 import LeadTrigger from "~/components/LeadTrigger";
 import { Card, LinkButton, Section } from "~/components/ui";
 import { SITE_NAME, OPERATOR_DISCLOSURE } from "~/lib/config";
@@ -191,7 +191,9 @@ export default function Home() {
                 </LinkButton>
               </div>
               <div class="grid gap-4 lg:grid-cols-2">
-                <For each={d().topColleges}>{(c) => <CollegeCardItem college={c} />}</For>
+                <For each={d().topColleges}>
+                  {(c, i) => <TopCollegeCard college={c} rank={i() + 1} />}
+                </For>
               </div>
             </Section>
 
