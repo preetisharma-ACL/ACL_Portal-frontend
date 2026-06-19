@@ -51,7 +51,7 @@ export default function Header() {
           </For>
           <A
             href="/search"
-            class="flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-md)] font-medium hover:bg-primary-50 hover:text-primary-700"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-md)] font-medium bg-primary-50  hover:bg-primary-100 hover:text-primary-700"
           >
             <SearchIcon />
             Search

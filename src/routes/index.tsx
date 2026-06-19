@@ -4,6 +4,7 @@ import Seo from "~/components/Seo";
 import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
+import StreamExplorer from "~/components/StreamExplorer";
 import CollegeCardItem from "~/components/CollegeCardItem";
 import LeadTrigger from "~/components/LeadTrigger";
 import { Card, LinkButton, Section } from "~/components/ui";
@@ -88,27 +89,15 @@ export default function Home() {
       <Show when={data()}>
         {(d) => (
           <>
-            {/* Browse by stream */}
+            {/* Browse by stream: streams on the left, their courses on the right */}
             <Section bg="surface">
               <div class="flex items-end justify-between mb-6">
                 <h2 class="text-2xl font-bold">Browse by stream</h2>
+                <p class="text-sm text-[var(--color-muted)] hidden sm:block">
+                  Pick a stream to see its courses
+                </p>
               </div>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <For each={d().streams}>
-                  {(s) => (
-                    <A
-                      href={`/${s.slug}`}
-                      class="group flex flex-col gap-2 p-5 rounded-[var(--radius-lg)] border border-[var(--color-line)] hover:border-primary-300 hover:bg-primary-50"
-                    >
-                      <StreamIcon slug={s.slug} class="text-3xl" />
-                      <span class="font-semibold group-hover:text-primary-700">{s.name}</span>
-                      <span class="text-sm text-[var(--color-muted)]">
-                        {s.course_count} courses
-                      </span>
-                    </A>
-                  )}
-                </For>
-              </div>
+              <StreamExplorer streams={d().streams} />
             </Section>
 
             {/* Browse by popular city */}
