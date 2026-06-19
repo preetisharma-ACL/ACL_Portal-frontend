@@ -31,14 +31,8 @@ import type {
 const PLACEHOLDER_LOGO = "/placeholders/college-logo.svg";
 const COVER = "/placeholders/campus-cover.svg";
 
-/**
- * Demo-only dummy logos. DiceBear generates a unique, license-clean mark per
- * seed so the mock looks like a real logo wall without using any institution's
- * trademark. When the live API returns real logo URLs this is never used.
- */
-function dummyLogo(seed: string): string {
-  return `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(seed)}&radius=12`;
-}
+/** Demo logos from the public folder, rotated across colleges in mock mode. */
+const COLLEGE_LOGOS = ["/gla-university-online-logo.webp", "/lpu.png", "/sharda.png"];
 
 function slugify(s: string): string {
   return s
@@ -361,7 +355,7 @@ function genCollegeCard(streamSlug: string, citySlug: string, index: number): Co
     slug,
     name,
     city: cityName,
-    logo: dummyLogo(slug),
+    logo: COLLEGE_LOGOS[index % COLLEGE_LOGOS.length],
     key_courses: p.keyCourses.slice(0, 2 + (index % 2)),
     fee_range: p.feeRanges[index % p.feeRanges.length],
     approvals: p.approvals[index % p.approvals.length],
