@@ -62,25 +62,7 @@ export function getStreams(): Promise<Stream[]> {
 }
 
 export function getStream(slug: string): Promise<StreamDetail> {
-  if (USE_MOCK) {
-    const d = mock.STREAM_DETAIL[slug];
-    if (d) return Promise.resolve(d);
-    // Synthesize a reasonable detail for any stream slug in mock mode.
-    const stream =
-      mock.STREAMS.find((s) => s.slug === slug) ?? {
-        id: 0,
-        name: slug.toUpperCase(),
-        slug,
-        icon: "book",
-        order: 99,
-        course_count: 0,
-      };
-    return Promise.resolve({
-      stream,
-      courses: mock.STREAM_DETAIL.mba.courses,
-      top_cities: mock.CITIES,
-    });
-  }
+  if (USE_MOCK) return Promise.resolve(mock.buildStreamDetail(slug));
   return get<StreamDetail>(`/taxonomy/streams/${slug}/`);
 }
 
@@ -92,18 +74,14 @@ export function getCities(): Promise<CityLite[]> {
 /* -------------------------------------------------------------------- courses */
 
 export function getCourse(slug: string): Promise<CourseDetail> {
-  if (USE_MOCK) {
-    return Promise.resolve(mock.COURSE_DETAIL[slug] ?? mock.COURSE_DETAIL["mba-pgdm"]);
-  }
+  if (USE_MOCK) return Promise.resolve(mock.buildCourseDetail(slug));
   return get<CourseDetail>(`/courses/${slug}/`);
 }
 
 /* ---------------------------------------------------------------------- exams */
 
 export function getExam(slug: string): Promise<ExamDetail> {
-  if (USE_MOCK) {
-    return Promise.resolve(mock.EXAM_DETAIL[slug] ?? mock.EXAM_DETAIL["cat"]);
-  }
+  if (USE_MOCK) return Promise.resolve(mock.buildExamDetail(slug));
   return get<ExamDetail>(`/exams/${slug}/`);
 }
 
