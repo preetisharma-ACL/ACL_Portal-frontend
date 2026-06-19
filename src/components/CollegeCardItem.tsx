@@ -3,6 +3,7 @@ import { For, Show } from "solid-js";
 import type { CollegeCard } from "~/lib/types";
 import { track } from "~/lib/analytics";
 import { Badge, LinkButton, Rating } from "./ui";
+import CollegeLogo from "./CollegeLogo";
 
 /**
  * College result card used on listing, course and exam pages. The "Get info"
@@ -17,15 +18,11 @@ export default function CollegeCardItem(props: {
   const onCardClick = () => track("card_click", { college_id: c.id, college: c.name });
   return (
     <article class="bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[var(--radius-lg)] p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
-      <img
-        src={c.logo || "/placeholders/college-logo.svg"}
-        alt={`${c.name} logo`}
-        width="64"
-        height="64"
-        loading="lazy"
-        decoding="async"
-        onError={(e) => (e.currentTarget.src = "/placeholders/college-logo.svg")}
-        class="w-16 h-16 rounded-[var(--radius-md)] border border-[var(--color-line)] object-contain bg-white shrink-0"
+      <CollegeLogo
+        name={c.name}
+        logo={c.logo}
+        id={c.id}
+        class="w-16 h-16 text-xl rounded-[var(--radius-md)] shrink-0"
       />
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-3">

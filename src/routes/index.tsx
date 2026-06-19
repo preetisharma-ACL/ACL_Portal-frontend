@@ -5,6 +5,7 @@ import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import StreamExplorer from "~/components/StreamExplorer";
+import CollegeLogo from "~/components/CollegeLogo";
 import LeadTrigger from "~/components/LeadTrigger";
 import { Card, Section } from "~/components/ui";
 import { SITE_NAME, OPERATOR_DISCLOSURE } from "~/lib/config";
@@ -211,27 +212,21 @@ export default function Home() {
                     return (
                       <A
                         href={`/college/${c.slug}-${c.id}`}
+                        aria-label={c.name}
                         class="group flex flex-col items-center text-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-sm hover:-translate-y-0.5"
                       >
-                        <div class="h-12 flex items-center justify-center mb-3">
-                          <img
-                            src={c.logo || "/placeholders/college-logo.svg"}
-                            alt={`${c.name} logo`}
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) =>
-                              (e.currentTarget.src = "/placeholders/college-logo.svg")
-                            }
-                            class="max-h-12 max-w-[7rem] object-contain"
+                        <div class="mb-3">
+                          <CollegeLogo
+                            name={c.name}
+                            logo={c.logo}
+                            id={c.id}
+                            class="w-16 h-16 text-xl rounded-[var(--radius-lg)]"
                           />
                         </div>
                         <span class="text-sm font-bold text-primary-700">
                           {courseCount} Courses
                         </span>
-                        <span class="mt-1 text-sm font-medium leading-snug line-clamp-2 min-h-[2.5rem] flex items-center group-hover:text-primary-700">
-                          {c.name}
-                        </span>
-                        <span class="mt-1.5 inline-flex items-center gap-1 text-xs text-[var(--color-muted)]">
+                        <span class="mt-2 inline-flex items-center gap-1 text-xs text-[var(--color-muted)]">
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
