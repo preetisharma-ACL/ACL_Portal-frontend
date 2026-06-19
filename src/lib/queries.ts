@@ -56,18 +56,20 @@ export const searchQuery = query(async (q: string) => {
  */
 export const homeQuery = query(async () => {
   "use server";
-  const [streams, cities, listing] = await Promise.all([
-    api.getStreams(),
-    api.getCities(),
-    api.getListing({ course: "mba", city: "varanasi" }),
-  ]);
+  const [streams, cities] = await Promise.all([api.getStreams(), api.getCities()]);
+  // Gather featured colleges across the popular cities so logos and locations vary.
+  const popularCities = cities.slice(0, 6);
+  const listings = await Promise.all(
+    popularCities.map((c) => api.getListing({ course: "mba", city: c.slug })),
+  );
+  const topColleges = listings.flatMap((l) => l.results.slice(0, 3)).slice(0, 18);
   const totalColleges = cities.reduce((n, c) => n + c.college_count, 0);
   const totalCourses = streams.reduce((n, s) => n + s.course_count, 0);
   return {
     streams,
     cities,
-    topColleges: listing.results.slice(0, 4),
-    popularCourses: listing.meta.popular_courses,
+    topColleges,
+    popularCourses: listings[0]?.meta.popular_courses ?? [],
     counts: { colleges: totalColleges, courses: totalCourses, cities: cities.length },
   };
 }, "home");

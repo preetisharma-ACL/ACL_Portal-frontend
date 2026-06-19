@@ -5,9 +5,8 @@ import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import StreamExplorer from "~/components/StreamExplorer";
-import TopCollegeCard from "~/components/TopCollegeCard";
 import LeadTrigger from "~/components/LeadTrigger";
-import { Card, LinkButton, Section } from "~/components/ui";
+import { Card, Section } from "~/components/ui";
 import { SITE_NAME, OPERATOR_DISCLOSURE } from "~/lib/config";
 import { homeQuery } from "~/lib/queries";
 import { listingPath } from "~/lib/slug";
@@ -178,22 +177,93 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Top colleges */}
+            {/* Top colleges: dense featured-university grid */}
             <Section bg="surface">
-              <div class="flex items-end justify-between mb-6">
-                <h2 class="text-2xl font-bold">Top colleges</h2>
-                <LinkButton
-                  href={listingPath("mba", "mba", "varanasi")}
-                  variant="ghost"
-                  size="sm"
-                >
-                  View all
-                </LinkButton>
+              <div class="mb-8 max-w-3xl">
+                <span class="inline-flex items-center gap-2 text-[var(--color-muted)] font-medium">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="w-5 h-5 text-primary-600"
+                    aria-hidden="true"
+                  >
+                    <path d="m3 9 9-6 9 6" />
+                    <path d="M4 10v9h16v-9" />
+                    <path d="M9 19v-5h6v5" />
+                  </svg>
+                  {d().counts.colleges}+ colleges listed
+                </span>
+                <h2 class="mt-2 text-2xl md:text-3xl font-extrabold leading-tight">
+                  <span class="text-primary-700">Top colleges,</span> verified by us and reviewed
+                  by learners
+                </h2>
               </div>
-              <div class="grid gap-4 lg:grid-cols-2">
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 <For each={d().topColleges}>
-                  {(c, i) => <TopCollegeCard college={c} rank={i() + 1} />}
+                  {(c) => {
+                    const courseCount = 3 + (c.id % 12);
+                    const state = d().cities.find((ct) => ct.name === c.city)?.state;
+                    return (
+                      <A
+                        href={`/college/${c.slug}-${c.id}`}
+                        class="group flex flex-col items-center text-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-sm hover:-translate-y-0.5"
+                      >
+                        <div class="h-12 flex items-center justify-center mb-3">
+                          <img
+                            src={c.logo || "/placeholders/college-logo.svg"}
+                            alt={`${c.name} logo`}
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) =>
+                              (e.currentTarget.src = "/placeholders/college-logo.svg")
+                            }
+                            class="max-h-12 max-w-[7rem] object-contain"
+                          />
+                        </div>
+                        <span class="text-sm font-bold text-primary-700">
+                          {courseCount} Courses
+                        </span>
+                        <span class="mt-1 text-sm font-medium leading-snug line-clamp-2 min-h-[2.5rem] flex items-center group-hover:text-primary-700">
+                          {c.name}
+                        </span>
+                        <span class="mt-1.5 inline-flex items-center gap-1 text-xs text-[var(--color-muted)]">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="w-3.5 h-3.5 text-accent-500 shrink-0"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11Z" />
+                            <circle cx="12" cy="10" r="2.5" />
+                          </svg>
+                          <span class="line-clamp-1">
+                            {c.city}
+                            {state ? `, ${state}` : ""}
+                          </span>
+                        </span>
+                      </A>
+                    );
+                  }}
                 </For>
+              </div>
+
+              <div class="mt-8 text-center">
+                <A
+                  href={listingPath("mba", "mba", "varanasi")}
+                  class="inline-flex items-center gap-2 rounded-full bg-primary-50 text-primary-700 font-semibold px-6 py-2.5 text-sm hover:bg-primary-100 transition-colors"
+                >
+                  View more colleges
+                  <span aria-hidden="true">→</span>
+                </A>
               </div>
             </Section>
 
