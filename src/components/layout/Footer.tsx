@@ -47,11 +47,10 @@ export default function Footer() {
       <div class="container-x py-12">
         <div class="grid gap-10 md:grid-cols-4">
           <div>
-            <div class="flex items-center gap-2 mb-3">
-              <span class="grid place-items-center w-8 h-8 rounded-[var(--radius-md)] bg-white text-primary-900 font-bold">
-                A
+            <div class="mb-3">
+              <span class="inline-flex bg-white rounded-[var(--radius-md)] px-3 py-2">
+                <img src="/placeholders/logo.png" alt={SITE_NAME} class="h-7 w-auto" />
               </span>
-              <span class="font-bold">{SITE_NAME}</span>
             </div>
             <p class="text-sm text-white/70">
               Independent discovery for colleges, courses and exams. Compare and decide with
