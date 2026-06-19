@@ -36,8 +36,17 @@ export default function Home() {
       />
 
       {/* Hero */}
-      <section class="bg-primary-900 text-white">
-        <div class="container-x py-14 md:py-20">
+      <section
+        class="relative bg-primary-900 text-white bg-cover bg-center"
+        style={{ "background-image": "url('/bg-image.jpg')" }}
+      >
+        {/* Minimal overlay: keeps the copy readable, left-weighted so the image
+            still shows through on the right. */}
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-gradient-to-r from-primary-900/85 via-primary-900/65 to-primary-900/40"
+        />
+        <div class="container-x py-14 md:py-20 relative z-10">
           <div class="max-w-3xl">
             <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight">
               Find the right college, course and exam
