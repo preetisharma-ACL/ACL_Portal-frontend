@@ -2,7 +2,6 @@ import { A, createAsync } from "@solidjs/router";
 import { For, Show, createSignal } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
-import HeroSlider from "~/components/HeroSlider";
 import CollegeLogo from "~/components/CollegeLogo";
 import LeadForm from "~/components/LeadForm";
 import LeadTrigger from "~/components/LeadTrigger";
@@ -139,21 +138,33 @@ export default function CourseInfo(props: { slug: string }) {
             />
 
             {/* Hero with enquiry form */}
-            <section class="relative overflow-hidden bg-primary-900 text-white">
-              <HeroSlider />
+            <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-900 to-primary-700 text-white">
               <div
                 aria-hidden="true"
-                class="absolute inset-0 z-[1] bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/65"
+                class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-accent-500/20 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute -bottom-28 -left-24 w-96 h-96 rounded-full bg-primary-500/25 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
               />
               <div class="container-x py-10 md:py-14 relative z-10">
-                <div class="grid gap-8 lg:grid-cols-2 lg:items-center">
+                <div class="grid gap-10 lg:grid-cols-[1fr_26rem] lg:items-center">
                   <div>
                     <Breadcrumbs crumbs={crumbs()} light />
-                    <h1 class="mt-3 text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                    <span class="mt-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-accent-400">
+                      Course guide
+                    </span>
+                    <h1 class="mt-3 text-3xl md:text-5xl font-extrabold text-white leading-[1.08] tracking-tight">
                       {c().name} Course
                     </h1>
-                    <p class="mt-3 max-w-xl text-white/85">{c().description.slice(0, 150)}…</p>
-                    <ul class="mt-5 grid sm:grid-cols-2 gap-x-6 gap-y-2 max-w-xl">
+                    <p class="mt-4 max-w-xl text-lg text-white/85">
+                      {c().description.slice(0, 150)}…
+                    </p>
+                    <ul class="mt-7 grid sm:grid-cols-2 gap-x-8 gap-y-3 max-w-xl">
                       <For
                         each={[
                           `${c().level} · ${c().duration}`,
@@ -163,8 +174,13 @@ export default function CourseInfo(props: { slug: string }) {
                         ]}
                       >
                         {(t) => (
-                          <li class="flex items-center gap-2 text-sm text-white/90">
-                            <span aria-hidden="true" class="text-accent-400">✓</span>
+                          <li class="flex items-center gap-2.5 text-sm text-white/90">
+                            <span
+                              aria-hidden="true"
+                              class="grid place-items-center w-5 h-5 shrink-0 rounded-full bg-accent-500/20 text-accent-400 text-xs"
+                            >
+                              ✓
+                            </span>
                             {t}
                           </li>
                         )}
@@ -172,7 +188,7 @@ export default function CourseInfo(props: { slug: string }) {
                     </ul>
                   </div>
 
-                  <Card class="p-5 sm:p-6 text-[var(--color-ink)] shadow-xl">
+                  <Card class="p-5 sm:p-6 text-[var(--color-ink)] shadow-2xl ring-1 ring-black/5">
                     <LeadForm
                       sourcePage={path()}
                       courseInterest={c().name}
