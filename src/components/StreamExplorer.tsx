@@ -91,17 +91,17 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
         <Show
           when={detail()}
           fallback={
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
               <For each={Array.from({ length: 8 })}>
                 {() => (
-                  <div class="h-44 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-canvas)] animate-pulse" />
+                  <div class="h-56 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-canvas)] animate-pulse" />
                 )}
               </For>
             </div>
           }
         >
           {(d) => (
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
               <For each={d().courses}>
                 {(c, i) => {
                   const specs = 4 + ((i() * 7) % 36);
@@ -109,25 +109,59 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
                   return (
                     <A
                       href={`/${c.slug}-course`}
-                      class="group relative flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-3 hover:border-primary-300 hover:shadow-md transition"
+                      class="group relative flex flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-lg"
                     >
+                      {/* Hover wash */}
+                      <div
+                        aria-hidden="true"
+                        class="pointer-events-none absolute inset-x-0 -top-16 h-24 bg-gradient-to-b from-primary-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
                       <span
-                        class="self-start text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        class="relative self-start inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
                         classList={{
                           "bg-primary-50 text-primary-700": popular,
                           "bg-accent-400/15 text-accent-600": !popular,
                         }}
                       >
+                        <span
+                          aria-hidden="true"
+                          class="w-1.5 h-1.5 rounded-full"
+                          classList={{
+                            "bg-primary-500": popular,
+                            "bg-accent-500": !popular,
+                          }}
+                        />
                         {popular ? "Popular" : `${specs}+ specialisations`}
                       </span>
-                      <div class="my-3 mx-auto grid place-items-center w-12 h-12 rounded-full bg-primary-50 text-2xl">
+
+                      <div class="relative my-3 mx-auto grid place-items-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 text-2xl ring-1 ring-primary-100 transition-transform duration-200 group-hover:scale-105">
                         <span aria-hidden="true">{GLYPHS[i() % GLYPHS.length]}</span>
                       </div>
-                      <h4 class="text-center text-sm font-semibold leading-snug min-h-[2.5rem] flex items-center justify-center">
+
+                      <h4 class="relative text-center text-sm font-semibold leading-snug line-clamp-2 min-h-[2.5rem] flex items-center justify-center group-hover:text-primary-700">
                         {c.name}
                       </h4>
-                      <span class="mt-3 block text-center text-xs font-semibold text-white bg-primary-600 group-hover:bg-primary-700 rounded-[var(--radius-md)] py-2 transition-colors">
+
+                      <div class="relative mt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-[var(--color-muted)]">
+                        <Show when={c.duration}>
+                          <span class="whitespace-nowrap">{c.duration}</span>
+                        </Show>
+                        <Show when={c.duration && c.fee_range}>
+                          <span aria-hidden="true">·</span>
+                        </Show>
+                        <Show when={c.fee_range}>
+                          <span class="truncate">{c.fee_range}</span>
+                        </Show>
+                      </div>
+
+                      <span class="relative mt-3 inline-flex items-center justify-center gap-1 text-xs font-semibold text-primary-700 bg-primary-50 group-hover:bg-primary-600 group-hover:text-white rounded-[var(--radius-md)] py-2 transition-colors">
                         View course
+                        <span
+                          aria-hidden="true"
+                          class="transition-transform duration-200 group-hover:translate-x-0.5"
+                        >
+                          →
+                        </span>
                       </span>
                     </A>
                   );
