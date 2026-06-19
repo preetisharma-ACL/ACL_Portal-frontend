@@ -26,6 +26,8 @@ export interface LeadFormProps {
   defaultCity?: string;
   /** Heading shown above the form. */
   heading?: string;
+  /** Hide the built-in heading and subtext (when the parent supplies its own). */
+  hideHeading?: boolean;
   /** Called after a successful submission. */
   onSuccess?: () => void;
 }
@@ -225,12 +227,14 @@ export default function LeadForm(props: LeadFormProps) {
       }
     >
       <form onSubmit={onSubmit} novalidate>
-        <h3 class="font-semibold text-lg">
-          {props.heading ?? "Get free admission guidance"}
-        </h3>
-        <p class="mt-1 text-sm text-[var(--color-muted)]">
-          Independent guidance on courses, fees and admissions. We do not charge students.
-        </p>
+        <Show when={!props.hideHeading}>
+          <h3 class="font-semibold text-lg">
+            {props.heading ?? "Get free admission guidance"}
+          </h3>
+          <p class="mt-1 text-sm text-[var(--color-muted)]">
+            Independent guidance on courses, fees and admissions. We do not charge students.
+          </p>
+        </Show>
 
         <div class="mt-4 grid gap-3 sm:grid-cols-2">
           <label class="block sm:col-span-2">

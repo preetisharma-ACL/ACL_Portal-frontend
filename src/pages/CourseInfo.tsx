@@ -21,6 +21,24 @@ const TABS = [
   { id: "colleges", label: "Top Colleges" },
 ];
 
+const HERO_LOGOS = [
+  "/gla-university-online-logo.webp",
+  "/lpu.png",
+  "/sharda.png",
+  "/sms.webp",
+];
+
+const HERO_FEATURES = [
+  "100+ colleges to compare",
+  "30+ comparison factors",
+  "Free expert guidance",
+  "Verified, comparable information",
+  "Compare fees and placements",
+  "Admission guidance support",
+  "Independent and unbiased",
+  "Courses, colleges and exams in one place",
+];
+
 function Icon(props: { d: string; class?: string }) {
   return (
     <svg
@@ -137,64 +155,78 @@ export default function CourseInfo(props: { slug: string }) {
               jsonLd={[breadcrumbLd(crumbs()), courseLd(d(), path())]}
             />
 
-            {/* Hero with enquiry form */}
-            <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-900 to-primary-700 text-white">
-              <div
-                aria-hidden="true"
-                class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-accent-500/20 blur-3xl"
-              />
-              <div
-                aria-hidden="true"
-                class="pointer-events-none absolute -bottom-28 -left-24 w-96 h-96 rounded-full bg-primary-500/25 blur-3xl"
-              />
-              <div
-                aria-hidden="true"
-                class="pointer-events-none absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
-              />
-              <div class="container-x py-10 md:py-14 relative z-10">
-                <div class="grid gap-10 lg:grid-cols-[1fr_26rem] lg:items-center">
-                  <div>
-                    <Breadcrumbs crumbs={crumbs()} light />
-                    <span class="mt-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-accent-400">
-                      Course guide
-                    </span>
-                    <h1 class="mt-3 text-3xl md:text-5xl font-extrabold text-white leading-[1.08] tracking-tight">
-                      {c().name} Course
-                    </h1>
-                    <p class="mt-4 max-w-xl text-lg text-white/85">
-                      {c().description.slice(0, 150)}…
-                    </p>
-                    <ul class="mt-7 grid sm:grid-cols-2 gap-x-8 gap-y-3 max-w-xl">
-                      <For
-                        each={[
-                          `${c().level} · ${c().duration}`,
-                          `Fees ${c().fee_range}`,
-                          `${d().specializations.length}+ specialisations`,
-                          `${d().related_exams.length}+ accepted exams`,
-                        ]}
-                      >
-                        {(t) => (
-                          <li class="flex items-center gap-2.5 text-sm text-white/90">
-                            <span
-                              aria-hidden="true"
-                              class="grid place-items-center w-5 h-5 shrink-0 rounded-full bg-accent-500/20 text-accent-400 text-xs"
-                            >
-                              ✓
-                            </span>
-                            {t}
+            {/* Hero: comparison panel + enquiry form */}
+            <section class="bg-[var(--color-canvas)] border-b border-[var(--color-line)]">
+              <div class="container-x py-8 md:py-10">
+                <Breadcrumbs crumbs={crumbs()} />
+                <h1 class="mt-3 text-2xl md:text-3xl font-extrabold leading-tight">
+                  {c().name} Course
+                </h1>
+                <p class="mt-2 max-w-3xl text-[var(--color-muted)]">
+                  {c().description.slice(0, 150)}…
+                </p>
+
+                <div class="mt-6 grid gap-6 lg:grid-cols-2 items-start">
+                  {/* Left: platform comparison panel */}
+                  <div class="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 sm:p-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      <For each={HERO_LOGOS}>
+                        {(src) => (
+                          <div class="grid place-items-center h-14 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2">
+                            <img
+                              src={src}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              class="max-h-9 max-w-full object-contain"
+                            />
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                    <div class="mt-4 rounded-[var(--radius-md)] bg-primary-50 px-4 py-3">
+                      <p class="font-bold text-primary-900">
+                        India's colleges on a single platform, in minutes
+                      </p>
+                    </div>
+                    <ul class="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                      <For each={HERO_FEATURES}>
+                        {(f) => (
+                          <li class="flex items-center gap-2 text-sm">
+                            <span aria-hidden="true" class="text-accent-500">★</span>
+                            {f}
                           </li>
                         )}
                       </For>
                     </ul>
                   </div>
 
-                  <Card class="p-5 sm:p-6 text-[var(--color-ink)] shadow-2xl ring-1 ring-black/5">
-                    <LeadForm
-                      sourcePage={path()}
-                      courseInterest={c().name}
-                      heading={`Compare and get free guidance for ${c().name}`}
-                    />
-                  </Card>
+                  {/* Right: enquiry form */}
+                  <div class="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-lg p-5 sm:p-6">
+                    <h2 class="text-xl sm:text-2xl font-extrabold leading-snug">
+                      <span class="text-primary-700">Compare and shortlist</span> from 100+{" "}
+                      {c().name} colleges
+                    </h2>
+                    <div class="mt-4 grid grid-cols-2 gap-3">
+                      <div class="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-2">
+                        <Icon
+                          d='<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>'
+                          class="w-5 h-5 text-primary-600 shrink-0"
+                        />
+                        <span class="text-xs font-semibold">Free expert guidance</span>
+                      </div>
+                      <div class="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-2">
+                        <Icon
+                          d='<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>'
+                          class="w-5 h-5 text-primary-600 shrink-0"
+                        />
+                        <span class="text-xs font-semibold">Independent and unbiased</span>
+                      </div>
+                    </div>
+                    <div class="mt-4">
+                      <LeadForm sourcePage={path()} courseInterest={c().name} hideHeading />
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
