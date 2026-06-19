@@ -1,13 +1,13 @@
-import { SITE_ORIGIN, USE_MOCK } from "~/lib/config";
+import { SITE_ORIGIN, NOINDEX } from "~/lib/config";
 
 /**
- * robots.txt. In mock/preview mode disallow all crawlers (the preview carries
- * draft legal text and placeholder data and must never be indexed). In
- * production (mock off) allow crawling, keep the noindex /search out, and point
+ * robots.txt. While NOINDEX is on, disallow all crawlers (the site may carry
+ * draft legal text or demo data and must not be indexed yet). Once public
+ * launch sets VITE_NOINDEX=false, allow crawling, keep /search out, and point
  * to the sitemap.
  */
 export function GET() {
-  const body = USE_MOCK
+  const body = NOINDEX
     ? ["User-agent: *", "Disallow: /", ""].join("\n")
     : [
         "User-agent: *",

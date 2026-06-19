@@ -19,6 +19,15 @@ export const API_BASE = (env.VITE_API_BASE || "http://localhost:8000/api/v1").re
 
 export const USE_MOCK = String(env.VITE_USE_MOCK).toLowerCase() === "true";
 
+/**
+ * Whether the site is kept out of search indexes (site-wide noindex meta and a
+ * robots.txt Disallow: /). Decoupled from USE_MOCK so the site can run on real
+ * data while staying unindexed until public launch is explicitly approved.
+ * Defaults to true when unset; only an explicit VITE_NOINDEX=false opts in to
+ * being indexable.
+ */
+export const NOINDEX = String(env.VITE_NOINDEX ?? "true").toLowerCase() !== "false";
+
 export const GA4_ID = env.VITE_GA4_ID || "";
 
 /** Operator disclosure shown in the footer and About page (compliance item 5). */

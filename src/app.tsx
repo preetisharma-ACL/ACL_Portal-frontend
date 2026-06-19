@@ -7,17 +7,17 @@ import Header from "~/components/layout/Header";
 import Footer from "~/components/layout/Footer";
 import Analytics from "~/components/Analytics";
 import { ErrorState, LoadingBlock, NotFound } from "~/components/states";
-import { USE_MOCK } from "~/lib/config";
+import { USE_MOCK, NOINDEX } from "~/lib/config";
 
 export default function App() {
   return (
     <Router
       root={(props) => (
         <MetaProvider>
-          {/* Demo safety: in mock/preview mode keep the build out of search
-              indexes site-wide. Production runs with mock off, so this never
-              carries forward. */}
-          <Show when={USE_MOCK}>
+          {/* Keep the build out of search indexes site-wide while NOINDEX is on.
+              Decoupled from USE_MOCK so the site can run on real data and stay
+              unindexed until public launch sets VITE_NOINDEX=false. */}
+          <Show when={NOINDEX}>
             <Meta name="robots" content="noindex,nofollow" />
           </Show>
           <a
