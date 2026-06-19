@@ -6,7 +6,9 @@ import CollegeCardItem from "~/components/CollegeCardItem";
 import FilterRail from "~/components/FilterRail";
 import Faq from "~/components/Faq";
 import LeadForm from "~/components/LeadForm";
-import { Card } from "~/components/ui";
+import HeroSlider from "~/components/HeroSlider";
+import StreamIcon from "~/components/StreamIcon";
+import { Card, Section } from "~/components/ui";
 import { EmptyState, NotFound } from "~/components/states";
 import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
 import { listingPath, parseListingSlug } from "~/lib/slug";
@@ -80,34 +82,40 @@ export default function Listing() {
               }
             />
 
-            {/* Header */}
-            <div class="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
-              <div class="container-x py-6">
-                <Breadcrumbs crumbs={crumbs()} />
-                <h1 class="mt-3 text-2xl md:text-3xl font-extrabold">
+            {/* Hero banner with crossfading images */}
+            <section class="relative overflow-hidden bg-primary-900 text-white">
+              <HeroSlider />
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 z-[1] bg-gradient-to-r from-primary-900/92 via-primary-900/78 to-primary-900/50"
+              />
+              <div class="container-x py-8 md:py-12 relative z-10">
+                <Breadcrumbs crumbs={crumbs()} light />
+                <h1 class="mt-3 text-2xl md:text-4xl font-extrabold text-white leading-tight">
                   {m().course} Colleges in {m().city}
                 </h1>
                 <Show when={m().intro}>
-                  <p class="mt-2 max-w-3xl text-[var(--color-muted)]">{m().intro}</p>
+                  <p class="mt-3 max-w-3xl text-white/85">{m().intro}</p>
                 </Show>
-                <dl class="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-                  <div class="flex items-baseline gap-2">
-                    <dt class="text-[var(--color-muted)]">Colleges listed</dt>
-                    <dd class="font-semibold">{m().total_colleges}</dd>
-                  </div>
-                  <div class="flex items-baseline gap-2">
-                    <dt class="text-[var(--color-muted)]">Fee range</dt>
-                    <dd class="font-semibold">{m().fee_range}</dd>
-                  </div>
-                  <Show when={m().popular_courses.length}>
-                    <div class="flex items-baseline gap-2">
-                      <dt class="text-[var(--color-muted)]">Popular courses</dt>
-                      <dd class="font-semibold">{m().popular_courses.join(", ")}</dd>
-                    </div>
-                  </Show>
-                </dl>
+                <div class="mt-5 flex flex-wrap gap-2.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                    <span class="font-bold text-accent-400">{m().total_colleges}</span>
+                    colleges
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                    Fees
+                    <span class="font-semibold">{m().fee_range}</span>
+                  </span>
+                  <For each={m().popular_courses.slice(0, 3)}>
+                    {(pc) => (
+                      <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
+                        {pc}
+                      </span>
+                    )}
+                  </For>
+                </div>
               </div>
-            </div>
+            </section>
 
             {/* Body: filter rail + results */}
             <div class="container-x py-8">
@@ -263,67 +271,81 @@ export default function Listing() {
                       <Faq items={d().faqs} />
                     </section>
                   </Show>
-
-                  {/* Related internal links */}
-                  <section class="mt-10 grid gap-8 sm:grid-cols-2">
-                    <Show when={cities()}>
-                      {(cs) => (
-                        <div>
-                          <h2 class="text-lg font-bold mb-3">
-                            {m().course} colleges in other cities
-                          </h2>
-                          <ul class="space-y-2 text-sm">
-                            <For
-                              each={cs()
-                                .filter((c) => c.slug !== parsed().city)
-                                .slice(0, 6)}
-                            >
-                              {(c) => (
-                                <li>
-                                  <A
-                                    href={listingPath(stream(), baseCourse(), c.slug)}
-                                    class="text-primary-700 hover:underline"
-                                  >
-                                    {m().course} colleges in {c.name}
-                                  </A>
-                                </li>
-                              )}
-                            </For>
-                          </ul>
-                        </div>
-                      )}
-                    </Show>
-                    <Show when={streams()}>
-                      {(ss) => (
-                        <div>
-                          <h2 class="text-lg font-bold mb-3">
-                            Other courses in {m().city}
-                          </h2>
-                          <ul class="space-y-2 text-sm">
-                            <For
-                              each={ss()
-                                .filter((s) => s.slug !== params.stream)
-                                .slice(0, 6)}
-                            >
-                              {(s) => (
-                                <li>
-                                  <A
-                                    href={listingPath(s.slug, s.slug, parsed().city)}
-                                    class="text-primary-700 hover:underline"
-                                  >
-                                    {s.name} colleges in {m().city}
-                                  </A>
-                                </li>
-                              )}
-                            </For>
-                          </ul>
-                        </div>
-                      )}
-                    </Show>
-                  </section>
                 </div>
               </div>
             </div>
+
+            {/* Full-width: explore other courses and cities */}
+            <Section bg="canvas">
+              <Show when={streams()}>
+                {(ss) => (
+                  <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-accent-600">
+                      Keep exploring
+                    </span>
+                    <h2 class="mt-2 text-2xl font-extrabold">
+                      Other courses in {m().city}
+                    </h2>
+                    <p class="mt-2 text-[var(--color-muted)]">
+                      Browse colleges for other streams in {m().city}.
+                    </p>
+                    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      <For each={ss().filter((s) => s.slug !== params.stream)}>
+                        {(s) => (
+                          <A
+                            href={listingPath(s.slug, s.slug, parsed().city)}
+                            class="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 transition-all hover:border-primary-300 hover:shadow-sm hover:-translate-y-0.5"
+                          >
+                            <span class="grid place-items-center w-10 h-10 shrink-0 rounded-[var(--radius-md)] bg-primary-50">
+                              <StreamIcon slug={s.slug} class="text-xl" />
+                            </span>
+                            <span class="min-w-0 flex-1">
+                              <span class="block text-sm font-semibold truncate group-hover:text-primary-700">
+                                {s.name}
+                              </span>
+                              <span class="block text-xs text-[var(--color-muted)]">
+                                Colleges in {m().city}
+                              </span>
+                            </span>
+                            <span
+                              aria-hidden="true"
+                              class="text-primary-400 transition-transform group-hover:translate-x-0.5 group-hover:text-primary-600"
+                            >
+                              →
+                            </span>
+                          </A>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                )}
+              </Show>
+
+              <Show when={cities()}>
+                {(cs) => (
+                  <div class="mt-10">
+                    <h3 class="text-lg font-bold">
+                      {m().course} colleges in other cities
+                    </h3>
+                    <div class="mt-4 flex flex-wrap gap-2.5">
+                      <For each={cs().filter((c) => c.slug !== parsed().city)}>
+                        {(c) => (
+                          <A
+                            href={listingPath(stream(), baseCourse(), c.slug)}
+                            class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-2 text-sm font-medium hover:border-primary-300 hover:text-primary-700 transition-colors"
+                          >
+                            <span aria-hidden="true" class="text-accent-500">
+                              ◉
+                            </span>
+                            {m().course} in {c.name}
+                          </A>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                )}
+              </Show>
+            </Section>
           </>
         );
       }}
