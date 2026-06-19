@@ -63,13 +63,23 @@ export const homeQuery = query(async () => {
     popularCities.map((c) => api.getListing({ course: "mba", city: c.slug })),
   );
   const topColleges = listings.flatMap((l) => l.results.slice(0, 3)).slice(0, 18);
+
+  // Popular courses across a spread of streams, with real slugs for linking.
+  const popularStreamSlugs = ["mba", "engineering", "medical", "law", "commerce", "design"];
+  const streamDetails = await Promise.all(popularStreamSlugs.map((s) => api.getStream(s)));
+  const popularCourses = streamDetails
+    .flatMap((sd) =>
+      sd.courses.slice(0, 2).map((c) => ({ name: c.name, slug: c.slug, stream: sd.stream.name })),
+    )
+    .slice(0, 10);
+
   const totalColleges = cities.reduce((n, c) => n + c.college_count, 0);
   const totalCourses = streams.reduce((n, s) => n + s.course_count, 0);
   return {
     streams,
     cities,
     topColleges,
-    popularCourses: listings[0]?.meta.popular_courses ?? [],
+    popularCourses,
     counts: { colleges: totalColleges, courses: totalCourses, cities: cities.length },
   };
 }, "home");

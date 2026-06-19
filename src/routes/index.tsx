@@ -19,12 +19,6 @@ export const route = {
 
 const POPULAR_CITY_SLUGS = ["varanasi", "lucknow", "delhi-ncr", "noida", "bengaluru"];
 
-function courseSlug(label: string): string {
-  const l = label.toLowerCase();
-  if (l.includes("mba") || l.includes("pgdm")) return "mba-pgdm";
-  return l.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
-
 export default function Home() {
   const data = createAsync(() => homeQuery());
 
@@ -264,62 +258,135 @@ export default function Home() {
 
             {/* Popular courses */}
             <Section>
-              <h2 class="text-2xl font-bold mb-6">Popular courses</h2>
-              <div class="flex flex-wrap gap-3">
+              <div class="mb-8 max-w-2xl">
+                <span class="text-xs font-semibold uppercase tracking-wider text-accent-600">
+                  Trending now
+                </span>
+                <h2 class="mt-2 text-2xl md:text-3xl font-extrabold">Popular courses</h2>
+                <p class="mt-2 text-[var(--color-muted)]">
+                  The programmes learners explore most, across every stream.
+                </p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <For each={d().popularCourses}>
-                  {(label) => (
+                  {(c) => (
                     <A
-                      href={`/${courseSlug(label)}-course`}
-                      class="px-4 py-2 rounded-full bg-[var(--color-surface)] border border-[var(--color-line)] hover:border-primary-300 hover:text-primary-700 font-medium"
+                      href={`/${c.slug}-course`}
+                      class="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 transition-all hover:border-primary-300 hover:shadow-sm hover:-translate-y-0.5"
                     >
-                      {label}
+                      <span class="grid place-items-center w-10 h-10 shrink-0 rounded-[var(--radius-md)] bg-primary-50 text-primary-700">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="w-5 h-5"
+                          aria-hidden="true"
+                        >
+                          <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+                          <path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5" />
+                        </svg>
+                      </span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block text-sm font-semibold truncate group-hover:text-primary-700">
+                          {c.name}
+                        </span>
+                        <span class="block text-xs text-[var(--color-muted)]">{c.stream}</span>
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        class="text-primary-400 transition-transform group-hover:translate-x-0.5 group-hover:text-primary-600"
+                      >
+                        →
+                      </span>
                     </A>
                   )}
                 </For>
               </div>
             </Section>
 
-            {/* Trust band */}
-            <section class="bg-primary-900 text-white">
-              <div class="container-x py-12">
-                <div class="grid gap-8 md:grid-cols-2 items-center">
+            {/* Trust band: One place to compare your options */}
+            <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-900 to-primary-700 text-white">
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-accent-500/20 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-0 opacity-[0.05] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
+              />
+              <div class="container-x py-14 md:py-16 relative z-10">
+                <div class="grid gap-10 lg:grid-cols-2 items-center">
                   <div>
-                    <h2 class="text-2xl font-bold text-white">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-accent-400">
+                      Why {SITE_NAME}
+                    </span>
+                    <h2 class="mt-2 text-2xl md:text-3xl font-extrabold text-white">
                       One place to compare your options
                     </h2>
-                    <p class="mt-3 text-white/80">
-                      {SITE_NAME} is an independent discovery platform. We bring colleges, courses
-                      and exams together with comparable information so you can shortlist with
-                      clarity. We do not run admissions for any institution.
+                    <p class="mt-3 text-white/80 max-w-xl">
+                      An independent discovery platform that brings colleges, courses and exams
+                      together with comparable information, so you can shortlist with clarity. We
+                      do not run admissions for any institution.
                     </p>
-                    <div class="mt-6 flex gap-8">
-                      <div>
-                        <div class="text-3xl font-extrabold">{d().counts.colleges}+</div>
-                        <div class="text-sm text-white/70">colleges</div>
-                      </div>
-                      <div>
-                        <div class="text-3xl font-extrabold">{d().counts.courses}+</div>
-                        <div class="text-sm text-white/70">courses</div>
-                      </div>
-                      <div>
-                        <div class="text-3xl font-extrabold">{d().counts.cities}</div>
-                        <div class="text-sm text-white/70">cities</div>
-                      </div>
+
+                    <div class="mt-7 grid grid-cols-3 gap-3 max-w-lg">
+                      <For
+                        each={[
+                          { value: `${d().counts.colleges}+`, label: "Colleges" },
+                          { value: `${d().counts.courses}+`, label: "Courses" },
+                          { value: `${d().counts.cities}`, label: "Cities" },
+                        ]}
+                      >
+                        {(stat) => (
+                          <div class="rounded-[var(--radius-lg)] border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                            <div class="text-2xl md:text-3xl font-extrabold text-accent-400">
+                              {stat.value}
+                            </div>
+                            <div class="text-xs text-white/70">{stat.label}</div>
+                          </div>
+                        )}
+                      </For>
                     </div>
-                    <p class="mt-6 text-xs text-white/60">{OPERATOR_DISCLOSURE}</p>
+
+                    <p class="mt-6 text-xs text-white/50 max-w-xl">{OPERATOR_DISCLOSURE}</p>
                   </div>
 
-                  <Card class="p-6 text-[var(--color-ink)]">
-                    <h3 class="text-xl font-bold">Need help deciding?</h3>
+                  <Card class="p-6 sm:p-7 text-[var(--color-ink)] shadow-xl">
+                    <span class="inline-flex items-center gap-2 rounded-full bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1">
+                      Free guidance
+                    </span>
+                    <h3 class="mt-3 text-xl font-bold">Need help deciding?</h3>
                     <p class="mt-2 text-[var(--color-muted)]">
                       Get free, no obligation guidance on shortlisting colleges and courses that
                       fit your goals.
                     </p>
-                    <div class="mt-5">
+                    <ul class="mt-4 space-y-2 text-sm">
+                      <For
+                        each={[
+                          "Compare fees, approvals and placements",
+                          "Talk to an advisor, no charge to students",
+                          "Guidance relevant to your goals",
+                        ]}
+                      >
+                        {(point) => (
+                          <li class="flex items-start gap-2">
+                            <span aria-hidden="true" class="mt-0.5 text-[var(--color-success)]">
+                              ✓
+                            </span>
+                            <span>{point}</span>
+                          </li>
+                        )}
+                      </For>
+                    </ul>
+                    <div class="mt-6">
                       <LeadTrigger
                         sourcePage="/"
                         label="Get free admission guidance"
                         size="lg"
+                        class="w-full"
                       />
                     </div>
                   </Card>
