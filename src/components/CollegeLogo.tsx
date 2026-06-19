@@ -51,7 +51,7 @@ export default function CollegeLogo(props: {
         loading="lazy"
         decoding="async"
         onError={(e) => (e.currentTarget.src = "/placeholders/college-logo.svg")}
-        class={`object-contain bg-white border border-[var(--color-line)] ${size()}`}
+        class={`object-contain ${size()}`}
       />
     </Show>
   );

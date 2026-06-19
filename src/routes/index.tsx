@@ -215,12 +215,12 @@ export default function Home() {
                         aria-label={c.name}
                         class="group flex flex-col items-center text-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-sm hover:-translate-y-0.5"
                       >
-                        <div class="mb-3">
+                        <div class="mb-3 h-12 flex items-center justify-center">
                           <CollegeLogo
                             name={c.name}
                             logo={c.logo}
                             id={c.id}
-                            class="w-16 h-16 text-xl rounded-[var(--radius-lg)]"
+                            class="max-h-12 w-auto max-w-[7.5rem] text-xl"
                           />
                         </div>
                         <span class="text-sm font-bold text-primary-700">
