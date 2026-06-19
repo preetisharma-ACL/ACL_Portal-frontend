@@ -12,7 +12,7 @@ import { Show, createSignal, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import { A } from "@solidjs/router";
 import { requestOtpAction, verifyOtpAction, submitLeadAction } from "~/lib/actions";
-import { CONSENT_TEXT, CONSENT_TEXT_VERSION } from "~/lib/config";
+import { CONSENT_TEXT, CONSENT_TEXT_VERSION, USE_MOCK } from "~/lib/config";
 import { track } from "~/lib/analytics";
 import type { LeadPayload } from "~/lib/types";
 import { Button } from "./ui";
@@ -306,6 +306,11 @@ export default function LeadForm(props: LeadFormProps) {
                   Verify
                 </Button>
               </div>
+              <Show when={USE_MOCK}>
+                <span class="mt-1 block text-xs text-[var(--color-muted)]">
+                  Preview mode: enter any 6 digit code to continue.
+                </span>
+              </Show>
             </label>
           </Show>
 

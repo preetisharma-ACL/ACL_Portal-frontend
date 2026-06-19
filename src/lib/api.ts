@@ -157,8 +157,10 @@ export function requestOtp(mobile: string): Promise<OtpRequestResponse> {
 
 export function verifyOtp(request_id: string, otp: string): Promise<OtpVerifyResponse> {
   if (USE_MOCK) {
-    // Accept 123456 as the demo OTP in mock mode.
-    return Promise.resolve({ verified: otp === "123456", token: "mock-otp-token" });
+    // Preview/demo mode: accept any 4 to 6 digit code so the flow completes
+    // without a backend. Nothing is sent anywhere.
+    const verified = /^\d{4,6}$/.test(otp.trim());
+    return Promise.resolve({ verified, token: "mock-otp-token" });
   }
   return post<OtpVerifyResponse>("/leads/otp/verify/", { request_id, otp });
 }
