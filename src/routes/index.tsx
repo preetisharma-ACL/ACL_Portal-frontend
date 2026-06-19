@@ -51,7 +51,7 @@ export default function Home() {
             <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight">
               Find the right college, course and exam
             </h1>
-            <p class="mt-4 text-lg text-white/80">
+            <p class="mt-4 text-lg text-white/90">
               Compare colleges by fees, approvals, accepted exams and placements. Clear,
               comparable information to help you decide with confidence.
             </p>
@@ -68,12 +68,12 @@ export default function Home() {
                   {(s) => (
                     <A
                       href={`/${s.slug}`}
-                      class="flex items-center gap-3 bg-white/10 hover:bg-white/15 border border-white/15 rounded-[var(--radius-lg)] px-4 py-3"
+                      class="flex items-center gap-3 bg-white/15 hover:bg-white/25 border border-white/25 rounded-[var(--radius-lg)] px-4 py-3 backdrop-blur-sm shadow-sm transition-colors"
                     >
                       <StreamIcon slug={s.slug} />
                       <span>
                         <span class="block font-semibold">{s.name}</span>
-                        <span class="block text-xs text-white/70">{s.course_count} courses</span>
+                        <span class="block text-xs text-white/80">{s.course_count} courses</span>
                       </span>
                     </A>
                   )}
