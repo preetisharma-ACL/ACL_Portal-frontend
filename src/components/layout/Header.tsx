@@ -35,7 +35,7 @@ export default function Header() {
     <header class="sticky top-0 z-40 bg-[var(--color-surface)] border-b border-[var(--color-line)]">
       <div class="container-x flex items-center gap-4 h-16">
         <A href="/" class="flex items-center shrink-0" aria-label={`${SITE_NAME} home`}>
-          <img src="/placeholders/logo.png" alt={SITE_NAME} class="h-9 w-auto" />
+          <img src="/logo.png" alt={SITE_NAME} class="h-9 w-auto" />
         </A>
 
         <nav class="hidden lg:flex items-center gap-1 text-sm ml-auto" aria-label="Primary">
