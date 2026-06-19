@@ -100,25 +100,83 @@ export default function Home() {
               <StreamExplorer streams={d().streams} />
             </Section>
 
-            {/* Browse by popular city */}
-            <Section>
-              <h2 class="text-2xl font-bold mb-6">Browse by popular city</h2>
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <For each={d().cities.filter((c) => POPULAR_CITY_SLUGS.includes(c.slug))}>
-                  {(city) => (
-                    <A
-                      href={listingPath("mba", "mba", city.slug)}
-                      class="p-5 rounded-[var(--radius-lg)] bg-[var(--color-surface)] border border-[var(--color-line)] hover:border-primary-300"
-                    >
-                      <span class="block font-semibold">{city.name}</span>
-                      <span class="block text-sm text-[var(--color-muted)]">
-                        {city.college_count} colleges
-                      </span>
-                    </A>
-                  )}
-                </For>
+            {/* Browse by popular city: dark, decorative section */}
+            <section class="relative overflow-hidden bg-primary-900 text-white">
+              {/* Decorative shapes using both brand colors */}
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute -top-28 -left-24 w-80 h-80 rounded-full bg-primary-500/25 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute -bottom-28 -right-20 w-96 h-96 rounded-full bg-accent-500/20 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
+              />
+
+              <div class="container-x py-14 md:py-16 relative z-10">
+                <div class="max-w-2xl mb-8">
+                  <span class="inline-block text-xs font-semibold uppercase tracking-wider text-accent-400">
+                    Explore by location
+                  </span>
+                  <h2 class="mt-2 text-2xl md:text-3xl font-extrabold text-white">
+                    Browse by popular city
+                  </h2>
+                  <p class="mt-2 text-white/70">
+                    Discover top colleges in India's leading education hubs.
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  <For each={d().cities.filter((c) => POPULAR_CITY_SLUGS.includes(c.slug))}>
+                    {(city) => (
+                      <A
+                        href={listingPath("mba", "mba", city.slug)}
+                        class="group relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10 bg-white/5 p-5 backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent-400/50 hover:bg-white/10"
+                      >
+                        {/* Corner accent glow */}
+                        <div
+                          aria-hidden="true"
+                          class="pointer-events-none absolute -right-6 -top-6 w-20 h-20 rounded-full bg-accent-500/20 blur-xl transition-colors group-hover:bg-accent-500/40"
+                        />
+                        <div class="relative flex items-center justify-between">
+                          <span class="grid place-items-center w-10 h-10 rounded-[var(--radius-md)] bg-gradient-to-br from-primary-500 to-primary-700 text-white shadow-sm ring-1 ring-white/10">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="w-5 h-5"
+                              aria-hidden="true"
+                            >
+                              <path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11Z" />
+                              <circle cx="12" cy="10" r="2.5" />
+                            </svg>
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            class="text-white/40 transition-all group-hover:text-accent-400 group-hover:translate-x-0.5"
+                          >
+                            →
+                          </span>
+                        </div>
+                        <span class="relative mt-4 block font-bold text-lg text-white">
+                          {city.name}
+                        </span>
+                        <span class="relative block text-sm text-accent-400 font-medium">
+                          {city.college_count}+ colleges
+                        </span>
+                        <span class="relative mt-0.5 block text-xs text-white/50">{city.state}</span>
+                      </A>
+                    )}
+                  </For>
+                </div>
               </div>
-            </Section>
+            </section>
 
             {/* Top colleges */}
             <Section bg="surface">
