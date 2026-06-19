@@ -2,6 +2,7 @@ import { A, createAsync, type RouteDefinition } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import HeroSearch from "~/components/HeroSearch";
+import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import CollegeCardItem from "~/components/CollegeCardItem";
 import LeadTrigger from "~/components/LeadTrigger";
@@ -36,15 +37,14 @@ export default function Home() {
       />
 
       {/* Hero */}
-      <section
-        class="relative bg-primary-900 text-white bg-cover bg-center"
-        style={{ "background-image": "url('/bg-image.jpg')" }}
-      >
+      <section class="relative bg-primary-900 text-white overflow-hidden">
+        {/* Crossfading background images */}
+        <HeroSlider />
         {/* Minimal overlay: keeps the copy readable, left-weighted so the image
             still shows through on the right. */}
         <div
           aria-hidden="true"
-          class="absolute inset-0 bg-gradient-to-r from-primary-900/85 via-primary-900/65 to-primary-900/40"
+          class="absolute inset-0 z-[1] bg-gradient-to-r from-primary-900/85 via-primary-900/65 to-primary-900/40"
         />
         <div class="container-x py-14 md:py-20 relative z-10">
           <div class="max-w-3xl">
