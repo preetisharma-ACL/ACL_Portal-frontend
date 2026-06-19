@@ -31,6 +31,15 @@ import type {
 const PLACEHOLDER_LOGO = "/placeholders/college-logo.svg";
 const COVER = "/placeholders/campus-cover.svg";
 
+/**
+ * Demo-only dummy logos. DiceBear generates a unique, license-clean mark per
+ * seed so the mock looks like a real logo wall without using any institution's
+ * trademark. When the live API returns real logo URLs this is never used.
+ */
+function dummyLogo(seed: string): string {
+  return `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(seed)}&radius=12`;
+}
+
 function slugify(s: string): string {
   return s
     .toLowerCase()
@@ -346,12 +355,13 @@ function genCollegeCard(streamSlug: string, citySlug: string, index: number): Co
   const cityIdx = CITY_INDEX[citySlug] ?? 0;
   const id = streamIdx * 100000 + cityIdx * 100 + index;
   const rating = Math.min(4.7, Math.round((3.8 + index * 0.11) * 10) / 10);
+  const slug = slugify(name);
   return {
     id,
-    slug: slugify(name),
+    slug,
     name,
     city: cityName,
-    logo: PLACEHOLDER_LOGO,
+    logo: dummyLogo(slug),
     key_courses: p.keyCourses.slice(0, 2 + (index % 2)),
     fee_range: p.feeRanges[index % p.feeRanges.length],
     approvals: p.approvals[index % p.approvals.length],
