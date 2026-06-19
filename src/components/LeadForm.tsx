@@ -429,8 +429,7 @@ export default function LeadForm(props: LeadFormProps) {
         </Button>
 
         <p class="mt-2 text-xs text-[var(--color-muted)]">
-          Verify your mobile and tick consent to enable submit. This is category guidance, not
-          an application to any single institution.
+          Verify your mobile and tick consent to submit.
         </p>
       </form>
     </Show>

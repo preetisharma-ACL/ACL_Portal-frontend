@@ -169,20 +169,31 @@ export default function CourseInfo(props: { slug: string }) {
                 <div class="mt-6 grid gap-6 lg:grid-cols-2 items-start">
                   {/* Left: platform comparison panel */}
                   <div class="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 sm:p-6">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                      <For each={HERO_LOGOS}>
-                        {(src) => (
-                          <div class="grid place-items-center h-14 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2">
-                            <img
-                              src={src}
-                              alt=""
-                              loading="lazy"
-                              decoding="async"
-                              class="max-h-9 max-w-full object-contain"
-                            />
-                          </div>
-                        )}
-                      </For>
+                    {/* Infinite scrolling logo strip */}
+                    <div class="relative overflow-hidden">
+                      <div class="marquee-track flex w-max gap-3">
+                        <For each={[...HERO_LOGOS, ...HERO_LOGOS, ...HERO_LOGOS, ...HERO_LOGOS]}>
+                          {(src) => (
+                            <div class="grid place-items-center h-14 w-28 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2">
+                              <img
+                                src={src}
+                                alt=""
+                                loading="lazy"
+                                decoding="async"
+                                class="max-h-9 max-w-full object-contain"
+                              />
+                            </div>
+                          )}
+                        </For>
+                      </div>
+                      <div
+                        aria-hidden="true"
+                        class="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[var(--color-surface)] to-transparent"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[var(--color-surface)] to-transparent"
+                      />
                     </div>
                     <div class="mt-4 rounded-[var(--radius-md)] bg-primary-50 px-4 py-3">
                       <p class="font-bold text-primary-900">

@@ -25,8 +25,9 @@ export const GA4_ID = env.VITE_GA4_ID || "";
 export const OPERATOR_DISCLOSURE =
   "This is an independent education discovery platform operated by AAJneeti Connect Ltd. We are not affiliated with the institutions listed unless explicitly stated.";
 
-/** Current version of the consent text. Sent with every lead submission. */
-export const CONSENT_TEXT_VERSION = "2026-06-v1";
+/** Current version of the consent text. Sent with every lead submission.
+ *  Bump this whenever CONSENT_TEXT changes so records match what was shown. */
+export const CONSENT_TEXT_VERSION = "2026-06-v2";
 
 export const CONSENT_TEXT =
-  "I authorise AAJneeti Connect Ltd. and the relevant listed institutions to contact me by call, SMS, WhatsApp and email about admissions and courses relevant to my enquiry. I have read the Privacy Policy.";
+  "I agree that AAJneeti Connect Ltd. and relevant institutions may contact me about my enquiry. I have read the Privacy Policy.";
