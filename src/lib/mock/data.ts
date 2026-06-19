@@ -439,6 +439,39 @@ const NO_LOGO_CARD: CollegeCard = {
 };
 const EDGE_CARDS: CollegeCard[] = [LONG_NAME_CARD, NO_LOGO_CARD];
 
+/**
+ * Featured real colleges pinned to the top of a specific stream and city
+ * listing. Figures are indicative and should be verified with the institute.
+ * Drop a logo file in /public and set `logo` to it to show the real mark.
+ */
+const SMS_VARANASI: CollegeCard = {
+  id: 1001,
+  slug: "school-of-management-sciences-sms-varanasi",
+  name: "School of Management Sciences (SMS), Varanasi",
+  city: "Varanasi",
+  logo: PLACEHOLDER_LOGO,
+  key_courses: ["MBA", "PGDM", "BBA"],
+  fee_range: "INR 1.8L - 4.5L",
+  approvals: ["AICTE", "NAAC", "NBA"],
+  rating: 4.4,
+  type: "Private",
+};
+
+interface Featured {
+  streamSlug: string;
+  citySlug: string;
+  card: CollegeCard;
+}
+const FEATURED: Featured[] = [
+  { streamSlug: "mba", citySlug: "varanasi", card: SMS_VARANASI },
+];
+
+function featuredFor(streamSlug: string, citySlug: string): CollegeCard[] {
+  return FEATURED.filter((f) => f.streamSlug === streamSlug && f.citySlug === citySlug).map(
+    (f) => f.card,
+  );
+}
+
 /* ----------------------------------------------------- contract: taxonomy */
 
 export const STREAM_DETAIL: Record<string, StreamDetail> = {};
@@ -623,7 +656,7 @@ export function buildListing(course: string, city: string): ListingResponse {
   if (city === "emptyville") results = [];
   else if (city === "onlyone") results = [genCollegeCard(streamSlug, "varanasi", 0)];
   else if (city === "longtown") results = [LONG_NAME_CARD, NO_LOGO_CARD, ...generateColleges(streamSlug, "noida", 4)];
-  else results = generateColleges(streamSlug, city, PER_LISTING);
+  else results = [...featuredFor(streamSlug, city), ...generateColleges(streamSlug, city, PER_LISTING)];
 
   const total = results.length;
   return {
@@ -655,8 +688,12 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
   // Resolve the source card: generated (id encodes stream/city), edge, or default.
   let found: CollegeCard;
   let streamSlug = "mba";
+  const featured = FEATURED.find((f) => f.card.id === id);
   const decoded = streamFromId(id);
-  if (decoded) {
+  if (featured) {
+    streamSlug = featured.streamSlug;
+    found = featured.card;
+  } else if (decoded) {
     streamSlug = decoded.streamSlug;
     found = genCollegeCard(decoded.streamSlug, decoded.citySlug, decoded.index);
   } else {
@@ -768,12 +805,30 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
     detail.media = [];
     detail.overview.description = `${name} is a newly listed institute. We are still compiling its courses, fees, placements and other details. Please confirm directly with the institute.`;
   }
+
+  // Featured: School of Management Sciences (SMS), Varanasi. Indicative details.
+  if (id === SMS_VARANASI.id) {
+    detail.header.established = 1995;
+    detail.header.state = "Uttar Pradesh";
+    detail.overview.description =
+      "School of Management Sciences (SMS), Varanasi is an established private management institute in Varanasi, Uttar Pradesh, founded in 1995. It offers MBA, PGDM and other programmes with a focus on industry exposure, placements and overall development. The information below is indicative and should be confirmed with the institute.";
+    detail.overview.highlights = [
+      "Established management institute in Varanasi since 1995",
+      "AICTE approved and NAAC accredited",
+      "Dedicated training and placement cell",
+      "Industry interaction, internships and live projects",
+    ];
+    detail.overview.website = "https://www.smsvaranasi.com";
+    detail.contact.city = "Varanasi";
+    detail.contact.state = "Uttar Pradesh";
+  }
   return detail;
 }
 
 /* --------------------------------------------------------- contract: search */
 
 const SEARCH_COLLEGES: CollegeCard[] = [
+  SMS_VARANASI,
   ...generateColleges("mba", "varanasi", 3),
   ...generateColleges("engineering", "lucknow", 3),
   ...generateColleges("medical", "delhi-ncr", 2),
