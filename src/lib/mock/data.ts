@@ -449,7 +449,7 @@ const SMS_VARANASI: CollegeCard = {
   slug: "school-of-management-sciences-sms-varanasi",
   name: "School of Management Sciences (SMS), Varanasi",
   city: "Varanasi",
-  logo: PLACEHOLDER_LOGO,
+  logo: "/sms.webp",
   key_courses: ["MBA", "PGDM", "BBA"],
   fee_range: "INR 1.8L - 4.5L",
   approvals: ["AICTE", "NAAC", "NBA"],
