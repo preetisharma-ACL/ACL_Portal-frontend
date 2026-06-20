@@ -135,7 +135,7 @@ export default function TopCollegesCarousel(props: {
                 const rank = 1 + (Math.abs(c.id * 7) % 40);
                 const loc = [c.city, c.approvals[0]].filter(Boolean).join(" | ");
                 return (
-                  <article class="group flex snap-start flex-col overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm transition-shadow hover:shadow-md">
+                  <article class="group flex snap-start flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm transition-shadow hover:shadow-md">
                     {/* Cover: campus photo + score badge + logo/name overlay */}
                     <A href={href} aria-label={c.name} class="relative block h-32">
                       <img

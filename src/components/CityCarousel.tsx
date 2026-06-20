@@ -83,7 +83,7 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
             {(city) => (
               <A
                 href={listingPath("mba", "mba", city.slug)}
-                class="flex w-[18rem] shrink-0 snap-start flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)]"
+                class="flex w-[18rem] shrink-0 snap-start flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]"
               >
                 <div class="relative h-40">
                   <img
