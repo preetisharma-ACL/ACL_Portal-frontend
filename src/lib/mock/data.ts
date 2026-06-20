@@ -488,6 +488,102 @@ function featuredFor(streamSlug: string, citySlug: string): CollegeCard[] {
   );
 }
 
+/* ------------------------------------------------ curated top colleges (real) */
+
+/** A real, named institute surfaced on the homepage's "Top colleges" carousel. */
+interface TopCollege extends CollegeCard {
+  /** Stream used to resolve a sensible detail page (courses, exams, placements). */
+  stream: string;
+}
+
+function slugifyName(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[()]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+const STREAM_COURSES: Record<string, string[]> = {
+  mba: ["MBA", "PGDM"],
+  engineering: ["B.Tech", "M.Tech"],
+  medical: ["MBBS", "MD"],
+  law: ["BA LLB", "LLM"],
+  commerce: ["B.Com", "BBA"],
+  design: ["B.Des", "M.Des"],
+};
+
+// [name, city, stream, type, rating, feeRange, approvals, logo?]
+type TopRaw = [string, string, string, string, number, string, string[], string?];
+
+const TOP_RAW: TopRaw[] = [
+  ["IIM Bangalore", "Bengaluru", "mba", "Government", 4.8, "INR 24.0L - 25.0L", ["UGC", "AICTE"]],
+  ["IIM Ahmedabad", "Ahmedabad", "mba", "Government", 4.8, "INR 25.0L - 26.0L", ["UGC", "AICTE"]],
+  ["IIM Lucknow", "Lucknow", "mba", "Government", 4.7, "INR 19.0L - 20.0L", ["UGC", "AICTE"]],
+  ["IIM Calcutta", "Kolkata", "mba", "Government", 4.7, "INR 27.0L - 28.0L", ["UGC", "AICTE"]],
+  ["FMS Delhi", "Delhi NCR", "mba", "Government", 4.7, "INR 1.0L - 2.0L", ["UGC", "AICTE"]],
+  ["XLRI Jamshedpur", "Jamshedpur", "mba", "Private", 4.6, "INR 25.0L - 26.0L", ["AICTE", "NBA"]],
+  ["MDI Gurgaon", "Gurgaon", "mba", "Private", 4.5, "INR 22.0L - 23.0L", ["AICTE", "NBA"]],
+  ["SPJIMR Mumbai", "Mumbai", "mba", "Private", 4.6, "INR 21.0L - 22.0L", ["AICTE"]],
+  ["IIFT Delhi", "Delhi NCR", "mba", "Government", 4.5, "INR 18.0L - 20.0L", ["UGC", "AICTE"]],
+  ["NMIMS Mumbai", "Mumbai", "mba", "Deemed", 4.3, "INR 22.0L - 23.0L", ["UGC", "AICTE", "NAAC"]],
+  ["SIBM Pune", "Pune", "mba", "Deemed", 4.3, "INR 20.0L - 22.0L", ["UGC", "NAAC"]],
+  ["IIT Delhi", "Delhi NCR", "engineering", "Government", 4.8, "INR 8.0L - 9.0L", ["UGC", "AICTE", "NBA"]],
+  ["IIT Bombay", "Mumbai", "engineering", "Government", 4.8, "INR 8.0L - 9.0L", ["UGC", "AICTE", "NBA"]],
+  ["IIT Kanpur", "Kanpur", "engineering", "Government", 4.7, "INR 8.0L - 9.0L", ["UGC", "AICTE", "NBA"]],
+  ["IIT (BHU) Varanasi", "Varanasi", "engineering", "Government", 4.6, "INR 8.0L - 9.0L", ["UGC", "AICTE", "NBA"]],
+  ["IIT Madras", "Chennai", "engineering", "Government", 4.8, "INR 8.0L - 9.0L", ["UGC", "AICTE", "NBA"]],
+  ["NIT Tiruchirappalli", "Tiruchirappalli", "engineering", "Government", 4.5, "INR 5.0L - 6.0L", ["UGC", "AICTE", "NBA"]],
+  ["BITS Pilani", "Pilani", "engineering", "Deemed", 4.6, "INR 19.0L - 21.0L", ["UGC", "NAAC"]],
+  ["Delhi Technological University", "Delhi NCR", "engineering", "Government", 4.4, "INR 6.0L - 7.0L", ["AICTE", "NBA"]],
+  ["NSUT Delhi", "Delhi NCR", "engineering", "Government", 4.3, "INR 6.0L - 7.0L", ["AICTE", "NBA"]],
+  ["RV College of Engineering", "Bengaluru", "engineering", "Private", 4.3, "INR 8.0L - 9.0L", ["AICTE", "NBA"]],
+  ["PES University", "Bengaluru", "engineering", "Private", 4.2, "INR 14.0L - 16.0L", ["UGC", "AICTE"]],
+  ["VIT Vellore", "Vellore", "engineering", "Deemed", 4.2, "INR 7.0L - 8.0L", ["UGC", "NAAC"]],
+  ["AIIMS Delhi", "Delhi NCR", "medical", "Government", 4.9, "INR 0.1L - 0.2L", ["NMC", "UGC"]],
+  ["IMS BHU", "Varanasi", "medical", "Government", 4.6, "INR 0.5L - 1.0L", ["NMC", "UGC"]],
+  ["KGMU Lucknow", "Lucknow", "medical", "Government", 4.5, "INR 2.0L - 3.0L", ["NMC"]],
+  ["Maulana Azad Medical College", "Delhi NCR", "medical", "Government", 4.5, "INR 0.2L - 0.5L", ["NMC"]],
+  ["JIPMER Puducherry", "Puducherry", "medical", "Government", 4.6, "INR 0.1L - 0.2L", ["NMC"]],
+  ["CMC Vellore", "Vellore", "medical", "Private", 4.6, "INR 0.5L - 3.0L", ["NMC"]],
+  ["Bangalore Medical College", "Bengaluru", "medical", "Government", 4.3, "INR 1.0L - 4.0L", ["NMC"]],
+  ["NLSIU Bangalore", "Bengaluru", "law", "Government", 4.7, "INR 12.0L - 14.0L", ["UGC", "BCI"]],
+  ["NLU Delhi", "Delhi NCR", "law", "Government", 4.6, "INR 10.0L - 12.0L", ["UGC", "BCI"]],
+  ["RMLNLU Lucknow", "Lucknow", "law", "Government", 4.3, "INR 6.0L - 8.0L", ["UGC", "BCI"]],
+  ["Faculty of Law BHU", "Varanasi", "law", "Government", 4.2, "INR 0.2L - 0.5L", ["UGC", "BCI"]],
+  ["Symbiosis Law School Pune", "Pune", "law", "Deemed", 4.3, "INR 13.0L - 15.0L", ["UGC", "BCI"]],
+  ["Jindal Global Law School", "Sonipat", "law", "Private", 4.4, "INR 15.0L - 18.0L", ["UGC", "BCI"]],
+  ["SRCC Delhi", "Delhi NCR", "commerce", "Government", 4.7, "INR 0.5L - 1.0L", ["UGC", "NAAC"]],
+  ["Lady Shri Ram College", "Delhi NCR", "commerce", "Government", 4.6, "INR 0.5L - 1.0L", ["UGC", "NAAC"]],
+  ["Hindu College", "Delhi NCR", "commerce", "Government", 4.5, "INR 0.3L - 0.8L", ["UGC", "NAAC"]],
+  ["Christ University", "Bengaluru", "commerce", "Deemed", 4.3, "INR 2.0L - 4.0L", ["UGC", "NAAC"]],
+  ["NID Ahmedabad", "Ahmedabad", "design", "Government", 4.6, "INR 12.0L - 14.0L", ["UGC"]],
+  ["NIFT Delhi", "Delhi NCR", "design", "Government", 4.4, "INR 8.0L - 10.0L", ["UGC"]],
+  ["Pearl Academy Delhi", "Delhi NCR", "design", "Private", 4.0, "INR 9.0L - 12.0L", ["UGC"]],
+  ["Lovely Professional University", "Jalandhar", "engineering", "Private", 4.0, "INR 6.0L - 9.0L", ["UGC", "AICTE", "NAAC"], "/lpu.png"],
+  ["Sharda University", "Greater Noida", "engineering", "Private", 3.9, "INR 6.0L - 10.0L", ["UGC", "AICTE", "NAAC"], "/sharda.png"],
+  ["GLA University", "Mathura", "engineering", "Private", 3.9, "INR 5.0L - 8.0L", ["UGC", "AICTE", "NAAC"], "/gla-university-online-logo.webp"],
+];
+
+/** Curated, real top colleges. BHU stays first (pinned on top everywhere). */
+export const TOP_COLLEGES: TopCollege[] = [
+  { ...BHU_VARANASI, stream: "mba" },
+  { ...SMS_VARANASI, stream: "mba" },
+  ...TOP_RAW.map(([name, city, stream, type, rating, fee_range, approvals, logo], i) => ({
+    id: 1100 + i,
+    slug: slugifyName(name),
+    name,
+    city,
+    logo: logo ?? "",
+    key_courses: STREAM_COURSES[stream] ?? ["UG", "PG"],
+    fee_range,
+    approvals,
+    rating,
+    type,
+    stream,
+  })),
+];
+
 /* ----------------------------------------------------- contract: taxonomy */
 
 export const STREAM_DETAIL: Record<string, StreamDetail> = {};
@@ -706,12 +802,16 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
   let streamSlug = "mba";
   const featured = FEATURED.find((f) => f.card.id === id);
   const decoded = streamFromId(id);
+  const curated = TOP_COLLEGES.find((c) => c.id === id);
   if (featured) {
     streamSlug = featured.streamSlug;
     found = featured.card;
   } else if (decoded) {
     streamSlug = decoded.streamSlug;
     found = genCollegeCard(decoded.streamSlug, decoded.citySlug, decoded.index);
+  } else if (curated) {
+    streamSlug = curated.stream;
+    found = curated;
   } else {
     found = EDGE_CARDS.find((c) => c.id === id) ?? genCollegeCard("mba", "varanasi", 0);
   }

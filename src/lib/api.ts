@@ -9,6 +9,7 @@ import { API_BASE, USE_MOCK } from "./config";
 import * as mock from "./mock/data";
 import type {
   CityLite,
+  CollegeCard,
   CollegeDetail,
   CourseDetail,
   ExamDetail,
@@ -139,6 +140,12 @@ function parseFee(range: string): number {
 export function getCollege(slug: string, id: number): Promise<CollegeDetail> {
   if (USE_MOCK) return Promise.resolve(mock.buildCollegeDetail(slug, id));
   return get<CollegeDetail>(`/colleges/${slug}-${id}/`);
+}
+
+/** Curated list of real top colleges shown on the homepage carousel. */
+export function getTopColleges(): Promise<CollegeCard[]> {
+  if (USE_MOCK) return Promise.resolve(mock.TOP_COLLEGES);
+  return get<CollegeCard[]>("/colleges/top/");
 }
 
 /* --------------------------------------------------------------------- search */

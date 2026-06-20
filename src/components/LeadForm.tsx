@@ -28,6 +28,10 @@ export interface LeadFormProps {
   heading?: string;
   /** Hide the built-in heading and subtext (when the parent supplies its own). */
   hideHeading?: boolean;
+  /** Submit button colour. Defaults to "accent"; use "primary" where accent is unset. */
+  submitVariant?: "primary" | "accent";
+  /** Tighter spacing for use inside compact dialogs. */
+  dense?: boolean;
   /** Called after a successful submission. */
   onSuccess?: () => void;
 }
@@ -208,8 +212,9 @@ export default function LeadForm(props: LeadFormProps) {
     }
   }
 
-  const inputClass =
-    "w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2.5 text-sm outline-none focus:border-primary-500";
+  const inputClass = `w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 ${
+    props.dense ? "py-2" : "py-2.5"
+  } text-sm outline-none focus:border-primary-500`;
 
   return (
     <Show
@@ -236,7 +241,7 @@ export default function LeadForm(props: LeadFormProps) {
           </p>
         </Show>
 
-        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <div class={`mt-4 grid sm:grid-cols-2 ${props.dense ? "gap-2.5" : "gap-3"}`}>
           <label class="block sm:col-span-2">
             <span class="block text-sm font-medium mb-1">Full name</span>
             <input
@@ -396,7 +401,7 @@ export default function LeadForm(props: LeadFormProps) {
         </div>
 
         {/* Consent: unbundled, not pre-ticked (compliance item 3) */}
-        <label class="mt-4 flex items-start gap-3 text-sm">
+        <label class={`flex items-start gap-3 text-sm ${props.dense ? "mt-3" : "mt-4"}`}>
           <input
             type="checkbox"
             class="mt-1 shrink-0"
@@ -420,9 +425,9 @@ export default function LeadForm(props: LeadFormProps) {
 
         <Button
           type="submit"
-          variant="accent"
-          size="lg"
-          class="mt-4 w-full"
+          variant={props.submitVariant ?? "accent"}
+          size={props.dense ? "md" : "lg"}
+          class={`w-full ${props.dense ? "mt-3" : "mt-4"}`}
           disabled={!canSubmit()}
         >
           {busy() ? "Please wait..." : "Submit request"}

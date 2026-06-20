@@ -56,13 +56,11 @@ export const searchQuery = query(async (q: string) => {
  */
 export const homeQuery = query(async () => {
   "use server";
-  const [streams, cities] = await Promise.all([api.getStreams(), api.getCities()]);
-  // Gather featured colleges across the popular cities so logos and locations vary.
-  const popularCities = cities.slice(0, 6);
-  const listings = await Promise.all(
-    popularCities.map((c) => api.getListing({ course: "mba", city: c.slug })),
-  );
-  const topColleges = listings.flatMap((l) => l.results.slice(0, 3)).slice(0, 18);
+  const [streams, cities, topColleges] = await Promise.all([
+    api.getStreams(),
+    api.getCities(),
+    api.getTopColleges(),
+  ]);
 
   // Popular courses across a spread of streams, with real slugs for linking.
   const popularStreamSlugs = ["mba", "engineering", "medical", "law", "commerce", "design"];
