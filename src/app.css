@@ -21,6 +21,8 @@
   --color-accent-400: #1f3a66;
   --color-accent-500: #011838;
   --color-accent-600: #010f24;
+  --color-accent-700: #010b1b;
+  --color-accent-800: #010812;
 
   /* Neutrals — tinted toward the brand navy for cohesion. */
   --color-ink: #0a1730;
@@ -66,6 +68,8 @@
   --color-accent-400: var(--color-accent-400);
   --color-accent-500: var(--color-accent-500);
   --color-accent-600: var(--color-accent-600);
+  --color-accent-700: var(--color-accent-700);
+  --color-accent-800: var(--color-accent-800);
 
   --color-ink: var(--color-ink);
   --color-muted: var(--color-muted);

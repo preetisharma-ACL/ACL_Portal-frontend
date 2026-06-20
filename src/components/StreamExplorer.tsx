@@ -121,7 +121,7 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
                       >
                         {popular ? "Popular" : `${specs}+ specialisations`}
                       </span>
-                      <div class="my-3 mx-auto grid place-items-center w-12 h-12 rounded-[var(--radius-md)] bg-accent-50 text-accent-500">
+                      <div class="my-3 mx-auto grid place-items-center w-12 h-12 rounded-full bg-accent-400 text-white">
                         <StreamIcon slug={active()} class="w-6 h-6" />
                       </div>
                       <h4 class="text-center text-sm font-semibold leading-snug min-h-[2.5rem] flex items-center justify-center">
