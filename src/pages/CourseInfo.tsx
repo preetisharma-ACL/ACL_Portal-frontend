@@ -168,7 +168,7 @@ export default function CourseInfo(props: { slug: string }) {
 
                 <div class="mt-6 grid gap-6 lg:grid-cols-2 items-start">
                   {/* Left: platform comparison panel */}
-                  <div class="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 sm:p-6">
+                  <div class="min-w-0 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 sm:p-6">
                     {/* Infinite scrolling logo strip */}
                     <div class="relative overflow-hidden">
                       <div class="marquee-track flex w-max gap-3">
@@ -213,7 +213,7 @@ export default function CourseInfo(props: { slug: string }) {
                   </div>
 
                   {/* Right: enquiry form */}
-                  <div class="rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-lg p-5 sm:p-6">
+                  <div class="min-w-0 rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-lg p-5 sm:p-6">
                     <h2 class="text-xl sm:text-2xl font-extrabold leading-snug">
                       <span class="text-primary-700">Compare and shortlist</span> from 100+{" "}
                       {c().name} colleges
