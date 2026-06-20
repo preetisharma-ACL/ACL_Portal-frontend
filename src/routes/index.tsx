@@ -5,6 +5,7 @@ import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import StreamExplorer from "~/components/StreamExplorer";
+import CityCarousel from "~/components/CityCarousel";
 import CollegeLogo from "~/components/CollegeLogo";
 import LeadTrigger from "~/components/LeadTrigger";
 import { Card, Section } from "~/components/ui";
@@ -16,8 +17,6 @@ import { organizationLd, websiteLd } from "~/lib/jsonld";
 export const route = {
   preload: () => void homeQuery(),
 } satisfies RouteDefinition;
-
-const POPULAR_CITY_SLUGS = ["varanasi", "lucknow", "delhi-ncr", "noida", "bengaluru"];
 
 export default function Home() {
   const data = createAsync(() => homeQuery());
@@ -83,107 +82,8 @@ export default function Home() {
       <Show when={data()}>
         {(d) => (
           <>
-            {/* Browse by popular city: infinite marquee, no background band */}
-            <section class="relative overflow-hidden py-14 md:py-16">
-              <div class="container-x">
-                <div class="max-w-2xl mb-10">
-                  <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary-600">
-                    <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-primary-600" />
-                    Explore by location
-                  </span>
-                  <h2 class="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight text-primary-900">
-                    Browse by popular city
-                  </h2>
-                  <p class="mt-3 text-base text-[var(--color-muted)]">
-                    Discover top-ranked colleges across India's leading education hubs.
-                  </p>
-                </div>
-              </div>
-
-              {/* Full-bleed, infinitely looping strip (hover to pause). The list
-                  is repeated so the -50% marquee animation loops seamlessly. */}
-              <div class="relative overflow-hidden">
-                <div class="marquee-track flex w-max gap-4 px-4 py-3">
-                  <For each={[0, 1, 2, 3]}>
-                    {() => (
-                      <For
-                        each={d().cities.filter((c) =>
-                          POPULAR_CITY_SLUGS.includes(c.slug),
-                        )}
-                      >
-                        {(city) => (
-                          <A
-                            href={listingPath("mba", "mba", city.slug)}
-                            class="group relative flex w-[17rem] shrink-0 flex-col overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 hover:shadow-[0_16px_36px_-16px_rgba(158,7,24,0.30)]"
-                          >
-                            {/* Soft brand glow, revealed on hover */}
-                            <div
-                              aria-hidden="true"
-                              class="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-primary-100/70 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                            />
-
-                            <div class="relative p-5">
-                              <div class="flex items-start justify-between">
-                                <span class="grid h-11 w-11 place-items-center rounded-xl bg-primary-50 text-primary-600 ring-1 ring-primary-100 transition-colors duration-300 group-hover:bg-primary-600 group-hover:text-white">
-                                  <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="w-5 h-5"
-                                    aria-hidden="true"
-                                  >
-                                    <path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11Z" />
-                                    <circle cx="12" cy="10" r="2.5" />
-                                  </svg>
-                                </span>
-                                <span class="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-                                  {city.state}
-                                </span>
-                              </div>
-
-                              <h3 class="mt-4 text-xl font-bold tracking-tight text-primary-900">
-                                {city.name}
-                              </h3>
-
-                              <div class="mt-4 flex items-center justify-between border-t border-[var(--color-line)] pt-3">
-                                <span class="text-sm font-semibold text-primary-700">
-                                  {city.college_count}+ colleges
-                                </span>
-                                <span
-                                  aria-hidden="true"
-                                  class="grid h-7 w-7 place-items-center rounded-full bg-[var(--color-canvas)] text-[var(--color-muted)] transition-all duration-300 group-hover:translate-x-0.5 group-hover:bg-primary-600 group-hover:text-white"
-                                >
-                                  →
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Accent bar grows from the left on hover */}
-                            <span
-                              aria-hidden="true"
-                              class="block h-1 w-full origin-left scale-x-0 bg-gradient-to-r from-primary-500 to-primary-700 transition-transform duration-300 group-hover:scale-x-100"
-                            />
-                          </A>
-                        )}
-                      </For>
-                    )}
-                  </For>
-                </div>
-
-                {/* Edge fades blend the strip into the section background. */}
-                <div
-                  aria-hidden="true"
-                  class="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--color-canvas)] to-transparent"
-                />
-                <div
-                  aria-hidden="true"
-                  class="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--color-canvas)] to-transparent"
-                />
-              </div>
-            </section>
+            {/* Browse by city: image-led cards in a manual carousel */}
+            <CityCarousel cities={d().cities} />
 
             {/* Browse by stream: streams on the left, their courses on the right */}
             <Section bg="surface">
