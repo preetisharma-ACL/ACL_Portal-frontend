@@ -2,11 +2,14 @@ import { A, createAsync } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
-import { Card, LinkButton, Section } from "~/components/ui";
+import { Section } from "~/components/ui";
 import { NotFound } from "~/components/states";
 import { streamQuery } from "~/lib/queries";
 import { listingPath } from "~/lib/slug";
 import { breadcrumbLd } from "~/lib/jsonld";
+
+/** Cover photos shipped in /public, cycled across the course cards. */
+const COVERS = ["/bg-image.jpg", "/bg-image2.jpg", "/bg-image3.jpg"];
 
 export default function StreamLanding(props: { slug: string }) {
   const data = createAsync(() => streamQuery(props.slug));
@@ -28,40 +31,85 @@ export default function StreamLanding(props: { slug: string }) {
               jsonLd={breadcrumbLd(crumbs())}
             />
 
-            <div class="bg-primary-900 text-white">
-              <div class="container-x py-10">
-                <Breadcrumbs crumbs={crumbs()} />
-                <h1 class="mt-4 text-3xl md:text-4xl font-extrabold text-white">
+            {/* Breadcrumb hero banner with a cover photo, like the listing page */}
+            <section class="relative overflow-hidden bg-neutral-900 text-white">
+              <img
+                src="/bg-image2.jpg"
+                alt=""
+                class="absolute inset-0 h-full w-full object-cover"
+              />
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/40"
+              />
+              <div class="container-x py-10 md:py-14 relative z-10">
+                <Breadcrumbs crumbs={crumbs()} light />
+                <h1 class="mt-3 text-3xl md:text-4xl font-extrabold text-white leading-tight">
                   {name()} Courses, Colleges and Exams
                 </h1>
-                <p class="mt-3 max-w-2xl text-white/80">
+                <p class="mt-3 max-w-2xl text-white/85">
                   Discover {name()} programmes, compare colleges by city and understand the
-                  entrance exams. {d().stream.course_count} courses tracked.
+                  entrance exams.
                 </p>
+                <div class="mt-5 flex flex-wrap gap-2.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                    <span class="font-bold">{d().stream.course_count}</span> courses
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                    <span class="font-bold">{d().top_cities.length}</span> cities
+                  </span>
+                </div>
               </div>
-            </div>
+            </section>
 
             <Section>
               <h2 class="text-2xl font-bold mb-6">{name()} courses</h2>
-              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 <For each={d().courses}>
-                  {(c) => (
-                    <Card class="p-5">
-                      <h3 class="font-semibold text-lg">{c.name}</h3>
-                      <Show when={c.duration}>
-                        <p class="mt-1 text-sm text-[var(--color-muted)]">
-                          {c.level} · {c.duration}
-                        </p>
-                      </Show>
-                      <Show when={c.fee_range}>
-                        <p class="mt-2 text-sm">Fees: {c.fee_range}</p>
-                      </Show>
-                      <div class="mt-4">
-                        <LinkButton href={`/${c.slug}-course`} variant="outline" size="sm">
-                          Course details
-                        </LinkButton>
+                  {(c, i) => (
+                    <A
+                      href={`/${c.slug}-course`}
+                      class="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-[0_16px_36px_-18px_rgba(158,7,24,0.30)]"
+                    >
+                      <div class="relative h-32">
+                        <img
+                          src={COVERS[i() % COVERS.length]}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10"
+                        />
+                        <Show when={c.level}>
+                          <span class="absolute right-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[11px] font-bold text-primary-900 shadow-sm">
+                            {c.level}
+                          </span>
+                        </Show>
+                        <h3 class="absolute inset-x-0 bottom-0 p-4 text-lg font-bold leading-snug text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.55)] line-clamp-2">
+                          {c.name}
+                        </h3>
                       </div>
-                    </Card>
+                      <div class="flex flex-1 flex-col p-4">
+                        <Show when={c.duration}>
+                          <p class="text-sm text-[var(--color-muted)]">
+                            {c.level} · {c.duration}
+                          </p>
+                        </Show>
+                        <Show when={c.fee_range}>
+                          <p class="mt-1 text-sm">
+                            <span class="font-bold text-primary-700">{c.fee_range}</span>{" "}
+                            <span class="text-[var(--color-muted)]">Total Fees</span>
+                          </p>
+                        </Show>
+                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700 transition-transform group-hover:translate-x-0.5">
+                          Course details
+                          <span aria-hidden="true">›</span>
+                        </span>
+                      </div>
+                    </A>
                   )}
                 </For>
               </div>

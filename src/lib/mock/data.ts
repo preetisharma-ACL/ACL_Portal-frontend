@@ -444,6 +444,19 @@ const EDGE_CARDS: CollegeCard[] = [LONG_NAME_CARD, NO_LOGO_CARD];
  * listing. Figures are indicative and should be verified with the institute.
  * Drop a logo file in /public and set `logo` to it to show the real mark.
  */
+const BHU_VARANASI: CollegeCard = {
+  id: 1002,
+  slug: "banaras-hindu-university-bhu-varanasi",
+  name: "Banaras Hindu University (BHU), Varanasi",
+  city: "Varanasi",
+  logo: "/bhu.png",
+  key_courses: ["MBA", "MBA-IB", "MBA-Agribusiness"],
+  fee_range: "INR 1.0L - 1.6L",
+  approvals: ["UGC", "AICTE", "NAAC"],
+  rating: 4.7,
+  type: "Government",
+};
+
 const SMS_VARANASI: CollegeCard = {
   id: 1001,
   slug: "school-of-management-sciences-sms-varanasi",
@@ -462,7 +475,10 @@ interface Featured {
   citySlug: string;
   card: CollegeCard;
 }
+// Order matters: cards are pinned to the top of listings in this order, and the
+// first entry surfaces first on the homepage's top-colleges strip too.
 const FEATURED: Featured[] = [
+  { streamSlug: "mba", citySlug: "varanasi", card: BHU_VARANASI },
   { streamSlug: "mba", citySlug: "varanasi", card: SMS_VARANASI },
 ];
 
@@ -806,6 +822,23 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
     detail.overview.description = `${name} is a newly listed institute. We are still compiling its courses, fees, placements and other details. Please confirm directly with the institute.`;
   }
 
+  // Featured: Banaras Hindu University (BHU), Varanasi. Indicative details.
+  if (id === BHU_VARANASI.id) {
+    detail.header.established = 1916;
+    detail.header.state = "Uttar Pradesh";
+    detail.overview.description =
+      "Banaras Hindu University (BHU), Varanasi is one of India's premier central universities, founded in 1916 by Pandit Madan Mohan Malaviya. Set across a sprawling campus in Varanasi, Uttar Pradesh, it is among the largest residential universities in Asia and holds Institute of Eminence (IoE) status. Management programmes are offered through its Institute of Management Studies / Faculty of Management Studies (FMS-BHU), including MBA, MBA in International Business and MBA in Agribusiness. The information below is indicative and should be confirmed with the university.";
+    detail.overview.highlights = [
+      "Central University founded in 1916 by Pandit Madan Mohan Malaviya",
+      "Institute of Eminence (IoE) and NAAC accredited",
+      "Among the largest residential universities in Asia",
+      "MBA, MBA-IB and MBA-Agribusiness via FMS-BHU (AICTE approved)",
+    ];
+    detail.overview.website = "https://www.bhu.ac.in";
+    detail.contact.city = "Varanasi";
+    detail.contact.state = "Uttar Pradesh";
+  }
+
   // Featured: School of Management Sciences (SMS), Varanasi. Indicative details.
   if (id === SMS_VARANASI.id) {
     detail.header.established = 1995;
@@ -828,6 +861,7 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
 /* --------------------------------------------------------- contract: search */
 
 const SEARCH_COLLEGES: CollegeCard[] = [
+  BHU_VARANASI,
   SMS_VARANASI,
   ...generateColleges("mba", "varanasi", 3),
   ...generateColleges("engineering", "lucknow", 3),

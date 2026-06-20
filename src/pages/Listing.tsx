@@ -183,7 +183,7 @@ export default function Listing() {
                       </EmptyState>
                     }
                   >
-                    <div class="grid gap-4">
+                    <div class="grid gap-4 sm:grid-cols-2">
                       <For each={d().results}>{(c) => <CollegeCardItem college={c} />}</For>
                     </div>
                   </Show>
