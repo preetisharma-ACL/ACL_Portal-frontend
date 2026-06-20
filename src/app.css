@@ -16,9 +16,11 @@
   --color-primary-900: #600611;
 
   /* Accent: brand navy (#011838) for secondary CTAs. Used sparingly. */
-  /* --color-accent-400: #1f3a66;
+  --color-accent-50: #eef1f6;
+  --color-accent-100: #d6deea;
+  --color-accent-400: #1f3a66;
   --color-accent-500: #011838;
-  --color-accent-600: #010f24; */
+  --color-accent-600: #010f24;
 
   /* Neutrals — tinted toward the brand navy for cohesion. */
   --color-ink: #0a1730;
@@ -59,6 +61,8 @@
   --color-primary-700: var(--color-primary-700);
   --color-primary-900: var(--color-primary-900);
 
+  --color-accent-50: var(--color-accent-50);
+  --color-accent-100: var(--color-accent-100);
   --color-accent-400: var(--color-accent-400);
   --color-accent-500: var(--color-accent-500);
   --color-accent-600: var(--color-accent-600);

@@ -15,8 +15,6 @@ const TAGLINES: Record<string, string> = {
   design: "Creative careers",
 };
 
-const GLYPHS = ["🎓", "📘", "📊", "💼", "🧪", "⚖️", "🎨", "🧠", "🌐", "🏛️", "📈", "🩺"];
-
 /**
  * Browse by stream. Streams sit in a left rail; selecting one shows that
  * stream's courses as cards on the right. The selected stream's courses load
@@ -46,7 +44,7 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
                 role="tab"
                 aria-selected={isActive()}
                 onClick={() => setActive(s.slug)}
-                class="shrink-0 lg:w-full text-left rounded-[var(--radius-lg)] border px-4 py-3 transition-colors"
+                class="shrink-0 lg:w-full text-left rounded-[var(--radius-md)] border px-4 py-3 transition-colors"
                 classList={{
                   "bg-primary-600 text-white border-primary-600 shadow-sm": isActive(),
                   "bg-[var(--color-surface)] border-[var(--color-line)] hover:border-primary-300 hover:bg-primary-50":
@@ -54,7 +52,10 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
                 }}
               >
                 <span class="flex items-center gap-3">
-                  <StreamIcon slug={s.slug} class="text-2xl" />
+                  <StreamIcon
+                    slug={s.slug}
+                    class={`w-6 h-6 shrink-0 ${isActive() ? "text-white" : "text-accent-500"}`}
+                  />
                   <span class="min-w-0">
                     <span class="block font-semibold whitespace-nowrap">{s.name}</span>
                     <span
@@ -94,7 +95,7 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
             <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
               <For each={Array.from({ length: 8 })}>
                 {() => (
-                  <div class="h-44 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-canvas)] animate-pulse" />
+                  <div class="h-44 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)] animate-pulse" />
                 )}
               </For>
             </div>
@@ -109,7 +110,7 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
                   return (
                     <A
                       href={`/${c.slug}-course`}
-                      class="group relative flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-3 hover:border-primary-300 hover:shadow-md transition"
+                      class="group relative flex flex-col rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 hover:border-accent-400 hover:shadow-md transition"
                     >
                       <span
                         class="self-start text-[10px] font-semibold px-2 py-0.5 rounded-full"
@@ -120,14 +121,27 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
                       >
                         {popular ? "Popular" : `${specs}+ specialisations`}
                       </span>
-                      <div class="my-3 mx-auto grid place-items-center w-12 h-12 rounded-full bg-primary-50 text-2xl">
-                        <span aria-hidden="true">{GLYPHS[i() % GLYPHS.length]}</span>
+                      <div class="my-3 mx-auto grid place-items-center w-12 h-12 rounded-[var(--radius-md)] bg-accent-50 text-accent-500">
+                        <StreamIcon slug={active()} class="w-6 h-6" />
                       </div>
                       <h4 class="text-center text-sm font-semibold leading-snug min-h-[2.5rem] flex items-center justify-center">
                         {c.name}
                       </h4>
-                      <span class="mt-3 block text-center text-xs font-semibold text-white bg-primary-600 group-hover:bg-primary-700 rounded-[var(--radius-md)] py-2 transition-colors">
+                      <span class="mt-2 inline-flex items-center justify-center gap-1 text-xs font-semibold text-accent-500 group-hover:text-accent-600 transition-colors">
                         View course
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          width="14"
+                          height="14"
+                          aria-hidden="true"
+                          class="transition-transform group-hover:translate-x-0.5"
+                          innerHTML='<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'
+                        />
                       </span>
                     </A>
                   );

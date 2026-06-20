@@ -64,7 +64,7 @@ export default function Home() {
                       href={`/${s.slug}`}
                       class="flex items-center gap-3 bg-white/15 hover:bg-white/25 border border-white/25 rounded-[var(--radius-lg)] px-4 py-3 backdrop-blur-sm shadow-sm transition-colors"
                     >
-                      <StreamIcon slug={s.slug} />
+                      <StreamIcon slug={s.slug} class="w-6 h-6 shrink-0 text-white" />
                       <span>
                         <span class="block font-semibold">{s.name}</span>
                         <span class="block text-xs text-white/80">{s.course_count} courses</span>
