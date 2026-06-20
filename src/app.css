@@ -6,26 +6,26 @@
   theme mapping below, so no component hard-codes a colour.
 */
 :root {
-  /* Primary: deep teal / navy. Conveys trust and stability. */
-  --color-primary-50: #eef6f6;
-  --color-primary-100: #d3e8e8;
-  --color-primary-300: #7fb8ba;
-  --color-primary-500: #2f8085;
-  --color-primary-600: #1f6469;
-  --color-primary-700: #134e53;
-  --color-primary-900: #0a2f33;
+  /* Primary: brand crimson (#9e0718). The dominant company colour. */
+  --color-primary-50: #fceeef;
+  --color-primary-100: #f9d7db;
+  --color-primary-300: #f17e8c;
+  --color-primary-500: #d41128;
+  --color-primary-600: #b80a1e;
+  --color-primary-700: #9e0718;
+  --color-primary-900: #600611;
 
-  /* Accent: warm amber for CTAs only. High intent, used sparingly. */
-  --color-accent-400: #f6a64b;
-  --color-accent-500: #ef8f24;
-  --color-accent-600: #d9760c;
+  /* Accent: brand navy (#011838) for secondary CTAs. Used sparingly. */
+  /* --color-accent-400: #1f3a66;
+  --color-accent-500: #011838;
+  --color-accent-600: #010f24; */
 
-  /* Neutrals */
-  --color-ink: #14201f;
-  --color-muted: #5b6b6a;
-  --color-line: #e2e8e8;
+  /* Neutrals — tinted toward the brand navy for cohesion. */
+  --color-ink: #0a1730;
+  --color-muted: #4d5872;
+  --color-line: #dfe3ec;
   --color-surface: #ffffff;
-  --color-canvas: #f7fafa;
+  --color-canvas: #f6f8fc;
 
   /* Semantic */
   --color-success: #1f8a4c;

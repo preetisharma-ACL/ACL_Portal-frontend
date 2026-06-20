@@ -72,7 +72,7 @@ export default function CollegeCardItem(props: {
           >
             <button
               type="button"
-              class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] transition-colors text-sm px-3 py-1.5 bg-accent-500 text-[var(--color-ink)] hover:bg-accent-400"
+              class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] transition-colors text-sm px-3 py-1.5 bg-accent-500 text-white hover:bg-accent-400"
               onClick={() => props.onGetInfo?.(c)}
             >
               Get info

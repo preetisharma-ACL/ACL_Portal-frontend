@@ -61,7 +61,7 @@ export default function HeroSearch() {
         />
         <button
           type="submit"
-          class="shrink-0 bg-accent-500 hover:bg-accent-400 text-[var(--color-ink)] font-semibold px-5 py-2.5 rounded-[var(--radius-md)]"
+          class="shrink-0 bg-accent-500 hover:bg-accent-400 text-white font-semibold px-5 py-2.5 rounded-[var(--radius-md)]"
         >
           Search
         </button>

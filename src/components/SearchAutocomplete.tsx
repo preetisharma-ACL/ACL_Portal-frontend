@@ -78,7 +78,7 @@ export default function SearchAutocomplete(props: {
         />
         <button
           type="submit"
-          class="shrink-0 bg-accent-500 hover:bg-accent-400 text-[var(--color-ink)] font-semibold rounded-[var(--radius-md)] px-4 py-2 text-sm"
+          class="shrink-0 bg-accent-500 hover:bg-accent-400 text-white font-semibold rounded-[var(--radius-md)] px-4 py-2 text-sm"
         >
           {props.compact ? "Go" : "Search"}
         </button>

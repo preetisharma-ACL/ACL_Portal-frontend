@@ -83,11 +83,11 @@ export default function Listing() {
             />
 
             {/* Hero banner with crossfading images */}
-            <section class="relative overflow-hidden bg-primary-900 text-white">
+            <section class="relative overflow-hidden bg-neutral-900 text-white">
               <HeroSlider />
               <div
                 aria-hidden="true"
-                class="absolute inset-0 z-[1] bg-gradient-to-r from-primary-900/92 via-primary-900/78 to-primary-900/50"
+                class="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/60 to-black/35"
               />
               <div class="container-x py-8 md:py-12 relative z-10">
                 <Breadcrumbs crumbs={crumbs()} light />

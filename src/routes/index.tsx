@@ -32,14 +32,14 @@ export default function Home() {
       />
 
       {/* Hero */}
-      <section class="relative bg-primary-900 text-white overflow-hidden">
+      <section class="relative bg-neutral-900 text-white overflow-hidden">
         {/* Crossfading background images */}
         <HeroSlider />
-        {/* Minimal overlay: keeps the copy readable, left-weighted so the image
-            still shows through on the right. */}
+        {/* Minimal black overlay: keeps the copy readable, left-weighted so the
+            image still shows through on the right. */}
         <div
           aria-hidden="true"
-          class="absolute inset-0 z-[1] bg-gradient-to-r from-primary-900/85 via-primary-900/65 to-primary-900/40"
+          class="absolute inset-0 z-[1] bg-gradient-to-r from-black/70 via-black/45 to-black/20"
         />
         <div class="container-x py-14 md:py-20 relative z-10">
           <div class="max-w-3xl">
