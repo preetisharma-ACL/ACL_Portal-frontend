@@ -26,11 +26,11 @@ export default function App() {
           >
             Skip to content
           </a>
-          <Show when={USE_MOCK}>
+          {/* <Show when={USE_MOCK}>
             <div class="bg-[var(--color-warning)]/15 text-[var(--color-ink)] text-xs text-center px-3 py-1.5 border-b border-[var(--color-warning)]/30">
               Preview build with sample data, for review only. Not live and not indexed.
             </div>
-          </Show>
+          </Show> */}
           <Header />
           <main id="main" class="min-h-[60vh]">
             <ErrorBoundary
