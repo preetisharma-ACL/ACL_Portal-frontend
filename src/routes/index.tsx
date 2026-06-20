@@ -232,10 +232,10 @@ export default function Home() {
             </Section>
 
             {/* Trust band: One place to compare your options */}
-            <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-900 to-primary-700 text-white">
+            <section class="relative overflow-hidden bg-gradient-to-br from-[#011838] via-[#03204a] to-[#0c3066] text-white">
               <div
                 aria-hidden="true"
-                class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-accent-500/20 blur-3xl"
+                class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-white/10 blur-3xl"
               />
               <div
                 aria-hidden="true"
@@ -244,7 +244,7 @@ export default function Home() {
               <div class="container-x py-14 md:py-16 relative z-10">
                 <div class="grid gap-10 lg:grid-cols-2 items-center">
                   <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-accent-400">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#9db8e6]">
                       Why {SITE_NAME}
                     </span>
                     <h2 class="mt-2 text-2xl md:text-3xl font-extrabold text-white">
@@ -266,7 +266,7 @@ export default function Home() {
                       >
                         {(stat) => (
                           <div class="rounded-[var(--radius-lg)] border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
-                            <div class="text-2xl md:text-3xl font-extrabold text-accent-400">
+                            <div class="text-2xl md:text-3xl font-extrabold text-[#9db8e6]">
                               {stat.value}
                             </div>
                             <div class="text-xs text-white/70">{stat.label}</div>
