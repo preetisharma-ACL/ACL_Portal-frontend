@@ -45,9 +45,10 @@ export default function StreamExplorer(props: {
                 role="tab"
                 aria-selected={isActive()}
                 onClick={() => setActive(s.slug)}
-                class="shrink-0 lg:w-full text-left rounded-[var(--radius-md)] border px-4 py-3 transition-colors"
+                class="shrink-0 lg:w-full text-left rounded-[var(--radius-md)] border px-4 py-3 transition-all duration-200 ease-out lg:hover:translate-x-0.5"
                 classList={{
-                  "bg-primary-600 text-white border-primary-600 shadow-sm": isActive(),
+                  "bg-primary-600 text-white border-primary-600 shadow-md lg:scale-[1.02]":
+                    isActive(),
                   "bg-[var(--color-surface)] border-[var(--color-line)] hover:border-primary-300 hover:bg-primary-50":
                     !isActive(),
                 }}
@@ -55,12 +56,12 @@ export default function StreamExplorer(props: {
                 <span class="flex items-center gap-3">
                   <StreamIcon
                     slug={s.slug}
-                    class={`w-6 h-6 shrink-0 ${isActive() ? "text-white" : "text-accent-500"}`}
+                    class={`w-6 h-6 shrink-0 transition-colors duration-200 ${isActive() ? "text-white" : "text-accent-500"}`}
                   />
                   <span class="min-w-0">
                     <span class="block font-semibold whitespace-nowrap">{s.name}</span>
                     <span
-                      class="mt-0.5 inline-block text-[11px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap"
+                      class="mt-0.5 inline-block text-[11px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap transition-colors duration-200"
                       classList={{
                         "bg-white/20 text-white": isActive(),
                         "bg-primary-50 text-primary-700": !isActive(),
