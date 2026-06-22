@@ -1,7 +1,8 @@
 import { useNavigate } from "@solidjs/router";
-import { createResource, createSignal, For, Show, type JSX } from "solid-js";
+import { createEffect, createSignal, For, onCleanup, Show, type JSX } from "solid-js";
 import { searchAction } from "~/lib/actions";
 import { track } from "~/lib/analytics";
+import type { SearchResults } from "~/lib/types";
 
 type Scope = "all" | "colleges" | "courses" | "exams";
 
@@ -12,7 +13,7 @@ const SCOPES: { value: Scope; label: string }[] = [
   { value: "exams", label: "Exams" },
 ];
 
-const EMPTY = { colleges: [], courses: [], exams: [] };
+const EMPTY: SearchResults = { colleges: [], courses: [], exams: [] };
 
 /** Primary homepage search across colleges, courses and exams, with type-ahead. */
 export default function HeroSearch() {
@@ -23,13 +24,23 @@ export default function HeroSearch() {
   const [open, setOpen] = createSignal(false);
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  // Plain server action via createResource, decoupled from the router so typing
-  // never triggers a route transition/reload. `.latest` reads without suspending.
-  const [resource] = createResource(
-    () => (debounced().trim().length >= 2 ? debounced().trim() : null),
-    (q) => searchAction(q),
-  );
-  const suggestions = () => resource.latest ?? EMPTY;
+  // Fetch suggestions with a plain signal + effect (no router query, no resource
+  // Suspense) so typing can never trigger a route transition or page reload.
+  const [suggestions, setSuggestions] = createSignal<SearchResults>(EMPTY);
+  createEffect(() => {
+    const q = debounced().trim();
+    if (q.length < 2) {
+      setSuggestions(EMPTY);
+      return;
+    }
+    let cancelled = false;
+    searchAction(q)
+      .then((r) => !cancelled && setSuggestions(r))
+      .catch(() => {});
+    onCleanup(() => {
+      cancelled = true;
+    });
+  });
 
   const inScope = (s: Scope) => scope() === "all" || scope() === s;
   const visibleCount = () => {

@@ -63,16 +63,17 @@ export default function Home() {
         jsonLd={[organizationLd(), websiteLd()]}
       />
 
-      {/* Hero */}
-      <section class="relative bg-neutral-900 text-white overflow-hidden">
-        {/* Crossfading background images */}
-        <HeroSlider />
-        {/* Minimal black overlay: keeps the copy readable, left-weighted so the
-            image still shows through on the right. */}
-        <div
-          aria-hidden="true"
-          class="absolute inset-0 z-[1] bg-gradient-to-r from-black/70 via-black/45 to-black/20"
-        />
+      {/* Hero. No overflow-hidden on the section (it would clip the search
+          suggestions dropdown); the slider is clipped by its own wrapper. z-20
+          keeps the dropdown above the sections below. */}
+      <section class="relative z-20 bg-neutral-900 text-white">
+        {/* Crossfading background images, clipped to the hero */}
+        <div aria-hidden="true" class="absolute inset-0 overflow-hidden">
+          <HeroSlider />
+          {/* Minimal black overlay: keeps the copy readable, left-weighted so the
+              image still shows through on the right. */}
+          <div class="absolute inset-0 z-[1] bg-gradient-to-r from-black/70 via-black/45 to-black/20" />
+        </div>
         <div class="container-x py-14 md:py-20 relative z-10">
           <div class="max-w-3xl">
             <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-[1.08] tracking-tight [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
