@@ -69,7 +69,7 @@ export default function StreamLanding(props: { slug: string }) {
                   {(c, i) => (
                     <A
                       href={`/${c.slug}-course`}
-                      class="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-[0_16px_36px_-18px_rgba(158,7,24,0.30)]"
+                      class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_16px_36px_-18px_rgba(158,7,24,0.30)]"
                     >
                       <div class="relative h-32">
                         <img
@@ -122,7 +122,7 @@ export default function StreamLanding(props: { slug: string }) {
                   {(city) => (
                     <A
                       href={listingPath(props.slug, props.slug, city.slug)}
-                      class="flex items-center justify-between p-4 rounded-[var(--radius-md)] border border-[var(--color-line)] hover:border-primary-300 hover:bg-primary-50"
+                      class="flex items-center justify-between p-4 rounded-[var(--radius-sm)] border border-[var(--color-line)] hover:border-transparent hover:bg-primary-50"
                     >
                       <span>
                         <span class="font-medium">

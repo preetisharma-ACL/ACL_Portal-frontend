@@ -77,7 +77,7 @@ export default function Home() {
           <div class="max-w-3xl">
             <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-[1.08] tracking-tight [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
               Find the{" "}
-              <span class="text-accent-400">right</span> college, course and exam
+              <span class="text-yellow-600">right</span> college, course and exam
             </h1>
             <p class="mt-4 text-lg text-white/90">
               Compare colleges by fees, approvals, accepted exams and placements. Clear,
