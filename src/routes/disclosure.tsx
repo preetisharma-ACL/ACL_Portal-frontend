@@ -44,7 +44,7 @@ export default function Disclosure() {
       <h2>Tell us about an error</h2>
       <p>
         If you are an institution or a reader and you spot an inaccuracy, write to us at{" "}
-        <a href="mailto:contact@aajneeti.social">corrections@aajneeti.example</a> and we will
+        <a href="mailto:contact@aajneeti.social">contact@aajneeti.social</a> and we will
         review it.
       </p>
     </LegalPage>
