@@ -12,7 +12,7 @@ import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import { A, createAsync } from "@solidjs/router";
 import { requestOtpAction, verifyOtpAction, submitLeadAction } from "~/lib/actions";
-import { citiesQuery } from "~/lib/queries";
+import { citiesQuery, coursesQuery } from "~/lib/queries";
 import { CONSENT_TEXT, CONSENT_TEXT_VERSION, USE_MOCK } from "~/lib/config";
 import { track } from "~/lib/analytics";
 import type { LeadPayload } from "~/lib/types";
@@ -92,6 +92,8 @@ export default function LeadForm(props: LeadFormProps) {
   const [email, setEmail] = createSignal("");
   // City is submitted as a backend city SLUG (not a display name).
   const [city, setCity] = createSignal(props.citySlug ?? "");
+  // Course of interest is submitted as a backend course SLUG.
+  const [course, setCourse] = createSignal(props.courseSlug ?? "");
   const [qualification, setQualification] = createSignal("");
   const [intakeYear, setIntakeYear] = createSignal("");
   const [consent, setConsent] = createSignal(false);
@@ -115,6 +117,17 @@ export default function LeadForm(props: LeadFormProps) {
       (c) => c.name.toLowerCase() === props.defaultCity!.toLowerCase(),
     );
     if (match) setCity(match.slug);
+  });
+
+  // Course options come from the streams taxonomy so every value is a real
+  // backend course slug. If no slug was passed but a display label was, try to
+  // resolve it to a slug once courses load (best effort; user can still change).
+  const courses = createAsync(() => coursesQuery());
+  createEffect(() => {
+    if (course() || !props.courseInterest) return;
+    const label = props.courseInterest.toLowerCase();
+    const match = (courses() ?? []).find((c) => c.name.toLowerCase() === label);
+    if (match) setCourse(match.slug);
   });
 
   let utm: Record<string, string> = {};
@@ -199,12 +212,19 @@ export default function LeadForm(props: LeadFormProps) {
     const known = cities() ?? [];
     const safeCity = known.some((c) => c.slug === city()) ? city() : "";
 
+    // Same guard for the course: send the selected slug only if it is a known
+    // backend course (from the dropdown options or the trusted courseSlug prop),
+    // otherwise empty. Prevents an "Unknown course." 400.
+    const courseSlugs = new Set((courses() ?? []).map((c) => c.slug));
+    if (props.courseSlug) courseSlugs.add(props.courseSlug);
+    const safeCourse = courseSlugs.has(course()) ? course() : "";
+
     const payload: LeadPayload = {
       name: name().trim(),
       mobile: mobile().trim(),
       email: email().trim(),
       city: safeCity, // verified backend city slug, or empty
-      course_interest: props.courseSlug ?? "", // backend course slug, or empty
+      course_interest: safeCourse, // verified backend course slug, or empty
       qualification: qualification(),
       intake_year: intakeYear(),
       source_page: props.sourcePage,
@@ -267,13 +287,6 @@ export default function LeadForm(props: LeadFormProps) {
             Independent guidance on courses, fees and admissions. We do not charge students.
           </p>
         </Show>
-        <Show when={props.courseInterest}>
-          <p class={`text-sm text-[var(--color-muted)] ${props.hideHeading ? "" : "mt-1"}`}>
-            Enquiry about{" "}
-            <span class="font-medium text-[var(--color-ink)]">{props.courseInterest}</span>
-          </p>
-        </Show>
-
         <div class={`mt-4 grid sm:grid-cols-2 ${props.dense ? "gap-2.5" : "gap-3"}`}>
           <label class="block sm:col-span-2">
             <span class="block text-sm font-medium mb-1">Full name</span>
@@ -376,6 +389,20 @@ export default function LeadForm(props: LeadFormProps) {
             >
               <option value="">Select city</option>
               <For each={cities() ?? []}>
+                {(c) => <option value={c.slug}>{c.name}</option>}
+              </For>
+            </select>
+          </label>
+
+          <label class="block">
+            <span class="block text-sm font-medium mb-1">Course of interest</span>
+            <select
+              class={inputClass}
+              value={course()}
+              onChange={(e) => setCourse(e.currentTarget.value)}
+            >
+              <option value="">Select course</option>
+              <For each={courses() ?? []}>
                 {(c) => <option value={c.slug}>{c.name}</option>}
               </For>
             </select>

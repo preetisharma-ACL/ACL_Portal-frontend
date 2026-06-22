@@ -28,6 +28,28 @@ export const courseQuery = query(async (slug: string) => {
   return api.getCourse(slug);
 }, "course");
 
+/**
+ * Flat list of all courses (distinct {name, slug}) across every stream, for the
+ * lead form's "Course of interest" dropdown. Sourcing it from the streams
+ * taxonomy guarantees every option is a real backend course slug, so the lead
+ * POST never 400s on course_interest. Cached, so it is fetched once.
+ */
+export const coursesQuery = query(async () => {
+  "use server";
+  const streams = await api.getStreams();
+  const details = await Promise.all(
+    streams.map((s) => api.getStream(s.slug).catch(() => null)),
+  );
+  const bySlug = new Map<string, { name: string; slug: string }>();
+  for (const d of details) {
+    if (!d) continue;
+    for (const c of d.courses) {
+      if (c.slug && !bySlug.has(c.slug)) bySlug.set(c.slug, { name: c.name, slug: c.slug });
+    }
+  }
+  return [...bySlug.values()].sort((a, b) => a.name.localeCompare(b.name));
+}, "courses-all");
+
 export const examQuery = query(async (slug: string) => {
   "use server";
   return api.getExam(slug);
