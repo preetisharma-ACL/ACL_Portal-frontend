@@ -94,10 +94,13 @@ export default function SearchPage(props: { query: string }) {
                             class="text-primary-700 hover:underline"
                           >
                             {c.name}
-                          </A>{" "}
-                          <span class="text-sm text-[var(--color-muted)]">
-                            {c.city} · {c.type}
-                          </span>
+                          </A>
+                          <Show when={[c.city, c.type].filter(Boolean).length}>
+                            {" "}
+                            <span class="text-sm text-[var(--color-muted)]">
+                              {[c.city, c.type].filter(Boolean).join(" · ")}
+                            </span>
+                          </Show>
                         </li>
                       )}
                     </For>

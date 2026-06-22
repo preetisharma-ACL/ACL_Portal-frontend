@@ -1,5 +1,5 @@
-import { useNavigate } from "@solidjs/router";
-import { For, Show, createResource, createSignal, type JSX } from "solid-js";
+import { createAsync, useNavigate } from "@solidjs/router";
+import { For, Show, createSignal, type JSX } from "solid-js";
 import { searchQuery } from "~/lib/queries";
 import { track } from "~/lib/analytics";
 
@@ -21,10 +21,15 @@ export default function SearchAutocomplete(props: {
   const [open, setOpen] = createSignal(false);
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  const [suggestions] = createResource(
-    () => (debounced().trim().length >= 2 ? debounced().trim() : null),
-    (q) => searchQuery(q),
-  );
+  // Consume the router query via createAsync (the supported consumer). Reacts to
+  // the debounced term; returns undefined below the 2-char minimum so no fetch
+  // fires. (Using createResource around a router query does not drive the
+  // client fetch, which left the dropdown permanently empty.)
+  const suggestions = createAsync(() => {
+    const q = debounced().trim();
+    if (q.length < 2) return Promise.resolve({ colleges: [], courses: [], exams: [] });
+    return searchQuery(q);
+  });
 
   function onInput(value: string) {
     setTerm(value);
@@ -92,7 +97,9 @@ export default function SearchAutocomplete(props: {
                 <Suggestion
                   onSelect={() => go(`/college/${c.slug}-${c.id}`)}
                   primary={c.name}
-                  secondary={`${c.city} · ${c.type}`}
+                  // city/type are not returned by the search endpoint; show them
+                  // only if present, never a bare " · ".
+                  secondary={[c.city, c.type].filter(Boolean).join(" · ") || "College"}
                 />
               )}
             </For>
@@ -138,7 +145,7 @@ function Group(props: { label: string; count: number; children: JSX.Element }) {
   );
 }
 
-function Suggestion(props: { onSelect: () => void; primary: string; secondary: string }) {
+function Suggestion(props: { onSelect: () => void; primary: string; secondary?: string }) {
   return (
     <button
       type="button"
@@ -150,7 +157,9 @@ function Suggestion(props: { onSelect: () => void; primary: string; secondary: s
       class="block w-full text-left px-3 py-2 hover:bg-primary-50"
     >
       <span class="block text-sm font-medium">{props.primary}</span>
-      <span class="block text-xs text-[var(--color-muted)]">{props.secondary}</span>
+      <Show when={props.secondary}>
+        <span class="block text-xs text-[var(--color-muted)]">{props.secondary}</span>
+      </Show>
     </button>
   );
 }
