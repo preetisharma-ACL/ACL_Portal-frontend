@@ -64,14 +64,11 @@ export default function StreamLanding(props: { slug: string }) {
 
             <Section>
               <h2 class="text-2xl font-bold mb-6">{name()} courses</h2>
-              <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 <For each={d().courses}>
                   {(c, i) => (
-                    <A
-                      href={`/${c.slug}-course`}
-                      class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]"
-                    >
-                      <div class="relative h-32">
+                    <article class="flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm">
+                      <A href={`/${c.slug}-course`} aria-label={c.name} class="relative block h-32">
                         <img
                           src={COVERS[i() % COVERS.length]}
                           alt=""
@@ -81,35 +78,40 @@ export default function StreamLanding(props: { slug: string }) {
                         />
                         <div
                           aria-hidden="true"
-                          class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10"
+                          class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10"
                         />
                         <Show when={c.level}>
-                          <span class="absolute right-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[11px] font-bold text-primary-900 shadow-sm">
+                          <span class="absolute right-2 top-2 rounded-md bg-white/95 px-1.5 py-0.5 text-[11px] font-bold text-primary-900 shadow-sm">
                             {c.level}
                           </span>
                         </Show>
-                        <h3 class="absolute inset-x-0 bottom-0 p-4 text-lg font-bold leading-snug text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.55)] line-clamp-2">
+                        <h3 class="absolute inset-x-0 bottom-0 p-3 text-sm font-bold leading-tight text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.7)] line-clamp-2">
                           {c.name}
                         </h3>
-                      </div>
-                      <div class="flex flex-1 flex-col p-4">
+                      </A>
+                      <div class="flex flex-1 flex-col p-3">
+                        <Show when={c.fee_range}>
+                          <p class="text-sm">
+                            <span class="font-bold text-primary-700">{c.fee_range}</span>{" "}
+                            <span class="text-xs text-[var(--color-muted)]">Total Fees</span>
+                          </p>
+                        </Show>
                         <Show when={c.duration}>
-                          <p class="text-sm text-[var(--color-muted)]">
+                          <p class="mt-2 line-clamp-1 border-t border-[var(--color-line)] pt-2 text-[11px] text-[var(--color-muted)]">
                             {c.level} · {c.duration}
                           </p>
                         </Show>
-                        <Show when={c.fee_range}>
-                          <p class="mt-1 text-sm">
-                            <span class="font-bold text-primary-700">{c.fee_range}</span>{" "}
-                            <span class="text-[var(--color-muted)]">Total Fees</span>
-                          </p>
-                        </Show>
-                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700">
-                          Course details
-                          <span aria-hidden="true">›</span>
-                        </span>
+                        <div class="mt-1 border-t border-[var(--color-line)] text-xs">
+                          <A
+                            href={`/${c.slug}-course`}
+                            class="flex items-center justify-between py-2 font-semibold text-[var(--color-ink)] transition-colors hover:text-primary-700"
+                          >
+                            View course details
+                            <span aria-hidden="true" class="text-[var(--color-muted)]">›</span>
+                          </A>
+                        </div>
                       </div>
-                    </A>
+                    </article>
                   )}
                 </For>
               </div>
