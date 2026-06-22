@@ -18,9 +18,10 @@ export async function verifyOtpAction(requestId: string, otp: string) {
 
 export async function submitLeadAction(payload: LeadPayload) {
   "use server";
-  // Drop honeypot hits server-side too: report success without persisting.
+  // Drop honeypot hits server-side without persisting. Use a distinct sentinel
+  // status so the client never mistakes a drop for a created lead.
   if (payload.hp_field && payload.hp_field.trim() !== "") {
-    return { id: 0, status: "received" };
+    return { id: 0, status: "rejected" };
   }
   return api.submitLead(payload);
 }

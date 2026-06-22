@@ -157,11 +157,6 @@ export default function LeadForm(props: LeadFormProps) {
     e.preventDefault();
     setError("");
 
-    // Honeypot: a bot filled the hidden field. Pretend success, persist nothing.
-    if (hpField().trim() !== "") {
-      setSuccess(true);
-      return;
-    }
     // Rate guard: block rapid repeat submissions from the same browser.
     if (!isServer) {
       const last = Number(sessionStorage.getItem("acl_lead_ts") || "0");
@@ -195,17 +190,28 @@ export default function LeadForm(props: LeadFormProps) {
       utm,
       consent: { checked: consent(), text_version: CONSENT_TEXT_VERSION },
       otp_token: requestId(), // holds the verified token after onVerifyOtp
-      hp_field: hpField(),
+      hp_field: hpField(), // honeypot dropped server-side, never short-circuits here
     };
 
     setBusy(true);
     try {
-      await submitLeadAction(payload);
-      if (!isServer) sessionStorage.setItem("acl_lead_ts", String(Date.now()));
-      track("lead_submit", { source_page: props.sourcePage, course_interest: payload.course_interest });
-      setSuccess(true);
-      props.onSuccess?.();
-    } catch {
+      // Always POST the lead. Success is shown ONLY when the lead is created
+      // (a real response, not the honeypot "rejected" sentinel) — never off the
+      // back of OTP verify or a swallowed error.
+      const res = await submitLeadAction(payload);
+      if (res && res.status !== "rejected") {
+        if (!isServer) sessionStorage.setItem("acl_lead_ts", String(Date.now()));
+        track("lead_submit", {
+          source_page: props.sourcePage,
+          course_interest: payload.course_interest,
+        });
+        setSuccess(true);
+        props.onSuccess?.();
+      } else {
+        setError("We could not submit your request. Please try again.");
+      }
+    } catch (err) {
+      console.error("Lead submit failed", err);
       setError("Something went wrong submitting your request. Please try again.");
     } finally {
       setBusy(false);
@@ -385,19 +391,18 @@ export default function LeadForm(props: LeadFormProps) {
           </label>
         </div>
 
-        {/* Honeypot: hidden from people, tempting to bots. Must stay empty. */}
+        {/* Honeypot: hidden from people and from browser autofill (no common
+            field name or label), tempting only to naive bots. Must stay empty. */}
         <div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
-          <label>
-            Company
-            <input
-              type="text"
-              tabindex="-1"
-              autocomplete="off"
-              name="company"
-              value={hpField()}
-              onInput={(e) => setHpField(e.currentTarget.value)}
-            />
-          </label>
+          <input
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+            name="acl_hp"
+            aria-hidden="true"
+            value={hpField()}
+            onInput={(e) => setHpField(e.currentTarget.value)}
+          />
         </div>
 
         {/* Consent: unbundled, not pre-ticked (compliance item 3) */}
