@@ -69,7 +69,7 @@ export default function StreamLanding(props: { slug: string }) {
                   {(c, i) => (
                     <A
                       href={`/${c.slug}-course`}
-                      class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_16px_36px_-18px_rgba(158,7,24,0.30)]"
+                      class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-transparent hover:shadow-lg"
                     >
                       <div class="relative h-32">
                         <img

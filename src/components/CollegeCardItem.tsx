@@ -23,7 +23,7 @@ export default function CollegeCardItem(props: {
   const onCardClick = () => track("card_click", { college_id: c.id, college: c.name });
 
   return (
-    <article class="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-[0_16px_36px_-18px_rgba(158,7,24,0.30)]">
+    <article class="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-lg">
       {/* Cover: photo + dark gradient, with rating pill and logo/name overlay */}
       <div class="relative h-40">
         <img
