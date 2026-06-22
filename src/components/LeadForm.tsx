@@ -226,7 +226,8 @@ export default function LeadForm(props: LeadFormProps) {
       city: safeCity, // verified backend city slug, or empty
       course_interest: safeCourse, // verified backend course slug, or empty
       qualification: qualification(),
-      intake_year: intakeYear(),
+      // Integer when chosen; omitted when blank (backend rejects "" and null).
+      ...(intakeYear() ? { intake_year: Number(intakeYear()) } : {}),
       source_page: props.sourcePage,
       utm,
       consent: { checked: consent(), text_version: CONSENT_TEXT_VERSION },

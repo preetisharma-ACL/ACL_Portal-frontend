@@ -256,7 +256,9 @@ export interface LeadPayload {
   city: string;
   course_interest: string;
   qualification: string;
-  intake_year: string;
+  /** Integer year (e.g. 2026); omitted entirely when not chosen — the backend
+   *  rejects "" and null, so the key must be absent rather than empty. */
+  intake_year?: number;
   source_page: string;
   utm: Record<string, string>;
   consent: { checked: boolean; text_version: string };
