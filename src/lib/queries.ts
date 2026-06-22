@@ -6,7 +6,7 @@
  */
 import { query } from "@solidjs/router";
 import * as api from "./api";
-import type { ListingQuery } from "./types";
+import type { CourseLite, ListingQuery } from "./types";
 
 export const streamsQuery = query(async () => {
   "use server";
@@ -62,10 +62,16 @@ export const homeQuery = query(async () => {
     api.getTopColleges(),
   ]);
 
+  // Fetch every stream's courses once so the Browse-by-stream explorer switches
+  // instantly on the client (no per-click server round-trip, no flicker).
+  const streamDetails = await Promise.all(streams.map((s) => api.getStream(s.slug)));
+  const coursesByStream: Record<string, CourseLite[]> = {};
+  for (const sd of streamDetails) coursesByStream[sd.stream.slug] = sd.courses;
+
   // Popular courses across a spread of streams, with real slugs for linking.
   const popularStreamSlugs = ["mba", "engineering", "medical", "law", "commerce", "design"];
-  const streamDetails = await Promise.all(popularStreamSlugs.map((s) => api.getStream(s)));
   const popularCourses = streamDetails
+    .filter((sd) => popularStreamSlugs.includes(sd.stream.slug))
     .flatMap((sd) =>
       sd.courses.slice(0, 2).map((c) => ({ name: c.name, slug: c.slug, stream: sd.stream.name })),
     )
@@ -78,6 +84,7 @@ export const homeQuery = query(async () => {
     cities,
     topColleges,
     popularCourses,
+    coursesByStream,
     counts: { colleges: totalColleges, courses: totalCourses, cities: cities.length },
   };
 }, "home");

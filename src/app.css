@@ -190,6 +190,26 @@
   }
 }
 
+/* Subtle enter animation for swapped content (e.g. stream switch). */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade {
+  animation: fade-in-up 0.28s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade {
+    animation: none;
+  }
+}
+
 /* Focus visibility for accessibility. */
 :where(a, button, input, select, textarea):focus-visible {
   outline: 2px solid var(--color-primary-500);

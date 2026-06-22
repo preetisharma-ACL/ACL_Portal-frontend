@@ -92,7 +92,7 @@ export default function Home() {
                   Pick a stream to see its courses
                 </p>
               </div>
-              <StreamExplorer streams={d().streams} />
+              <StreamExplorer streams={d().streams} coursesByStream={d().coursesByStream} />
             </Section>
 
             {/* Top colleges: real, named institutes in a manual carousel */}

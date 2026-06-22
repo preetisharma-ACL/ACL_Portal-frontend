@@ -1,8 +1,7 @@
-import { A, createAsync } from "@solidjs/router";
+import { A } from "@solidjs/router";
 import { For, Show, createSignal } from "solid-js";
 import StreamIcon from "~/components/StreamIcon";
-import { streamQuery } from "~/lib/queries";
-import type { Stream } from "~/lib/types";
+import type { CourseLite, Stream } from "~/lib/types";
 
 const TAGLINES: Record<string, string> = {
   mba: "After Graduation",
@@ -17,14 +16,16 @@ const TAGLINES: Record<string, string> = {
 
 /**
  * Browse by stream. Streams sit in a left rail; selecting one shows that
- * stream's courses as cards on the right. The selected stream's courses load
- * from the streamQuery (server-rendered for the default stream, then cached per
- * stream on the client) so the grid updates instantly without a full navigation.
+ * stream's courses on the right. All streams' courses are preloaded (passed in
+ * via coursesByStream), so switching is instant on the client, with no server
+ * round-trip or skeleton flicker, plus a subtle fade on each switch.
  */
-export default function StreamExplorer(props: { streams: Stream[] }) {
+export default function StreamExplorer(props: {
+  streams: Stream[];
+  coursesByStream: Record<string, CourseLite[]>;
+}) {
   const [active, setActive] = createSignal(props.streams[0]?.slug ?? "mba");
-  const detail = createAsync(() => streamQuery(active()));
-
+  const courses = () => props.coursesByStream[active()] ?? [];
   const activeStream = () => props.streams.find((s) => s.slug === active());
 
   return (
@@ -89,21 +90,11 @@ export default function StreamExplorer(props: { streams: Stream[] }) {
           </A>
         </div>
 
-        <Show
-          when={detail()}
-          fallback={
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
-              <For each={Array.from({ length: 8 })}>
-                {() => (
-                  <div class="h-44 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)] animate-pulse" />
-                )}
-              </For>
-            </div>
-          }
-        >
-          {(d) => (
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
-              <For each={d().courses}>
+        {/* keyed on the active stream so the grid re-mounts and fades on switch */}
+        <Show when={active()} keyed>
+          {(_active) => (
+            <div class="animate-fade grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+              <For each={courses()}>
                 {(c, i) => {
                   const specs = 4 + ((i() * 7) % 36);
                   const popular = i() === 0;
