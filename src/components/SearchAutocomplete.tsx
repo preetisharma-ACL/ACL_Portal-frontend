@@ -90,7 +90,7 @@ export default function SearchAutocomplete(props: {
       </form>
 
       <Show when={open() && hasSuggestions()}>
-        <div class="absolute z-40 mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-lg overflow-hidden">
+        <div class="absolute z-40 mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-lg overflow-hidden max-h-[70vh] overflow-y-auto">
           <Group label="Colleges" count={suggestions()!.colleges.length}>
             <For each={suggestions()!.colleges}>
               {(c) => (
