@@ -9,6 +9,7 @@ import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
 import { courseQuery } from "~/lib/queries";
 import { breadcrumbLd, courseLd } from "~/lib/jsonld";
+import { formatFeeRange } from "~/lib/format";
 import type { CollegeCard } from "~/lib/types";
 
 const TABS = [
@@ -133,6 +134,9 @@ export default function CourseInfo(props: { slug: string }) {
     <Show when={data()} fallback={<LoadingBlock label="Loading course" />}>
       {(d) => {
         const c = () => d().course;
+        // fee_range is the native {min,max}; format for display (else [object Object]).
+        const fee = () => formatFeeRange(c().fee_range);
+        const overview = () => c().overview || c().description;
         const crumbs = () => [
           { name: "Home", path: "/" },
           { name: c().name, path: path() },
@@ -150,7 +154,7 @@ export default function CourseInfo(props: { slug: string }) {
           <>
             <Seo
               title={`${c().name} Course: Eligibility, Fees, Specialisations and Top Colleges`}
-              description={`${c().name}: ${c().description.slice(0, 140)}`}
+              description={`${c().name}: ${overview().slice(0, 140)}`}
               canonical={path()}
               jsonLd={[breadcrumbLd(crumbs()), courseLd(d(), path())]}
             />
@@ -163,7 +167,7 @@ export default function CourseInfo(props: { slug: string }) {
                   {c().name} Course
                 </h1>
                 <p class="mt-2 max-w-3xl text-[var(--color-muted)]">
-                  {c().description.slice(0, 150)}…
+                  {overview().slice(0, 150)}…
                 </p>
 
                 <div class="mt-6 grid gap-6 lg:grid-cols-2 items-start">
@@ -278,7 +282,7 @@ export default function CourseInfo(props: { slug: string }) {
                   {/* Overview */}
                   <section id="overview" class="scroll-mt-28">
                     <h2 class="text-2xl font-extrabold">{c().name} program overview</h2>
-                    <p class="mt-3 text-[var(--color-ink)]/90">{c().description}</p>
+                    <p class="mt-3 text-[var(--color-ink)]/90">{overview()}</p>
 
                     <div class="mt-6 grid gap-4 sm:grid-cols-2">
                       <For each={BENEFITS}>
@@ -324,6 +328,7 @@ export default function CourseInfo(props: { slug: string }) {
                   </section>
 
                   {/* Specialisations */}
+                  <Show when={d().specializations.length}>
                   <section id="specialisations" class="scroll-mt-28">
                     <h2 class="text-2xl font-extrabold mb-4">Specialisations</h2>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -337,6 +342,7 @@ export default function CourseInfo(props: { slug: string }) {
                       </For>
                     </div>
                   </section>
+                  </Show>
 
                   {/* Fees & eligibility */}
                   <section id="fees" class="scroll-mt-28">
@@ -344,7 +350,7 @@ export default function CourseInfo(props: { slug: string }) {
                     <div class="grid gap-4 sm:grid-cols-2">
                       <Card class="p-5">
                         <h3 class="font-semibold">Indicative fees</h3>
-                        <p class="mt-1 text-2xl font-extrabold text-primary-700">{c().fee_range}</p>
+                        <p class="mt-1 text-2xl font-extrabold text-primary-700">{fee()}</p>
                         <p class="mt-2 text-xs text-[var(--color-muted)]">
                           Fees vary by institute and are indicative. Confirm with the college.
                         </p>
@@ -360,18 +366,43 @@ export default function CourseInfo(props: { slug: string }) {
                   <section id="career" class="scroll-mt-28">
                     <h2 class="text-2xl font-extrabold mb-3">Career scope</h2>
                     <p class="text-[var(--color-ink)]/90 text-sm">{c().career_scope}</p>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                      <For each={d().specializations}>
-                        {(s) => (
-                          <span class="rounded-full bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1">
-                            {s.name}
-                          </span>
-                        )}
-                      </For>
-                    </div>
+
+                    <Show when={c().average_salary}>
+                      <p class="mt-4 text-sm">
+                        <span class="text-[var(--color-muted)]">Indicative average salary </span>
+                        <span class="font-semibold">{c().average_salary}</span>
+                      </p>
+                    </Show>
+
+                    <Show when={(c().job_roles ?? []).length}>
+                      <h3 class="mt-5 text-lg font-bold">Common roles</h3>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        <For each={c().job_roles ?? []}>
+                          {(r) => (
+                            <span class="rounded-full bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1">
+                              {r}
+                            </span>
+                          )}
+                        </For>
+                      </div>
+                    </Show>
+
+                    <Show when={(c().top_recruiters ?? []).length}>
+                      <h3 class="mt-5 text-lg font-bold">Top recruiters</h3>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        <For each={c().top_recruiters ?? []}>
+                          {(r) => (
+                            <span class="rounded-full border border-[var(--color-line)] text-xs font-medium px-3 py-1">
+                              {r}
+                            </span>
+                          )}
+                        </For>
+                      </div>
+                    </Show>
                   </section>
 
                   {/* Exams */}
+                  <Show when={d().related_exams.length}>
                   <section id="exams" class="scroll-mt-28">
                     <h2 class="text-2xl font-extrabold mb-4">Accepted entrance exams</h2>
                     <div class="grid gap-3 sm:grid-cols-2">
@@ -397,6 +428,7 @@ export default function CourseInfo(props: { slug: string }) {
                       </For>
                     </div>
                   </section>
+                  </Show>
                 </div>
 
                 {/* Sticky aside */}
@@ -408,9 +440,10 @@ export default function CourseInfo(props: { slug: string }) {
                         each={[
                           { k: "Level", v: c().level },
                           { k: "Duration", v: c().duration },
-                          { k: "Fee range", v: c().fee_range },
+                          { k: "Fee range", v: fee() },
+                          { k: "Average salary", v: c().average_salary ?? "" },
                           { k: "Specialisations", v: `${d().specializations.length}+` },
-                        ]}
+                        ].filter((row) => row.v)}
                       >
                         {(row) => (
                           <div class="flex items-center justify-between gap-4 py-2.5">

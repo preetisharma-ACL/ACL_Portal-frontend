@@ -170,53 +170,6 @@ function mapStreamDetail(r: any): StreamDetail {
   };
 }
 
-function mapCourse(r: any): CourseDetail {
-  return {
-    course: {
-      id: r.id,
-      name: r.name,
-      slug: r.slug,
-      level: r.level ?? "",
-      duration: r.typical_duration ?? r.duration ?? "",
-      description: r.description ?? "",
-      eligibility: r.eligibility ?? "",
-      career_scope: r.career_scope ?? "",
-      fee_range: formatFeeRange(r.fee_range),
-    },
-    specializations: r.specializations ?? [],
-    related_exams: (r.related_exams ?? []).map((e: any) => ({
-      id: e.id,
-      name: e.name,
-      slug: e.slug,
-      conducting_body: e.conducting_body ?? "",
-    })),
-    top_colleges: (r.top_colleges ?? []).map(mapCard),
-  };
-}
-
-function mapExam(r: any): ExamDetail {
-  const dates = r.important_dates ?? r.dates;
-  const important_dates = Array.isArray(dates)
-    ? dates
-    : dates && typeof dates === "object"
-      ? Object.entries(dates).map(([label, date]) => ({ label, date: String(date) }))
-      : [];
-  return {
-    exam: {
-      id: r.id,
-      name: r.name,
-      slug: r.slug,
-      conducting_body: r.conducting_body ?? "",
-      overview: r.overview ?? "",
-      eligibility: r.eligibility ?? "",
-      pattern: r.pattern ?? "",
-      syllabus: r.syllabus ?? [],
-      important_dates,
-    },
-    accepting_colleges: (r.accepting_colleges ?? []).map(mapCard),
-  };
-}
-
 function mapCollege(r: any): CollegeDetail {
   const h = r.header ?? {};
   const ov = r.overview ?? {};
@@ -319,14 +272,27 @@ export function getCities(): Promise<CityLite[]> {
 
 export function getCourse(slug: string): Promise<CourseDetail> {
   if (USE_MOCK) return Promise.resolve(mock.buildCourseDetail(slug));
-  return get<any>(`/courses/${slug}/`).then(mapCourse);
+  // Backend returns the native {course, specializations, related_exams,
+  // top_colleges} shape; consume it directly, only normalizing the embedded
+  // college cards (shared card normalizer, used everywhere cards render).
+  return get<any>(`/courses/${slug}/`).then((r) => ({
+    course: r.course,
+    specializations: r.specializations ?? [],
+    related_exams: r.related_exams ?? [],
+    top_colleges: (r.top_colleges ?? []).map(mapCard),
+  }));
 }
 
 /* ---------------------------------------------------------------------- exams */
 
 export function getExam(slug: string): Promise<ExamDetail> {
   if (USE_MOCK) return Promise.resolve(mock.buildExamDetail(slug));
-  return get<any>(`/exams/${slug}/`).then(mapExam);
+  // Backend returns the native {exam, accepting_colleges} shape, with syllabus
+  // and important_dates inside exam. Consume directly; normalize only the cards.
+  return get<any>(`/exams/${slug}/`).then((r) => ({
+    exam: r.exam,
+    accepting_colleges: (r.accepting_colleges ?? []).map(mapCard),
+  }));
 }
 
 /* ------------------------------------------------------------------- listings */

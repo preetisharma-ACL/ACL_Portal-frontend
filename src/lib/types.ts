@@ -68,11 +68,18 @@ export interface CourseDetail {
     name: string;
     slug: string;
     level: string;
-    duration: string;
+    stream?: string;
+    stream_slug?: string;
+    overview: string;
     description: string;
     eligibility: string;
+    duration: string;
     career_scope: string;
-    fee_range: string;
+    /** Native backend shape is {min,max}; formatFeeRange handles it for display. */
+    fee_range: { min?: number | null; max?: number | null } | string | null;
+    job_roles?: string[];
+    top_recruiters?: string[];
+    average_salary?: string;
   };
   specializations: Specialization[];
   related_exams: ExamLite[];
@@ -84,10 +91,13 @@ export interface ExamDetail {
     id: number;
     name: string;
     slug: string;
+    level?: string;
     conducting_body: string;
     overview: string;
     eligibility: string;
     pattern: string;
+    mode?: string;
+    frequency?: string;
     syllabus: string[];
     important_dates: { label: string; date: string }[];
   };

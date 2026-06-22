@@ -10,6 +10,7 @@ import { EmptyState, LoadingBlock } from "~/components/states";
 import { examQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
 import { humanize } from "~/lib/slug";
+import { titleCaseType } from "~/lib/format";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -121,21 +122,28 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
               <div class="grid gap-8 lg:grid-cols-3">
                 {/* Main column */}
                 <div class="lg:col-span-2 space-y-6">
-                  <Card id="overview" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
-                    <h2 class="text-xl font-bold">{e().name} overview</h2>
-                    <p class="mt-3 text-[var(--color-ink)]/90">{e().overview}</p>
-                  </Card>
+                  <Show when={e().overview}>
+                    <Card id="overview" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
+                      <h2 class="text-xl font-bold">{e().name} overview</h2>
+                      <p class="mt-3 text-[var(--color-ink)]/90">{e().overview}</p>
+                    </Card>
+                  </Show>
 
-                  <Card id="eligibility" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
-                    <h2 class="text-xl font-bold">Eligibility</h2>
-                    <p class="mt-3 text-[var(--color-ink)]/90">{e().eligibility}</p>
-                  </Card>
+                  <Show when={e().eligibility}>
+                    <Card id="eligibility" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
+                      <h2 class="text-xl font-bold">Eligibility</h2>
+                      <p class="mt-3 text-[var(--color-ink)]/90">{e().eligibility}</p>
+                    </Card>
+                  </Show>
 
-                  <Card id="pattern" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
-                    <h2 class="text-xl font-bold">Exam pattern</h2>
-                    <p class="mt-3 text-[var(--color-ink)]/90">{e().pattern}</p>
-                  </Card>
+                  <Show when={e().pattern}>
+                    <Card id="pattern" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
+                      <h2 class="text-xl font-bold">Exam pattern</h2>
+                      <p class="mt-3 text-[var(--color-ink)]/90">{e().pattern}</p>
+                    </Card>
+                  </Show>
 
+                  <Show when={e().syllabus.length}>
                   <Card id="syllabus" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
                     <h2 class="text-xl font-bold mb-4">Syllabus outline</h2>
                     <div class="grid gap-3 sm:grid-cols-2">
@@ -151,7 +159,9 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
                       </For>
                     </div>
                   </Card>
+                  </Show>
 
+                  <Show when={e().important_dates.length}>
                   <Card id="dates" class="scroll-mt-28 p-5 sm:p-6 shadow-sm">
                     <h2 class="text-xl font-bold mb-5">Important dates</h2>
                     <ol class="relative ml-1.5 border-l-2 border-[var(--color-line)] space-y-5">
@@ -162,13 +172,14 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
                               aria-hidden="true"
                               class="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-accent-500 ring-4 ring-[var(--color-surface)]"
                             />
-                            <p class="text-sm font-bold">{dt.date}</p>
-                            <p class="text-sm text-[var(--color-muted)]">{dt.label}</p>
+                            <p class="text-sm font-bold">{dt.label}</p>
+                            <p class="text-sm text-[var(--color-muted)]">{dt.date}</p>
                           </li>
                         )}
                       </For>
                     </ol>
                   </Card>
+                  </Show>
                 </div>
 
                 {/* Sticky sidebar */}
@@ -179,9 +190,11 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
                       <For
                         each={[
                           { k: "Conducting body", v: e().conducting_body },
+                          { k: "Mode", v: titleCaseType(e().mode) },
+                          { k: "Frequency", v: e().frequency ?? "" },
                           { k: "Sections", v: String(e().syllabus.length) },
                           { k: "Colleges accepting", v: `${d().accepting_colleges.length}+` },
-                        ]}
+                        ].filter((row) => row.v)}
                       >
                         {(row) => (
                           <div class="flex items-start justify-between gap-4 py-2.5">

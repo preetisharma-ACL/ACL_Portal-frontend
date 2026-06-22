@@ -629,6 +629,7 @@ export function buildCourseDetail(slug: string): CourseDetail {
       slug,
       level: c.level ?? "Postgraduate",
       duration: c.duration ?? "2 years",
+      overview: `${c.name} is a ${(c.level ?? "postgraduate").toLowerCase()} programme. It builds the knowledge and practical skills needed for a career in this field, through coursework, projects and supervised practice.`,
       description: `${c.name} is a ${(c.level ?? "postgraduate").toLowerCase()} programme. It builds the knowledge and practical skills needed for a career in this field, through coursework, projects and supervised practice.`,
       eligibility:
         "A qualifying degree or examination as specified by each institute, with the minimum aggregate the institute sets. Final year students can usually apply provisionally.",
