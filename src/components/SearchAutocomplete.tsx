@@ -1,7 +1,9 @@
-import { createAsync, useNavigate } from "@solidjs/router";
-import { For, Show, createSignal, type JSX } from "solid-js";
-import { searchQuery } from "~/lib/queries";
+import { useNavigate } from "@solidjs/router";
+import { For, Show, createResource, createSignal, type JSX } from "solid-js";
+import { searchAction } from "~/lib/actions";
 import { track } from "~/lib/analytics";
+
+const EMPTY = { colleges: [], courses: [], exams: [] };
 
 /**
  * Type-ahead search across colleges, courses and exams. Suggestions are fetched
@@ -21,15 +23,14 @@ export default function SearchAutocomplete(props: {
   const [open, setOpen] = createSignal(false);
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  // Consume the router query via createAsync (the supported consumer). Reacts to
-  // the debounced term; returns undefined below the 2-char minimum so no fetch
-  // fires. (Using createResource around a router query does not drive the
-  // client fetch, which left the dropdown permanently empty.)
-  const suggestions = createAsync(() => {
-    const q = debounced().trim();
-    if (q.length < 2) return Promise.resolve({ colleges: [], courses: [], exams: [] });
-    return searchQuery(q);
-  });
+  // Plain server action via createResource, decoupled from the router so typing
+  // never triggers a route transition/reload. `.latest` reads without suspending,
+  // so the dropdown keeps showing the previous results while the next loads.
+  const [resource] = createResource(
+    () => (debounced().trim().length >= 2 ? debounced().trim() : null),
+    (q) => searchAction(q),
+  );
+  const suggestions = () => resource.latest ?? EMPTY;
 
   function onInput(value: string) {
     setTerm(value);

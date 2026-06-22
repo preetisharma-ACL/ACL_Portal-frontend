@@ -6,6 +6,13 @@
 import * as api from "./api";
 import type { LeadPayload } from "./types";
 
+export async function searchAction(q: string) {
+  "use server";
+  const term = (q ?? "").trim();
+  if (term.length < 1) return { colleges: [], courses: [], exams: [] };
+  return api.search(term);
+}
+
 export async function requestOtpAction(mobile: string) {
   "use server";
   return api.requestOtp(mobile);

@@ -1,6 +1,6 @@
-import { createAsync, useNavigate } from "@solidjs/router";
-import { createSignal, For, Show, type JSX } from "solid-js";
-import { searchQuery } from "~/lib/queries";
+import { useNavigate } from "@solidjs/router";
+import { createResource, createSignal, For, Show, type JSX } from "solid-js";
+import { searchAction } from "~/lib/actions";
 import { track } from "~/lib/analytics";
 
 type Scope = "all" | "colleges" | "courses" | "exams";
@@ -23,11 +23,13 @@ export default function HeroSearch() {
   const [open, setOpen] = createSignal(false);
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  const suggestions = createAsync(() => {
-    const q = debounced().trim();
-    if (q.length < 2) return Promise.resolve(EMPTY);
-    return searchQuery(q);
-  });
+  // Plain server action via createResource, decoupled from the router so typing
+  // never triggers a route transition/reload. `.latest` reads without suspending.
+  const [resource] = createResource(
+    () => (debounced().trim().length >= 2 ? debounced().trim() : null),
+    (q) => searchAction(q),
+  );
+  const suggestions = () => resource.latest ?? EMPTY;
 
   const inScope = (s: Scope) => scope() === "all" || scope() === s;
   const visibleCount = () => {
