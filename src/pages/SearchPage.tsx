@@ -65,16 +65,14 @@ export default function SearchPage(props: { query: string }) {
 
   return (
     <>
-      {/* Premium search header */}
-      <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
-        <div
-          aria-hidden="true"
-          class="pointer-events-none absolute -top-24 -right-10 h-96 w-96 rounded-full bg-accent-500/20 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          class="pointer-events-none absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-primary-400/20 blur-3xl"
-        />
+      {/* Premium search header. No overflow-hidden on the section itself, or it
+          would clip the suggestions dropdown; the blur glows are clipped by their
+          own inset wrapper instead. */}
+      <section class="relative z-30 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
+        <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+          <div class="absolute -top-24 -right-10 h-96 w-96 rounded-full bg-accent-500/20 blur-3xl" />
+          <div class="absolute -bottom-32 left-1/4 h-80 w-80 rounded-full bg-primary-400/20 blur-3xl" />
+        </div>
         <div class="container-x relative z-10 py-12 md:py-16">
           <span class="text-xs font-semibold uppercase tracking-wider text-accent-300">
             Explore
@@ -103,7 +101,7 @@ export default function SearchPage(props: { query: string }) {
 
       {/* Scope tabs */}
       <Show when={props.query}>
-        <div class="sticky top-16 z-30 border-b border-[var(--color-line)] bg-[var(--color-surface)]/90 backdrop-blur">
+        <div class="sticky top-16 z-20 border-b border-[var(--color-line)] bg-[var(--color-surface)]/90 backdrop-blur">
           <div class="container-x flex flex-wrap gap-2 py-3" role="tablist" aria-label="Filter results">
             <For each={SCOPES}>
               {(s) => (

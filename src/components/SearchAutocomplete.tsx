@@ -80,7 +80,7 @@ export default function SearchAutocomplete(props: {
           placeholder={props.placeholder ?? "Search colleges, courses or exams"}
           aria-label="Search colleges, courses or exams"
           aria-expanded={open() && hasSuggestions()}
-          class="flex-1 bg-transparent py-2 px-1 outline-none text-sm min-w-0"
+          class="flex-1 bg-transparent py-2 px-1 outline-none text-sm min-w-0 text-[var(--color-ink)] placeholder:text-[var(--color-muted)]"
         />
         <button
           type="submit"
@@ -157,7 +157,7 @@ function Suggestion(props: { onSelect: () => void; primary: string; secondary?: 
       }}
       class="block w-full text-left px-3 py-2 hover:bg-primary-50"
     >
-      <span class="block text-sm font-medium">{props.primary}</span>
+      <span class="block text-sm font-medium text-[var(--color-ink)]">{props.primary}</span>
       <Show when={props.secondary}>
         <span class="block text-xs text-[var(--color-muted)]">{props.secondary}</span>
       </Show>
