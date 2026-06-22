@@ -194,11 +194,16 @@ export default function LeadForm(props: LeadFormProps) {
       return;
     }
 
+    // Only ever send a city slug the backend actually knows; otherwise empty
+    // (which the backend accepts). Guards stale/mismatched prefilled slugs.
+    const known = cities() ?? [];
+    const safeCity = known.some((c) => c.slug === city()) ? city() : "";
+
     const payload: LeadPayload = {
       name: name().trim(),
       mobile: mobile().trim(),
       email: email().trim(),
-      city: city().trim(), // backend city slug (or empty, which is allowed)
+      city: safeCity, // verified backend city slug, or empty
       course_interest: props.courseSlug ?? "", // backend course slug, or empty
       qualification: qualification(),
       intake_year: intakeYear(),
