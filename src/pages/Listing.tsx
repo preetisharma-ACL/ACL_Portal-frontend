@@ -9,7 +9,7 @@ import LeadForm from "~/components/LeadForm";
 import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
-import { EmptyState, NotFound } from "~/components/states";
+import { EmptyState, LoadingBlock } from "~/components/states";
 import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
 import { listingPath, parseListingSlug } from "~/lib/slug";
 import { breadcrumbLd, faqLd } from "~/lib/jsonld";
@@ -47,7 +47,7 @@ export default function Listing() {
   const streams = createAsync(() => streamsQuery());
 
   return (
-    <Show when={data()} fallback={<NotFound title="Listing not found" />}>
+    <Show when={data()} fallback={<LoadingBlock label="Loading colleges" />}>
       {(d) => {
         const m = () => d().meta;
         const path = () => `/${params.stream}/colleges/${params.listing}`;

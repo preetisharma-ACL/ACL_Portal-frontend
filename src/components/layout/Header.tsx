@@ -1,14 +1,7 @@
-import { A } from "@solidjs/router";
-import { createSignal, For } from "solid-js";
+import { A, createAsync } from "@solidjs/router";
+import { createSignal, For, Show } from "solid-js";
 import { SITE_NAME } from "~/lib/config";
-
-const NAV = [
-  { label: "MBA", href: "/mba" },
-  { label: "Engineering", href: "/engineering" },
-  { label: "Medical", href: "/medical" },
-  { label: "Law", href: "/law" },
-  { label: "Exams", href: "/mba/cat-exam" },
-];
+import { streamsQuery } from "~/lib/queries";
 
 function SearchIcon(props: { class?: string }) {
   return (
@@ -30,6 +23,10 @@ function SearchIcon(props: { class?: string }) {
 
 export default function Header() {
   const [open, setOpen] = createSignal(false);
+  // Nav derives from the live streams taxonomy so the links always match the
+  // slugs the backend actually serves (and the mock in dev).
+  const streams = createAsync(() => streamsQuery());
+  const navStreams = () => (streams() ?? []).slice(0, 5);
 
   return (
     <header class="sticky top-0 z-40 bg-[var(--color-surface)] border-b border-[var(--color-line)]">
@@ -39,19 +36,19 @@ export default function Header() {
         </A>
 
         <nav class="hidden lg:flex items-center gap-1 text-sm ml-auto" aria-label="Primary">
-          <For each={NAV}>
-            {(item) => (
+          <For each={navStreams()}>
+            {(s) => (
               <A
-                href={item.href}
+                href={`/${s.slug}`}
                 class="px-3 py-2 rounded-[var(--radius-md)] font-medium hover:bg-primary-50 hover:text-primary-700"
               >
-                {item.label}
+                {s.name}
               </A>
             )}
           </For>
           <A
             href="/search"
-            class="flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-md)] font-medium bg-primary-50  hover:bg-primary-100 hover:text-primary-700"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-md)] font-medium bg-primary-50 hover:bg-primary-100 hover:text-primary-700"
           >
             <SearchIcon />
             Search
@@ -78,17 +75,19 @@ export default function Header() {
       >
         <div class="container-x py-3">
           <nav class="grid gap-1" aria-label="Mobile">
-            <For each={NAV}>
-              {(item) => (
-                <A
-                  href={item.href}
-                  class="px-3 py-2 rounded-[var(--radius-md)] font-medium hover:bg-primary-50"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </A>
-              )}
-            </For>
+            <Show when={streams()}>
+              <For each={navStreams()}>
+                {(s) => (
+                  <A
+                    href={`/${s.slug}`}
+                    class="px-3 py-2 rounded-[var(--radius-md)] font-medium hover:bg-primary-50"
+                    onClick={() => setOpen(false)}
+                  >
+                    {s.name}
+                  </A>
+                )}
+              </For>
+            </Show>
             <A
               href="/search"
               class="flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-md)] font-medium hover:bg-primary-50"

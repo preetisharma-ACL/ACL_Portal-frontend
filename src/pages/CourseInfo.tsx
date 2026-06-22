@@ -6,7 +6,7 @@ import CollegeLogo from "~/components/CollegeLogo";
 import LeadForm from "~/components/LeadForm";
 import LeadTrigger from "~/components/LeadTrigger";
 import { Card, Section } from "~/components/ui";
-import { EmptyState, NotFound } from "~/components/states";
+import { EmptyState, LoadingBlock } from "~/components/states";
 import { courseQuery } from "~/lib/queries";
 import { breadcrumbLd, courseLd } from "~/lib/jsonld";
 import type { CollegeCard } from "~/lib/types";
@@ -130,7 +130,7 @@ export default function CourseInfo(props: { slug: string }) {
   const [active, setActive] = createSignal("overview");
 
   return (
-    <Show when={data()} fallback={<NotFound title="Course not found" />}>
+    <Show when={data()} fallback={<LoadingBlock label="Loading course" />}>
       {(d) => {
         const c = () => d().course;
         const crumbs = () => [

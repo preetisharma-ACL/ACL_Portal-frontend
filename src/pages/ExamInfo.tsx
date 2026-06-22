@@ -6,7 +6,7 @@ import CollegeCardItem from "~/components/CollegeCardItem";
 import LeadForm from "~/components/LeadForm";
 import LeadTrigger from "~/components/LeadTrigger";
 import { Card, Section } from "~/components/ui";
-import { EmptyState, NotFound } from "~/components/states";
+import { EmptyState, LoadingBlock } from "~/components/states";
 import { examQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
 import { humanize } from "~/lib/slug";
@@ -26,7 +26,7 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
   const [active, setActive] = createSignal("overview");
 
   return (
-    <Show when={data()} fallback={<NotFound title="Exam not found" />}>
+    <Show when={data()} fallback={<LoadingBlock label="Loading exam" />}>
       {(d) => {
         const e = () => d().exam;
         const crumbs = () => [

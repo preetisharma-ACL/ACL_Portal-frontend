@@ -3,7 +3,7 @@ import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import { Section } from "~/components/ui";
-import { NotFound } from "~/components/states";
+import { LoadingBlock } from "~/components/states";
 import { streamQuery } from "~/lib/queries";
 import { listingPath } from "~/lib/slug";
 import { breadcrumbLd } from "~/lib/jsonld";
@@ -15,7 +15,7 @@ export default function StreamLanding(props: { slug: string }) {
   const data = createAsync(() => streamQuery(props.slug));
 
   return (
-    <Show when={data()} fallback={<NotFound title="Stream not found" />}>
+    <Show when={data()} fallback={<LoadingBlock label="Loading stream" />}>
       {(d) => {
         const name = () => d().stream.name;
         const crumbs = () => [

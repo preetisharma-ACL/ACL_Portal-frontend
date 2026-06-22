@@ -8,7 +8,7 @@ import LeadTrigger from "~/components/LeadTrigger";
 import HeroSlider from "~/components/HeroSlider";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
-import { NotFound } from "~/components/states";
+import { LoadingBlock } from "~/components/states";
 import { collegeQuery } from "~/lib/queries";
 import { listingPath, parseSlugId } from "~/lib/slug";
 import { breadcrumbLd, collegeLd, collegeCoursesLd } from "~/lib/jsonld";
@@ -73,7 +73,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
   });
 
   return (
-    <Show when={data()} fallback={<NotFound title="College not found" />}>
+    <Show when={data()} fallback={<LoadingBlock label="Loading college" />}>
       {(d) => {
         const h = () => d().header;
         const basePath = () => `/college/${props.slugId}`;
