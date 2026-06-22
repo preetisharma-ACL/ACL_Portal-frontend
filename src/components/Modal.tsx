@@ -32,11 +32,11 @@ export default function Modal(props: {
         aria-label={props.title}
       >
         <div
-          class="absolute inset-0 bg-black/50"
+          class="absolute inset-0 bg-black/50 animate-backdrop-in"
           onClick={props.onClose}
           aria-hidden="true"
         />
-        <div class="relative bg-[var(--color-surface)] w-full sm:max-w-lg rounded-t-[var(--radius-xl)] sm:rounded-[var(--radius-xl)] shadow-xl max-h-[92vh] overflow-y-auto">
+        <div class="relative bg-[var(--color-surface)] w-full sm:max-w-lg rounded-t-[var(--radius-xl)] sm:rounded-[var(--radius-xl)] shadow-xl max-h-[92vh] overflow-y-auto animate-modal-in">
           <div class="sticky top-0 flex items-center justify-between gap-4 px-5 py-4 border-b border-[var(--color-line)] bg-[var(--color-surface)]">
             <h2 class="font-bold text-lg">{props.title}</h2>
             <button
