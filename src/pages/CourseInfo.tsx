@@ -235,7 +235,12 @@ export default function CourseInfo(props: { slug: string }) {
                       </div>
                     </div>
                     <div class="mt-4">
-                      <LeadForm sourcePage={path()} courseInterest={c().name} hideHeading />
+                      <LeadForm
+                        sourcePage={path()}
+                        courseInterest={c().name}
+                        courseSlug={props.slug}
+                        hideHeading
+                      />
                     </div>
                   </div>
                 </div>
@@ -425,6 +430,7 @@ export default function CourseInfo(props: { slug: string }) {
                       <LeadTrigger
                         sourcePage={path()}
                         courseInterest={c().name}
+                        courseSlug={props.slug}
                         label="Get free guidance"
                         class="w-full"
                       />
@@ -477,6 +483,7 @@ export default function CourseInfo(props: { slug: string }) {
                 <LeadTrigger
                   sourcePage={path()}
                   courseInterest={c().name}
+                  courseSlug={props.slug}
                   label="Get free guidance"
                   size="lg"
                 />

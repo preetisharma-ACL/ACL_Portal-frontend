@@ -8,10 +8,11 @@
  * by one time password. source_page and UTM parameters are captured
  * automatically and a hidden honeypot plus a client side rate guard deter spam.
  */
-import { Show, createSignal, onMount } from "solid-js";
+import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
-import { A } from "@solidjs/router";
+import { A, createAsync } from "@solidjs/router";
 import { requestOtpAction, verifyOtpAction, submitLeadAction } from "~/lib/actions";
+import { citiesQuery } from "~/lib/queries";
 import { CONSENT_TEXT, CONSENT_TEXT_VERSION, USE_MOCK } from "~/lib/config";
 import { track } from "~/lib/analytics";
 import type { LeadPayload } from "~/lib/types";
@@ -20,10 +21,14 @@ import { Button } from "./ui";
 export interface LeadFormProps {
   /** Path the lead originated from, sent as source_page. */
   sourcePage: string;
-  /** Pre-fill the course/stream of interest field. */
+  /** Display label of the course/stream of interest (shown for context). */
   courseInterest?: string;
-  /** Pre-fill the city field. */
+  /** Backend course slug to submit as course_interest (must be a real course slug). */
+  courseSlug?: string;
+  /** Pre-fill the city field by display name (matched to a city slug). */
   defaultCity?: string;
+  /** Explicit city slug to pre-select (preferred over defaultCity). */
+  citySlug?: string;
   /** Heading shown above the form. */
   heading?: string;
   /** Hide the built-in heading and subtext (when the parent supplies its own). */
@@ -85,8 +90,8 @@ export default function LeadForm(props: LeadFormProps) {
   const [name, setName] = createSignal("");
   const [mobile, setMobile] = createSignal("");
   const [email, setEmail] = createSignal("");
-  const [city, setCity] = createSignal(props.defaultCity ?? "");
-  const [courseInterest, setCourseInterest] = createSignal(props.courseInterest ?? "");
+  // City is submitted as a backend city SLUG (not a display name).
+  const [city, setCity] = createSignal(props.citySlug ?? "");
   const [qualification, setQualification] = createSignal("");
   const [intakeYear, setIntakeYear] = createSignal("");
   const [consent, setConsent] = createSignal(false);
@@ -101,14 +106,25 @@ export default function LeadForm(props: LeadFormProps) {
   const [error, setError] = createSignal("");
   const [success, setSuccess] = createSignal(false);
 
+  // City options come from the taxonomy so we always submit a valid city slug.
+  const cities = createAsync(() => citiesQuery());
+  // If only a display name was given, resolve it to a slug once cities load.
+  createEffect(() => {
+    if (city() || !props.defaultCity) return;
+    const match = (cities() ?? []).find(
+      (c) => c.name.toLowerCase() === props.defaultCity!.toLowerCase(),
+    );
+    if (match) setCity(match.slug);
+  });
+
   let utm: Record<string, string> = {};
   onMount(() => {
     utm = captureUtm();
   });
 
   const mobileValid = () => /^[6-9]\d{9}$/.test(mobile());
-  const requiredFilled = () =>
-    name().trim().length >= 2 && mobileValid() && city().trim().length >= 2;
+  // City is optional on the backend, so it does not gate submission.
+  const requiredFilled = () => name().trim().length >= 2 && mobileValid();
   const canSubmit = () => requiredFilled() && consent() && otpVerified() && !busy();
 
   async function onSendOtp() {
@@ -174,7 +190,7 @@ export default function LeadForm(props: LeadFormProps) {
       return;
     }
     if (!requiredFilled()) {
-      setError("Please fill your name, a valid mobile number and your city.");
+      setError("Please fill your name and a valid 10 digit mobile number.");
       return;
     }
 
@@ -182,8 +198,8 @@ export default function LeadForm(props: LeadFormProps) {
       name: name().trim(),
       mobile: mobile().trim(),
       email: email().trim(),
-      city: city().trim(),
-      course_interest: courseInterest().trim(),
+      city: city().trim(), // backend city slug (or empty, which is allowed)
+      course_interest: props.courseSlug ?? "", // backend course slug, or empty
       qualification: qualification(),
       intake_year: intakeYear(),
       source_page: props.sourcePage,
@@ -244,6 +260,12 @@ export default function LeadForm(props: LeadFormProps) {
           </h3>
           <p class="mt-1 text-sm text-[var(--color-muted)]">
             Independent guidance on courses, fees and admissions. We do not charge students.
+          </p>
+        </Show>
+        <Show when={props.courseInterest}>
+          <p class={`text-sm text-[var(--color-muted)] ${props.hideHeading ? "" : "mt-1"}`}>
+            Enquiry about{" "}
+            <span class="font-medium text-[var(--color-ink)]">{props.courseInterest}</span>
           </p>
         </Show>
 
@@ -342,24 +364,16 @@ export default function LeadForm(props: LeadFormProps) {
 
           <label class="block">
             <span class="block text-sm font-medium mb-1">City</span>
-            <input
+            <select
               class={inputClass}
-              type="text"
-              autocomplete="address-level2"
               value={city()}
-              onInput={(e) => setCity(e.currentTarget.value)}
-              required
-            />
-          </label>
-
-          <label class="block">
-            <span class="block text-sm font-medium mb-1">Course or stream of interest</span>
-            <input
-              class={inputClass}
-              type="text"
-              value={courseInterest()}
-              onInput={(e) => setCourseInterest(e.currentTarget.value)}
-            />
+              onChange={(e) => setCity(e.currentTarget.value)}
+            >
+              <option value="">Select city</option>
+              <For each={cities() ?? []}>
+                {(c) => <option value={c.slug}>{c.name}</option>}
+              </For>
+            </select>
           </label>
 
           <label class="block">

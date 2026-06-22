@@ -27,10 +27,29 @@ import type {
 
 class ApiError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  /** The backend error body (parsed JSON when possible, else text). */
+  detail: unknown;
+  constructor(status: number, message: string, detail?: unknown) {
     super(message);
     this.status = status;
+    this.detail = detail;
     this.name = "ApiError";
+  }
+}
+
+/** Read a non-2xx response body once, preferring JSON, so the backend's error
+ *  detail (e.g. DRF field errors) is never thrown away. */
+async function readError(res: Response): Promise<{ text: string; json?: unknown }> {
+  let text = "";
+  try {
+    text = await res.text();
+  } catch {
+    return { text: "" };
+  }
+  try {
+    return { text, json: JSON.parse(text) };
+  } catch {
+    return { text };
   }
 }
 
@@ -42,7 +61,11 @@ async function get<T>(path: string, params?: Record<string, string | undefined>)
     }
   }
   const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
-  if (!res.ok) throw new ApiError(res.status, `GET ${path} failed: ${res.status}`);
+  if (!res.ok) {
+    const e = await readError(res);
+    console.error(`GET ${path} -> ${res.status}`, e.json ?? e.text);
+    throw new ApiError(res.status, `GET ${path} failed: ${res.status} ${e.text.slice(0, 800)}`, e.json ?? e.text);
+  }
   return (await res.json()) as T;
 }
 
@@ -52,7 +75,11 @@ async function post<T>(path: string, body: unknown): Promise<T> {
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new ApiError(res.status, `POST ${path} failed: ${res.status}`);
+  if (!res.ok) {
+    const e = await readError(res);
+    console.error(`POST ${path} -> ${res.status}`, e.json ?? e.text);
+    throw new ApiError(res.status, `POST ${path} failed: ${res.status} ${e.text.slice(0, 800)}`, e.json ?? e.text);
+  }
   return (await res.json()) as T;
 }
 

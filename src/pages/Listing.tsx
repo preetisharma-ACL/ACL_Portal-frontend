@@ -234,7 +234,7 @@ export default function Listing() {
                     <LeadForm
                       sourcePage={path()}
                       courseInterest={m().course}
-                      defaultCity={m().city}
+                      citySlug={parsed().city}
                       heading={`Get details and compare ${m().course} colleges in ${m().city}`}
                     />
                   </Card>
