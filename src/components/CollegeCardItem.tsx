@@ -23,7 +23,7 @@ export default function CollegeCardItem(props: {
   const onCardClick = () => track("card_click", { college_id: c.id, college: c.name });
 
   return (
-    <article class="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-lg">
+    <article class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]">
       {/* Cover: photo + dark gradient, with rating pill and logo/name overlay */}
       <div class="relative h-40">
         <img
@@ -31,7 +31,7 @@ export default function CollegeCardItem(props: {
           alt=""
           loading="lazy"
           decoding="async"
-          class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          class="absolute inset-0 h-full w-full object-cover"
         />
         <div
           aria-hidden="true"
