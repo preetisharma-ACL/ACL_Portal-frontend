@@ -308,6 +308,30 @@ export function getListing(query: ListingQuery): Promise<ListingResponse> {
   return get<any>("/listings/", query as Record<string, string | undefined>).then(mapListing);
 }
 
+/**
+ * Every college in a city (across courses and all pages), for the on-page
+ * college name search. The backend has no name-search param, so we fetch the
+ * full set (page_size is capped at 50, so we page through) and filter client
+ * side. Used by the city-wide listing search box.
+ */
+export async function getCityColleges(city: string): Promise<CollegeCard[]> {
+  if (USE_MOCK) {
+    const base = mock.buildListing("", city);
+    return base.results;
+  }
+  const out: CollegeCard[] = [];
+  for (let page = 1; page <= 20; page++) {
+    const r = await get<any>("/listings/", {
+      city,
+      page_size: "50",
+      page: String(page),
+    });
+    out.push(...(r.results ?? []).map(mapCard));
+    if (!r.pagination?.has_next) break;
+  }
+  return out;
+}
+
 /** Mirror the most common filters client-side so mock mode behaves like the API. */
 function applyMockFilters(base: ListingResponse, q: ListingQuery): ListingResponse {
   let results = [...base.results];

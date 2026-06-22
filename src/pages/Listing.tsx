@@ -1,5 +1,5 @@
 import { A, createAsync, useParams, useSearchParams } from "@solidjs/router";
-import { For, Show } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeCardItem from "~/components/CollegeCardItem";
@@ -10,7 +10,7 @@ import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
-import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
+import { citiesQuery, cityCollegesQuery, listingQuery, streamsQuery } from "~/lib/queries";
 import { cityCollegesPath, listingPath, parseListingSlug } from "~/lib/slug";
 import { breadcrumbLd, faqLd } from "~/lib/jsonld";
 import type { FilterOption, ListingQuery } from "~/lib/types";
@@ -47,6 +47,19 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
   const data = createAsync(() => listingQuery(q()));
   const cities = createAsync(() => citiesQuery());
   const streams = createAsync(() => streamsQuery());
+
+  // City-mode only: the full set of colleges in the city (all pages), so the
+  // on-page search can match a college by name across every page, not just the
+  // current one. Filtered client side since the backend has no name search.
+  const allCityColleges = createAsync(() =>
+    cityMode() && city() ? cityCollegesQuery(city()) : Promise.resolve(undefined),
+  );
+  const [collegeSearch, setCollegeSearch] = createSignal("");
+  const searching = () => collegeSearch().trim().length >= 1;
+  const collegeMatches = () => {
+    const term = collegeSearch().trim().toLowerCase();
+    return (allCityColleges() ?? []).filter((c) => c.name.toLowerCase().includes(term));
+  };
 
   return (
     <Show when={data()} fallback={<LoadingBlock label="Loading colleges" />}>
@@ -160,55 +173,117 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
 
                 {/* Results */}
                 <div class="min-w-0">
+                  {/* City-wide college search: matches a college by name across
+                      EVERY page (filters the full city list, not just this page). */}
+                  <Show when={cityMode()}>
+                    <label class="relative mb-4 block">
+                      <span
+                        aria-hidden="true"
+                        class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
+                      >
+                        ⌕
+                      </span>
+                      <input
+                        type="search"
+                        value={collegeSearch()}
+                        onInput={(e) => setCollegeSearch(e.currentTarget.value)}
+                        placeholder={`Search colleges in ${m().city} by name`}
+                        aria-label={`Search colleges in ${m().city} by name`}
+                        class="w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] py-2.5 pl-9 pr-9 text-sm outline-none focus:border-primary-500"
+                      />
+                      <Show when={collegeSearch()}>
+                        <button
+                          type="button"
+                          aria-label="Clear search"
+                          onClick={() => setCollegeSearch("")}
+                          class="absolute right-2.5 top-1/2 -translate-y-1/2 grid h-6 w-6 place-items-center rounded-full text-[var(--color-muted)] hover:bg-primary-50 hover:text-primary-700"
+                        >
+                          ×
+                        </button>
+                      </Show>
+                    </label>
+                  </Show>
+
                   <div class="flex items-center justify-between mb-4">
                     <p class="text-sm text-[var(--color-muted)]">
-                      Showing {d().results.length} of {total()} {cc()} in {m().city}
+                      <Show
+                        when={searching()}
+                        fallback={
+                          <>
+                            Showing {d().results.length} of {total()} {cc()} in {m().city}
+                          </>
+                        }
+                      >
+                        {collegeMatches().length}{" "}
+                        {collegeMatches().length === 1 ? "college" : "colleges"} matching "
+                        {collegeSearch().trim()}"
+                      </Show>
                     </p>
                   </div>
 
+                  {/* Search view (across all pages) vs the normal paginated view. */}
                   <Show
-                    when={d().results.length}
+                    when={searching()}
                     fallback={
-                      <EmptyState title="No colleges match these filters">
-                        <p>
-                          Try widening the fee range or clearing a filter to see more results.
-                        </p>
-                        <div class="mt-4 flex flex-wrap justify-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setSp({
-                                course: undefined,
-                                type: undefined,
-                                exam: undefined,
-                                approval: undefined,
-                                fees_min: undefined,
-                                fees_max: undefined,
-                                sort: undefined,
-                                page: undefined,
-                              })
-                            }
-                            class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 border border-primary-600 text-primary-700 hover:bg-primary-50"
-                          >
-                            Clear all filters
-                          </button>
-                          <A
-                            href={cityMode() ? "/" : `/${params.stream}`}
-                            class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 text-primary-700 hover:bg-primary-50"
-                          >
-                            {cityMode() ? "Back to home" : `Browse ${m().course} by city`}
-                          </A>
+                      <Show
+                        when={d().results.length}
+                        fallback={
+                          <EmptyState title="No colleges match these filters">
+                            <p>
+                              Try widening the fee range or clearing a filter to see more results.
+                            </p>
+                            <div class="mt-4 flex flex-wrap justify-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setSp({
+                                    course: undefined,
+                                    type: undefined,
+                                    exam: undefined,
+                                    approval: undefined,
+                                    fees_min: undefined,
+                                    fees_max: undefined,
+                                    sort: undefined,
+                                    page: undefined,
+                                  })
+                                }
+                                class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 border border-primary-600 text-primary-700 hover:bg-primary-50"
+                              >
+                                Clear all filters
+                              </button>
+                              <A
+                                href={cityMode() ? "/" : `/${params.stream}`}
+                                class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 text-primary-700 hover:bg-primary-50"
+                              >
+                                {cityMode() ? "Back to home" : `Browse ${m().course} by city`}
+                              </A>
+                            </div>
+                          </EmptyState>
+                        }
+                      >
+                        <div class="grid gap-4 sm:grid-cols-2">
+                          <For each={d().results}>{(c) => <CollegeCardItem college={c} />}</For>
                         </div>
-                      </EmptyState>
+                      </Show>
                     }
                   >
-                    <div class="grid gap-4 sm:grid-cols-2">
-                      <For each={d().results}>{(c) => <CollegeCardItem college={c} />}</For>
-                    </div>
+                    <Show
+                      when={collegeMatches().length}
+                      fallback={
+                        <EmptyState title="No college found">
+                          No college in {m().city} matches "{collegeSearch().trim()}". Check the
+                          spelling, or clear the search to see all colleges.
+                        </EmptyState>
+                      }
+                    >
+                      <div class="grid gap-4 sm:grid-cols-2">
+                        <For each={collegeMatches()}>{(c) => <CollegeCardItem college={c} />}</For>
+                      </div>
+                    </Show>
                   </Show>
 
-                  {/* Pagination */}
-                  <Show when={totalPages() > 1}>
+                  {/* Pagination (hidden while searching, which spans all pages) */}
+                  <Show when={!searching() && totalPages() > 1}>
                     <nav
                       aria-label="Pagination"
                       class="mt-8 flex items-center justify-center gap-2"
