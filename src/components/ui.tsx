@@ -50,9 +50,10 @@ export function LinkButton(
   );
 }
 
-export function Card(props: ParentProps<{ class?: string }>) {
+export function Card(props: ParentProps<{ class?: string; id?: string }>) {
   return (
     <div
+      id={props.id}
       class={`bg-[var(--color-surface)] border border-[var(--color-line)] rounded-[var(--radius-lg)] ${props.class ?? ""}`}
     >
       {props.children}
