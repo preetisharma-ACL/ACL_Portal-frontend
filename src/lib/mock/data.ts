@@ -778,7 +778,7 @@ export function buildListing(course: string, city: string): ListingResponse {
       city: cityLabel,
       total_colleges: total,
       fee_range: total ? p.metaFeeRange : "Not available yet",
-      popular_courses: p.popularCourses,
+      popular_courses: p.popularCourses.map((name) => ({ name, slug: slugify(name) })),
       intro: total
         ? `Compare ${courseLabel} colleges in ${cityLabel} by fees, approvals, accepted exams and student rating. Our directory lists ${total} institutes offering ${courseLabel} programmes, with full course and fee detail on each college page.`
         : `We are still adding ${courseLabel} colleges in ${cityLabel}. Explore nearby cities or other courses while we expand this list.`,

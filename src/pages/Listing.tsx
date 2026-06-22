@@ -11,28 +11,30 @@ import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
 import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
-import { listingPath, parseListingSlug } from "~/lib/slug";
+import { cityCollegesPath, listingPath, parseListingSlug } from "~/lib/slug";
 import { breadcrumbLd, faqLd } from "~/lib/jsonld";
 import type { FilterOption, ListingQuery } from "~/lib/types";
 
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-export default function Listing() {
+/**
+ * College listing. Two modes share this page:
+ *  - stream mode: /[stream]/colleges/[listing] — colleges for a course in a city.
+ *  - city mode (props.cityMode): /colleges/[city] — ALL colleges in a city,
+ *    course not forced; the "Course" filter narrows by the city's courses.
+ */
+export default function Listing(props: { city?: string; cityMode?: boolean }) {
   const params = useParams();
   const [sp, setSp] = useSearchParams();
+  const cityMode = () => !!props.cityMode;
   const parsed = () => parseListingSlug(params.listing);
-  const stream = () => params.stream ?? "";
-  /** Course slug used for canonical paths and related links (ignores the specialisation filter). */
-  const baseCourse = () => parsed().course || stream();
+  const stream = () => (cityMode() ? "" : params.stream ?? "");
+  const city = () => (cityMode() ? props.city ?? "" : parsed().city);
+  /** Course slug for canonical paths/links. Empty in city mode (no forced course). */
+  const baseCourse = () => (cityMode() ? "" : parsed().course || stream());
 
   const q = (): ListingQuery => ({
-    course: (sp.course as string) || baseCourse(),
-    city: parsed().city,
+    // City mode: only send a course when the user picks one in the filter.
+    course: (sp.course as string) || baseCourse() || undefined,
+    city: city(),
     type: (sp.type as string) || undefined,
     exam: (sp.exam as string) || undefined,
     approval: (sp.approval as string) || undefined,
@@ -50,15 +52,28 @@ export default function Listing() {
     <Show when={data()} fallback={<LoadingBlock label="Loading colleges" />}>
       {(d) => {
         const m = () => d().meta;
-        const path = () => `/${params.stream}/colleges/${params.listing}`;
-        const crumbs = () => [
-          { name: "Home", path: "/" },
-          { name: m().course, path: `/${params.stream}` },
-          { name: `${m().course} colleges in ${m().city}`, path: path() },
-        ];
+        const path = () =>
+          cityMode()
+            ? cityCollegesPath(city())
+            : `/${params.stream}/colleges/${params.listing}`;
+        // meta.course is "" in city mode; build copy that reads cleanly either way.
+        const courseName = () => m().course;
+        const Cc = () => (courseName() ? `${courseName()} Colleges` : "Colleges");
+        const cc = () => (courseName() ? `${courseName()} colleges` : "colleges");
+        const crumbs = () =>
+          cityMode()
+            ? [
+                { name: "Home", path: "/" },
+                { name: `Colleges in ${m().city}`, path: path() },
+              ]
+            : [
+                { name: "Home", path: "/" },
+                { name: m().course, path: `/${params.stream}` },
+                { name: `${m().course} colleges in ${m().city}`, path: path() },
+              ];
 
         const specializations = (): FilterOption[] =>
-          m().popular_courses.map((c) => ({ value: slugify(c), label: c }));
+          m().popular_courses.map((c) => ({ value: c.slug, label: c.name }));
 
         const page = () => d().pagination.page;
         const pageSize = () => d().pagination.page_size;
@@ -72,8 +87,8 @@ export default function Listing() {
         return (
           <>
             <Seo
-              title={`${m().course} Colleges in ${m().city}: Fees, Admission and Ranking`}
-              description={`Compare ${m().total_colleges} ${m().course} colleges in ${m().city} by fees (${m().fee_range}), approvals, accepted exams and student rating. Filter and shortlist the right institute.`}
+              title={`${Cc()} in ${m().city}: Fees, Admission and Ranking`}
+              description={`Compare ${m().total_colleges} ${cc()} in ${m().city} by fees (${m().fee_range}), approvals, accepted exams and student rating. Filter by course, type and budget to shortlist the right institute.`}
               canonical={path()}
               jsonLd={
                 d().faqs.length
@@ -92,7 +107,7 @@ export default function Listing() {
               <div class="container-x py-8 md:py-12 relative z-10">
                 <Breadcrumbs crumbs={crumbs()} light />
                 <h1 class="mt-3 text-2xl md:text-4xl font-extrabold text-white leading-tight">
-                  {m().course} Colleges in {m().city}
+                  {Cc()} in {m().city}
                 </h1>
                 <Show when={m().intro}>
                   <p class="mt-3 max-w-3xl text-white/85">{m().intro}</p>
@@ -109,7 +124,7 @@ export default function Listing() {
                   <For each={m().popular_courses.slice(0, 3)}>
                     {(pc) => (
                       <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
-                        {pc}
+                        {pc.name}
                       </span>
                     )}
                   </For>
@@ -130,11 +145,16 @@ export default function Listing() {
                       <FilterRail
                         filters={d().filters}
                         specializations={specializations()}
+                        specializationLabel={cityMode() ? "Course" : "Specialisation"}
                       />
                     </div>
                   </details>
                   <div class="hidden lg:block lg:sticky lg:top-20">
-                    <FilterRail filters={d().filters} specializations={specializations()} />
+                    <FilterRail
+                      filters={d().filters}
+                      specializations={specializations()}
+                      specializationLabel={cityMode() ? "Course" : "Specialisation"}
+                    />
                   </div>
                 </div>
 
@@ -142,8 +162,7 @@ export default function Listing() {
                 <div class="min-w-0">
                   <div class="flex items-center justify-between mb-4">
                     <p class="text-sm text-[var(--color-muted)]">
-                      Showing {d().results.length} of {total()}{" "}
-                      {m().course} colleges in {m().city}
+                      Showing {d().results.length} of {total()} {cc()} in {m().city}
                     </p>
                   </div>
 
@@ -174,10 +193,10 @@ export default function Listing() {
                             Clear all filters
                           </button>
                           <A
-                            href={`/${params.stream}`}
+                            href={cityMode() ? "/" : `/${params.stream}`}
                             class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 text-primary-700 hover:bg-primary-50"
                           >
-                            Browse {m().course} by city
+                            {cityMode() ? "Back to home" : `Browse ${m().course} by city`}
                           </A>
                         </div>
                       </EmptyState>
@@ -233,23 +252,24 @@ export default function Listing() {
                   <Card class="mt-10 p-5 sm:p-6 bg-primary-50 border-primary-100">
                     <LeadForm
                       sourcePage={path()}
-                      courseInterest={m().course}
-                      citySlug={parsed().city}
-                      heading={`Get details and compare ${m().course} colleges in ${m().city}`}
+                      courseInterest={cityMode() ? undefined : m().course}
+                      citySlug={city()}
+                      heading={`Get details and compare ${cc()} in ${m().city}`}
                     />
                   </Card>
 
                   {/* Supporting content: things to know */}
                   <section class="mt-10">
                     <h2 class="text-2xl font-bold mb-4">
-                      Things to know about {m().course} colleges in {m().city}
+                      Things to know about {cc()} in {m().city}
                     </h2>
                     <div class="space-y-3 text-[var(--color-ink)]/90">
                       <p>
                         {m().city} offers a mix of government, private and deemed institutes
-                        for {m().course}. Fees in this list span {m().fee_range} for the full
-                        programme, so shortlist by both budget and the specialisations you want
-                        to pursue.
+                        {courseName() ? ` for ${courseName()}` : " across courses"}. Fees in this
+                        list span {m().fee_range} for the full programme, so shortlist by both
+                        budget and the {cityMode() ? "courses" : "specialisations"} you want to
+                        pursue.
                       </p>
                       <p>
                         Use the filters to narrow by college type, accepted entrance exam and
@@ -293,7 +313,7 @@ export default function Listing() {
                       <For each={ss().filter((s) => s.slug !== params.stream)}>
                         {(s) => (
                           <A
-                            href={listingPath(s.slug, s.slug, parsed().city)}
+                            href={listingPath(s.slug, s.slug, city())}
                             class="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 transition-all hover:border-primary-300 hover:shadow-sm hover:-translate-y-0.5"
                           >
                             <span class="grid place-items-center w-10 h-10 shrink-0 rounded-[var(--radius-md)] bg-primary-50">
@@ -325,19 +345,23 @@ export default function Listing() {
                 {(cs) => (
                   <div class="mt-10">
                     <h3 class="text-lg font-bold">
-                      {m().course} colleges in other cities
+                      {cityMode() ? "Colleges in other cities" : `${m().course} colleges in other cities`}
                     </h3>
                     <div class="mt-4 flex flex-wrap gap-2.5">
-                      <For each={cs().filter((c) => c.slug !== parsed().city)}>
+                      <For each={cs().filter((c) => c.slug !== city())}>
                         {(c) => (
                           <A
-                            href={listingPath(stream(), baseCourse(), c.slug)}
+                            href={
+                              cityMode()
+                                ? cityCollegesPath(c.slug)
+                                : listingPath(stream(), baseCourse(), c.slug)
+                            }
                             class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-2 text-sm font-medium hover:border-primary-300 hover:text-primary-700 transition-colors"
                           >
                             <span aria-hidden="true" class="text-accent-500">
                               ◉
                             </span>
-                            {m().course} in {c.name}
+                            {cityMode() ? `Colleges in ${c.name}` : `${m().course} in ${c.name}`}
                           </A>
                         )}
                       </For>

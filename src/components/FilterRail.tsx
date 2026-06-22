@@ -25,6 +25,8 @@ const FEE_STOPS: FilterOption[] = [
 export default function FilterRail(props: {
   filters: ListingFilters;
   specializations: FilterOption[];
+  /** Label for the course/specialisation filter (city mode uses "Course"). */
+  specializationLabel?: string;
 }) {
   const [sp, setSp] = useSearchParams();
 
@@ -97,7 +99,11 @@ export default function FilterRail(props: {
       />
 
       <Show when={props.specializations.length}>
-        <Select label="Specialisation" name="course" options={props.specializations} />
+        <Select
+          label={props.specializationLabel ?? "Specialisation"}
+          name="course"
+          options={props.specializations}
+        />
       </Show>
 
       <Select label="College type" name="type" options={props.filters.types} />

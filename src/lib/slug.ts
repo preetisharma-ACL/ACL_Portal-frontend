@@ -19,6 +19,19 @@ export function parseListingSlug(slugRaw: string | undefined): { course: string;
   return { course: "", city: slug };
 }
 
+/** Turn an arbitrary label into a slug: "B.Com LL.B" -> "b-com-ll-b". */
+export function slugify(s: string): string {
+  return (s ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Build the canonical path for a city-wide colleges listing. */
+export function cityCollegesPath(city: string): string {
+  return `/colleges/${city}`;
+}
+
 /** Turn a slug into a Title Case label: "delhi-ncr" -> "Delhi Ncr". */
 export function humanize(slug: string | undefined): string {
   return (slug ?? "")

@@ -114,7 +114,8 @@ export interface ListingMeta {
   city: string;
   total_colleges: number;
   fee_range: string;
-  popular_courses: string[];
+  /** Courses available in this listing/city, with backend slugs for filtering. */
+  popular_courses: { name: string; slug: string }[];
   intro?: string;
 }
 

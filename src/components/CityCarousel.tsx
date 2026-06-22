@@ -1,7 +1,7 @@
 import { A } from "@solidjs/router";
 import { For, createSignal, onMount } from "solid-js";
 import type { CityLite } from "~/lib/types";
-import { listingPath } from "~/lib/slug";
+import { cityCollegesPath } from "~/lib/slug";
 
 /** Dedicated city photos in /public, keyed by city slug. */
 const CITY_IMAGES: Record<string, string> = {
@@ -82,7 +82,7 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
           <For each={props.cities}>
             {(city) => (
               <A
-                href={listingPath("mba", "mba", city.slug)}
+                href={cityCollegesPath(city.slug)}
                 class="flex w-[18rem] shrink-0 snap-start flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]"
               >
                 <div class="relative h-40">

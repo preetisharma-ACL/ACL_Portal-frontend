@@ -8,6 +8,7 @@
 import { API_BASE, USE_MOCK } from "./config";
 import * as mock from "./mock/data";
 import { formatFeeRange, inrShort, titleCaseType } from "./format";
+import { slugify } from "./slug";
 import type {
   CityLite,
   CollegeCard,
@@ -125,7 +126,9 @@ function mapListing(r: any): ListingResponse {
       total_colleges: m.total_colleges ?? (r.results ?? []).length,
       fee_range: formatFeeRange(m.fee_range),
       popular_courses: (m.popular_courses ?? []).map((p: any) =>
-        typeof p === "object" ? p.name : p,
+        typeof p === "object"
+          ? { name: p.name, slug: p.slug ?? slugify(p.name ?? "") }
+          : { name: String(p), slug: slugify(String(p)) },
       ),
       intro: m.intro,
     },
