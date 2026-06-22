@@ -12,10 +12,44 @@ import { Card, Section } from "~/components/ui";
 import { SITE_NAME, OPERATOR_DISCLOSURE } from "~/lib/config";
 import { homeQuery } from "~/lib/queries";
 import { organizationLd, websiteLd } from "~/lib/jsonld";
+import type { Stream } from "~/lib/types";
 
 export const route = {
   preload: () => void homeQuery(),
 } satisfies RouteDefinition;
+
+/** Stream quick-link cards. Dark glass style for the hero, light style elsewhere. */
+function StreamGrid(props: { streams: Stream[]; light?: boolean }) {
+  return (
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <For each={props.streams.slice(0, 8)}>
+        {(s) => (
+          <A
+            href={`/${s.slug}`}
+            class={
+              props.light
+                ? "flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 hover:border-primary-300 hover:bg-primary-50 transition-colors"
+                : "flex items-center gap-3 rounded-[var(--radius-lg)] border border-white/25 bg-white/15 px-4 py-3 backdrop-blur-sm shadow-sm hover:bg-white/25 transition-colors"
+            }
+          >
+            <StreamIcon
+              slug={s.slug}
+              class={`w-6 h-6 shrink-0 ${props.light ? "text-accent-500" : "text-white"}`}
+            />
+            <span class="min-w-0">
+              <span class="block font-semibold whitespace-nowrap">{s.name}</span>
+              <span
+                class={`block text-xs ${props.light ? "text-[var(--color-muted)]" : "text-white/80"}`}
+              >
+                {s.course_count} courses
+              </span>
+            </span>
+          </A>
+        )}
+      </For>
+    </div>
+  );
+}
 
 export default function Home() {
   const data = createAsync(() => homeQuery());
@@ -54,29 +88,29 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Prominent stream entry cards */}
-          <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Show when={data()}>
-              {(d) => (
-                <For each={d().streams.slice(0, 8)}>
-                  {(s) => (
-                    <A
-                      href={`/${s.slug}`}
-                      class="flex items-center gap-3 bg-white/15 hover:bg-white/25 border border-white/25 rounded-[var(--radius-lg)] px-4 py-3 backdrop-blur-sm shadow-sm transition-colors"
-                    >
-                      <StreamIcon slug={s.slug} class="w-6 h-6 shrink-0 text-white" />
-                      <span>
-                        <span class="block font-semibold">{s.name}</span>
-                        <span class="block text-xs text-white/80">{s.course_count} courses</span>
-                      </span>
-                    </A>
-                  )}
-                </For>
-              )}
-            </Show>
-          </div>
+          {/* Prominent stream entry cards: desktop only (on mobile/tablet they
+              appear in their own section just below the hero) */}
+          <Show when={data()}>
+            {(d) => (
+              <div class="mt-10 hidden lg:block">
+                <StreamGrid streams={d().streams} />
+              </div>
+            )}
+          </Show>
         </div>
       </section>
+
+      {/* Stream quick links: mobile and tablet only, below the hero */}
+      <Show when={data()}>
+        {(d) => (
+          <section class="lg:hidden border-b border-[var(--color-line)] bg-[var(--color-surface)]">
+            <div class="container-x py-6">
+              <h2 class="text-lg font-bold mb-4">Explore by stream</h2>
+              <StreamGrid streams={d().streams} light />
+            </div>
+          </section>
+        )}
+      </Show>
 
       <Show when={data()}>
         {(d) => (
