@@ -69,7 +69,7 @@ export default function StreamLanding(props: { slug: string }) {
                   {(c, i) => (
                     <A
                       href={`/${c.slug}-course`}
-                      class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] transition-all duration-200 hover:-translate-y-1 hover:border-transparent hover:shadow-lg"
+                      class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]"
                     >
                       <div class="relative h-32">
                         <img
@@ -77,7 +77,7 @@ export default function StreamLanding(props: { slug: string }) {
                           alt=""
                           loading="lazy"
                           decoding="async"
-                          class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          class="absolute inset-0 h-full w-full object-cover"
                         />
                         <div
                           aria-hidden="true"
@@ -104,7 +104,7 @@ export default function StreamLanding(props: { slug: string }) {
                             <span class="text-[var(--color-muted)]">Total Fees</span>
                           </p>
                         </Show>
-                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700 transition-transform group-hover:translate-x-0.5">
+                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700">
                           Course details
                           <span aria-hidden="true">›</span>
                         </span>
