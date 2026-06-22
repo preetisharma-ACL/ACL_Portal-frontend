@@ -274,7 +274,8 @@ function mapSearch(r: any): SearchResults {
 
 export function getStreams(): Promise<Stream[]> {
   if (USE_MOCK) return Promise.resolve(mock.STREAMS);
-  return get<Stream[]>("/taxonomy/streams/");
+  // Resilient: a streams failure must never blank core navigation or the home.
+  return get<Stream[]>("/taxonomy/streams/").catch(() => []);
 }
 
 export function getStream(slug: string): Promise<StreamDetail> {
