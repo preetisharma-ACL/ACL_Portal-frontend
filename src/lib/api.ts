@@ -145,14 +145,17 @@ function mapListing(r: any): ListingResponse {
 }
 
 function mapStreamDetail(r: any): StreamDetail {
+  // Live shape is nested: { stream: {id,name,slug}, courses, top_cities }.
+  // Fall back to the flat shape so either is handled.
+  const st = r.stream ?? r;
   return {
     stream: {
-      id: r.id,
-      name: r.name,
-      slug: r.slug,
-      icon: r.icon ?? "book",
-      order: r.order ?? 99,
-      course_count: (r.courses ?? []).length,
+      id: st.id,
+      name: st.name,
+      slug: st.slug,
+      icon: st.icon ?? "book",
+      order: st.order ?? 99,
+      course_count: (r.courses ?? st.courses ?? []).length,
     },
     courses: (r.courses ?? []).map((c: any) => ({
       id: c.id,
