@@ -243,8 +243,11 @@
   }
 }
 
-/* Focus visibility for accessibility. */
-:where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
+/* Focus visibility for accessibility. In @layer base so component utilities
+   (e.g. focus-visible:outline-none on the search inputs) can override it. */
+@layer base {
+  :where(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
 }

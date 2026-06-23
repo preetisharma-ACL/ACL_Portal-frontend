@@ -103,7 +103,7 @@ export default function HeroSearch() {
         <form
           role="search"
           onSubmit={onSubmit}
-          class="flex items-center gap-2 bg-white rounded-[var(--radius-lg)] p-1.5 shadow-lg ring-1 ring-transparent transition-shadow focus-within:ring-2 focus-within:ring-primary-300"
+          class="flex items-center gap-2 bg-white rounded-[var(--radius-lg)] p-1.5 shadow-lg ring-1 ring-transparent transition-shadow focus-within:ring-2 focus-within:ring-black/10"
         >
           <input
             name="q"

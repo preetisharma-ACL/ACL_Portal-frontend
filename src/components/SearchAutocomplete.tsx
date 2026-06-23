@@ -75,7 +75,7 @@ export default function SearchAutocomplete(props: {
         action="/search"
         method="get"
         onSubmit={submit}
-        class="flex items-center gap-2 bg-[var(--color-surface)] rounded-[var(--radius-md)] border border-[var(--color-line)] p-1.5 ring-1 ring-transparent transition-shadow focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-200"
+        class="flex items-center gap-2 bg-[var(--color-surface)] rounded-[var(--radius-md)] border border-[var(--color-line)] p-1.5 ring-1 ring-transparent transition-shadow focus-within:ring-2 focus-within:ring-black/10"
       >
         <span aria-hidden="true" class="pl-2 text-[var(--color-muted)]">
           ⌕
