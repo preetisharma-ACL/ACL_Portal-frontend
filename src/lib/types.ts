@@ -193,6 +193,8 @@ export interface CutoffRow {
 
 export interface MediaItem {
   type: "image" | "video";
+  /** Backend slot category: HERO (used as the cover) vs GALLERY. */
+  category: "HERO" | "GALLERY" | string;
   url: string;
   caption: string;
 }

@@ -261,7 +261,10 @@ function mapCollege(r: any): CollegeDetail {
       year: x.year != null ? String(x.year) : "",
     })),
     media: (r.media ?? []).map((x: any) => ({
-      type: x.type === "video" ? ("video" as const) : ("image" as const),
+      // Backend `type` is the slot category (HERO/GALLERY); keep image/video
+      // separate (defaults to image, the common case).
+      category: x.type === "HERO" ? "HERO" : x.type === "GALLERY" ? "GALLERY" : (x.category ?? "GALLERY"),
+      type: x.media_type === "video" || x.is_video ? ("video" as const) : ("image" as const),
       url: x.url ?? x.image ?? "",
       caption: x.caption ?? x.title ?? "",
     })),

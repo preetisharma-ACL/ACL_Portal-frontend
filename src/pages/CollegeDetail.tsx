@@ -117,7 +117,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
           placements: () => d().placements.length > 0,
           rankings: () => d().rankings.length > 0,
           cutoffs: () => d().cutoffs.length > 0,
-          gallery: () => d().media.length > 0,
+          gallery: () => d().media.some((m) => m.category !== "HERO"),
           // Always reachable so the empty-state prompts and submission forms show.
           reviews: () => true,
           qa: () => true,
@@ -146,7 +146,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                   slider (neutral fallback). */}
               <div class="relative mt-3 h-48 sm:h-64 md:h-80 overflow-hidden">
                 <Show
-                  when={d().media.find((m) => m.type === "image" && m.url)}
+                  when={d().media.find((m) => m.category === "HERO" && m.url)}
                   fallback={<HeroSlider />}
                 >
                   {(img) => (
@@ -557,7 +557,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 <Show when={visible.gallery()}>
                 <Block id="gallery" title="Gallery">
                   <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <For each={d().media}>
+                    <For each={d().media.filter((m) => m.category !== "HERO")}>
                       {(m) => (
                         <figure class="rounded-[var(--radius-md)] overflow-hidden border border-[var(--color-line)]">
                           <img

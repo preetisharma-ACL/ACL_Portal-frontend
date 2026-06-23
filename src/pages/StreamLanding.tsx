@@ -36,11 +36,9 @@ export default function StreamLanding(props: { slug: string }) {
 
             {/* Breadcrumb hero banner with a cover photo, like the listing page */}
             <section class="relative overflow-hidden bg-neutral-900 text-white">
-              {/* Managed stream banner slot, falling back to the bundled image. */}
-              <SlotImage
-                slot={[`stream_${props.slug}`, `${props.slug}_banner`, `stream_banner_${props.slug}`, "stream_banner"]}
-                fallback="/bg-image2.jpg"
-              />
+              {/* Managed stream banner slot (exact backend key), falling back to
+                  the bundled image. */}
+              <SlotImage slot={`stream_${props.slug}_banner`} fallback="/bg-image2.jpg" />
               <div
                 aria-hidden="true"
                 class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/40"

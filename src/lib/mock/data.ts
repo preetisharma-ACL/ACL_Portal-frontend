@@ -1066,9 +1066,9 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
       year: "2025",
     })),
     media: [
-      { type: "image", url: COVER, caption: "Campus" },
-      { type: "image", url: COVER, caption: "Library" },
-      { type: "image", url: COVER, caption: "Auditorium" },
+      { type: "image", category: "HERO", url: COVER, caption: "Campus" },
+      { type: "image", category: "GALLERY", url: COVER, caption: "Library" },
+      { type: "image", category: "GALLERY", url: COVER, caption: "Auditorium" },
     ],
     contact: {
       address: "Placeholder Campus Road",
