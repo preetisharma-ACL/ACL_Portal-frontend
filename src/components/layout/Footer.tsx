@@ -43,7 +43,7 @@ function Column(props: { title: string; links: { label: string; href: string }[]
 
 export default function Footer() {
   return (
-    <footer class="bg-primary-900 text-white mt-16">
+    <footer class="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white mt-16">
       <div class="container-x py-12">
         <div class="grid gap-10 md:grid-cols-4">
           <div>
