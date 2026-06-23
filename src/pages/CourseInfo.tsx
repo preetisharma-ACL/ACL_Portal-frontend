@@ -116,7 +116,7 @@ function ProgramCard(props: { college: CollegeCard; featured?: boolean }) {
       </div>
       <p class="mt-3 text-sm">
         <span class="text-[var(--color-muted)]">Fees </span>
-        <span class="font-semibold">{c.fee_range}</span>
+        <span class="font-semibold">{c.fee_range || "On request"}</span>
       </p>
       <span class="mt-4 inline-flex items-center justify-center gap-1 rounded-[var(--radius-md)] bg-primary-600 text-white text-sm font-semibold py-2 group-hover:bg-primary-700 transition-colors">
         View details

@@ -214,10 +214,12 @@ function mapCollege(r: any): CollegeDetail {
       logo: h.logo ?? "",
       cover: "",
       type: titleCaseType(h.type),
-      established: h.established_year ?? ov.established_year ?? 0,
+      // null (not 0) when unknown, so the UI can hide it cleanly.
+      established: h.established_year ?? ov.established_year ?? null,
+      affiliation: ov.affiliation ?? "",
       approvals: h.approvals ?? ov.approvals ?? [],
-      rating: Number(h.rating) || 0,
-      review_count: 0,
+      rating: Number(h.rating ?? r.review_summary?.average) || 0,
+      review_count: h.review_count ?? r.review_summary?.count ?? 0,
     },
     overview: {
       description: ov.about ?? "",
@@ -232,10 +234,36 @@ function mapCollege(r: any): CollegeDetail {
       important_dates: [],
       accepted_exams,
     },
-    placements: [],
-    rankings: [],
-    cutoffs: [],
-    media: [],
+    // Consume the real backend blocks (these were previously hardcoded to []).
+    placements: (r.placements ?? []).map((x: any) => ({
+      year: x.year != null ? String(x.year) : "",
+      highest_package:
+        x.highest != null ? inrShort(Number(x.highest)) : (x.highest_package ?? ""),
+      average_package:
+        x.average != null ? inrShort(Number(x.average)) : (x.average_package ?? ""),
+      median_package: x.median != null ? inrShort(Number(x.median)) : (x.median_package ?? ""),
+      placement_rate:
+        x.placement_pct != null ? `${x.placement_pct}%` : (x.placement_rate ?? ""),
+      top_recruiters: x.top_recruiters ?? [],
+    })),
+    rankings: (r.rankings ?? []).map((x: any) => ({
+      agency: x.agency ?? "",
+      rank: x.rank != null ? `#${x.rank}` : "",
+      category: x.category ?? "",
+      year: x.year != null ? String(x.year) : "",
+    })),
+    cutoffs: (r.cutoffs ?? []).map((x: any) => ({
+      exam: x.exam ?? x.exam_name ?? "",
+      category: x.category ?? "",
+      round: x.round != null ? String(x.round) : "",
+      cutoff: x.cutoff != null ? String(x.cutoff) : (x.value ?? ""),
+      year: x.year != null ? String(x.year) : "",
+    })),
+    media: (r.media ?? []).map((x: any) => ({
+      type: x.type === "video" ? ("video" as const) : ("image" as const),
+      url: x.url ?? x.image ?? "",
+      caption: x.caption ?? x.title ?? "",
+    })),
     contact: {
       address: campus.address ?? "",
       city: h.primary_city ?? campus.city ?? "",

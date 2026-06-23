@@ -77,8 +77,13 @@ export default function CollegeCardItem(props: {
           {c.key_courses[0]}
         </p>
         <p class="mt-1 text-sm">
-          <span class="font-bold text-primary-700">{c.fee_range}</span>{" "}
-          <span class="text-[var(--color-muted)]">Total Fees</span>
+          <Show
+            when={c.fee_range}
+            fallback={<span class="font-bold text-primary-700">Fees on request</span>}
+          >
+            <span class="font-bold text-primary-700">{c.fee_range}</span>{" "}
+            <span class="text-[var(--color-muted)]">Total Fees</span>
+          </Show>
         </p>
 
         <Show when={c.approvals.length}>

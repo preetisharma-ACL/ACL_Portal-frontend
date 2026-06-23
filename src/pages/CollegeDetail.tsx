@@ -130,7 +130,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
           <>
             <Seo
               title={seoTitle()}
-              description={`${h().name}, ${h().city}. ${h().type} institute established ${h().established}. Courses, fees, admission process, placements, rankings and cutoffs, compiled for comparison.`}
+              description={`${h().name}, ${h().city}. ${h().type} institute${h().established ? ` established ${h().established}` : ""}. Courses, fees, admission process, placements, rankings and cutoffs, compiled for comparison.`}
               canonical={path()}
               og={h().cover}
               jsonLd={[breadcrumbLd(crumbs()), collegeLd(d(), basePath()), ...collegeCoursesLd(d(), basePath())]}
@@ -192,7 +192,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       </Show>
                     </div>
                     <p class="mt-2 text-sm text-[var(--color-muted)]">
-                      {h().city}, {h().state} · {h().type} · Established {h().established}
+                      {[h().city, h().type, h().established ? `Established ${h().established}` : ""]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </p>
                     <div class="mt-2 flex items-center gap-2 text-sm">
                       <span class="text-[var(--color-muted)]">Not sure what fits you?</span>
@@ -272,7 +274,34 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               <div class="min-w-0">
                 {/* Overview */}
                 <Block id="overview" title="Overview">
-                  <p class="text-[var(--color-ink)]/90 max-w-3xl">{d().overview.description}</p>
+                  <p class="text-[var(--color-ink)]/90 max-w-3xl">
+                    {d().overview.description ||
+                      `${h().name} is a ${h().type.toLowerCase()} institution in ${h().city}${
+                        h().established ? `, established in ${h().established}` : ""
+                      }${h().affiliation ? `, affiliated to ${h().affiliation}` : ""}.`}
+                  </p>
+                  {/* Key facts (render only what exists, so a sparse record still
+                      looks intentional). */}
+                  <dl class="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+                    <Show when={h().established}>
+                      <div class="flex gap-2">
+                        <dt class="text-[var(--color-muted)]">Established</dt>
+                        <dd class="font-medium">{h().established}</dd>
+                      </div>
+                    </Show>
+                    <Show when={h().affiliation}>
+                      <div class="flex gap-2">
+                        <dt class="text-[var(--color-muted)]">Affiliation</dt>
+                        <dd class="font-medium">{h().affiliation}</dd>
+                      </div>
+                    </Show>
+                    <Show when={h().approvals.length}>
+                      <div class="flex gap-2">
+                        <dt class="text-[var(--color-muted)]">Approvals</dt>
+                        <dd class="font-medium">{h().approvals.join(", ")}</dd>
+                      </div>
+                    </Show>
+                  </dl>
                   <Show when={d().overview.highlights.length}>
                     <ul class="mt-4 grid gap-2 sm:grid-cols-2">
                       <For each={d().overview.highlights}>

@@ -208,7 +208,8 @@ export interface CollegeDetail {
     logo: string;
     cover: string;
     type: string;
-    established: number;
+    established: number | null;
+    affiliation?: string;
     approvals: string[];
     rating: number;
     review_count: number;
