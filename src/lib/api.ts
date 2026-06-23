@@ -10,6 +10,7 @@ import * as mock from "./mock/data";
 import { formatFeeRange, inrShort, titleCaseType } from "./format";
 import { slugify } from "./slug";
 import type {
+  AnswerPayload,
   CityLite,
   CollegeCard,
   CollegeDetail,
@@ -21,6 +22,10 @@ import type {
   ListingResponse,
   OtpRequestResponse,
   OtpVerifyResponse,
+  QuestionPayload,
+  QuestionsResponse,
+  ReviewPayload,
+  ReviewsResponse,
   SearchResults,
   Stream,
   StreamDetail,
@@ -417,6 +422,36 @@ export function verifyOtp(request_id: string, otp: string): Promise<OtpVerifyRes
 export function submitLead(payload: LeadPayload): Promise<LeadResponse> {
   if (USE_MOCK) return Promise.resolve({ id: 1, status: "received" });
   return post<LeadResponse>("/leads/", payload);
+}
+
+/* ----------------------------------------------------- reviews & q&a (Phase A)
+ * GET lists are addressed by the "slug-id" form (the numeric-only path is
+ * POST-only on the backend). Creates POST to the numeric college/question id.
+ * All created content is moderated server-side: it is NOT live until approved. */
+
+export function getReviews(slugId: string, page = 1): Promise<ReviewsResponse> {
+  if (USE_MOCK) return Promise.resolve(mock.buildReviews());
+  return get<ReviewsResponse>(`/colleges/${slugId}/reviews/`, { page: String(page) });
+}
+
+export function getQuestions(slugId: string, page = 1): Promise<QuestionsResponse> {
+  if (USE_MOCK) return Promise.resolve(mock.buildQuestions());
+  return get<QuestionsResponse>(`/colleges/${slugId}/questions/`, { page: String(page) });
+}
+
+export function postReview(collegeId: number, payload: ReviewPayload) {
+  if (USE_MOCK) return Promise.resolve({ id: 0, status: "pending" });
+  return post(`/colleges/${collegeId}/reviews/`, payload);
+}
+
+export function postQuestion(collegeId: number, payload: QuestionPayload) {
+  if (USE_MOCK) return Promise.resolve({ id: 0, status: "pending" });
+  return post(`/colleges/${collegeId}/questions/`, payload);
+}
+
+export function postAnswer(questionId: number, payload: AnswerPayload) {
+  if (USE_MOCK) return Promise.resolve({ id: 0, status: "pending" });
+  return post(`/questions/${questionId}/answers/`, payload);
 }
 
 export { ApiError };

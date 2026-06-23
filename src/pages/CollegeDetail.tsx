@@ -5,6 +5,8 @@ import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import LeadForm from "~/components/LeadForm";
 import LeadTrigger from "~/components/LeadTrigger";
+import ReviewsBlock from "~/components/ReviewsBlock";
+import QABlock from "~/components/QABlock";
 import HeroSlider from "~/components/HeroSlider";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
@@ -33,6 +35,7 @@ const SECTIONS: { id: string; label: string }[] = [
   { id: "cutoffs", label: "Cutoffs" },
   { id: "gallery", label: "Gallery" },
   { id: "reviews", label: "Reviews" },
+  { id: "qa", label: "Q&A" },
   { id: "news", label: "News" },
   { id: "contact", label: "Contact" },
 ];
@@ -106,7 +109,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
           rankings: () => d().rankings.length > 0,
           cutoffs: () => d().cutoffs.length > 0,
           gallery: () => d().media.length > 0,
-          reviews: () => d().header.review_count > 0,
+          // Always reachable so the empty-state prompts and submission forms show.
+          reviews: () => true,
+          qa: () => true,
           news: () => true,
           contact: () => true,
         };
@@ -496,15 +501,15 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 </Block>
                 </Show>
 
-                {/* Reviews (placeholder in v1) */}
-                <Show when={visible.reviews()}>
-                <Block id="reviews" title="Reviews & Q&A">
-                  <p class="text-sm text-[var(--color-muted)]">
-                    Verified student reviews and a questions and answers section are coming soon.
-                    We publish reviews only after basic verification to keep this section useful.
-                  </p>
+                {/* Reviews */}
+                <Block id="reviews" title="Reviews">
+                  <ReviewsBlock slugId={props.slugId} collegeId={parsed().id} />
                 </Block>
-                </Show>
+
+                {/* Q&A */}
+                <Block id="qa" title="Questions & Answers">
+                  <QABlock slugId={props.slugId} collegeId={parsed().id} />
+                </Block>
 
                 {/* News (placeholder) */}
                 <Block id="news" title="News & Updates">
@@ -541,7 +546,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                         />
                       </Show>
                     </div>
-                    <Card class="p-5 bg-primary-50 border-primary-100">
+                    {/* Mobile/tablet: the guidance form lives inline here. On
+                        desktop it moves to the sticky side rail (below). */}
+                    <Card class="p-5 bg-primary-50 border-primary-100 lg:hidden">
                       <LeadForm
                         sourcePage={path()}
                         courseInterest={d().courses_fees[0]?.course}
@@ -558,27 +565,35 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 </p>
               </div>
 
-              {/* Sticky side rail: quick guidance CTA */}
+              {/* Sticky side rail: guidance form, then the compare CTA */}
               <aside class="hidden lg:block">
-                <Card class="p-5 lg:sticky lg:top-32 bg-primary-50 border-primary-100">
-                  <h2 class="font-semibold text-lg">Compare and decide</h2>
-                  <p class="mt-2 text-sm text-[var(--color-muted)]">
-                    Get free guidance on courses, fees and admission for {h().short_name} and
-                    similar institutes.
-                  </p>
-                  <div class="mt-4 grid gap-2">
-                    <LinkButton href="#contact" variant="accent" size="md">
-                      Get free guidance
-                    </LinkButton>
-                    <LinkButton
-                      href={listingPath("mba", "mba", citySlug())}
-                      variant="outline"
-                      size="md"
-                    >
-                      See other colleges in {h().city}
-                    </LinkButton>
-                  </div>
-                </Card>
+                <div class="lg:sticky lg:top-32 space-y-6">
+                  <Card class="p-5 bg-primary-50 border-primary-100">
+                    <LeadForm
+                      sourcePage={path()}
+                      courseInterest={d().courses_fees[0]?.course}
+                      defaultCity={d().header.city}
+                      heading="Get admission guidance for this institute"
+                      dense
+                    />
+                  </Card>
+                  <Card class="p-5 bg-primary-50 border-primary-100">
+                    <h2 class="font-semibold text-lg">Compare and decide</h2>
+                    <p class="mt-2 text-sm text-[var(--color-muted)]">
+                      Get free guidance on courses, fees and admission for {h().short_name} and
+                      similar institutes.
+                    </p>
+                    <div class="mt-4 grid gap-2">
+                      <LinkButton
+                        href={listingPath("mba", "mba", citySlug())}
+                        variant="outline"
+                        size="md"
+                      >
+                        See other colleges in {h().city}
+                      </LinkButton>
+                    </div>
+                  </Card>
+                </div>
               </aside>
             </div>
           </>

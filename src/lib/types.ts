@@ -260,6 +260,87 @@ export interface OtpVerifyResponse {
   token: string;
 }
 
+/* ----------------------------------------------------------- reviews & q&a */
+
+export interface CollegeReview {
+  id: number;
+  author_name: string;
+  author_context?: string;
+  overall_rating: number;
+  placements?: number;
+  faculty?: number;
+  infrastructure?: number;
+  campus_life?: number;
+  title: string;
+  body: string;
+  is_verified: boolean;
+  created_at: string;
+}
+
+export interface ReviewSummary {
+  count: number;
+  average_overall: number;
+  sub_averages: {
+    placements?: number;
+    faculty?: number;
+    infrastructure?: number;
+    campus_life?: number;
+  };
+  distribution: Record<string, number>;
+}
+
+export interface ReviewsResponse {
+  summary: ReviewSummary;
+  results: CollegeReview[];
+  pagination: Pagination;
+}
+
+export interface CollegeAnswer {
+  id: number;
+  author_name: string;
+  body: string;
+  is_official: boolean;
+  created_at: string;
+}
+
+export interface CollegeQuestion {
+  id: number;
+  author_name: string;
+  body: string;
+  created_at: string;
+  answers: CollegeAnswer[];
+}
+
+export interface QuestionsResponse {
+  results: CollegeQuestion[];
+  pagination: Pagination;
+}
+
+export interface ReviewPayload {
+  author_name: string;
+  author_context?: string;
+  overall_rating: number;
+  placements?: number;
+  faculty?: number;
+  infrastructure?: number;
+  campus_life?: number;
+  title: string;
+  body: string;
+  hp_field?: string;
+}
+
+export interface QuestionPayload {
+  author_name: string;
+  body: string;
+  hp_field?: string;
+}
+
+export interface AnswerPayload {
+  author_name: string;
+  body: string;
+  hp_field?: string;
+}
+
 export interface LeadPayload {
   name: string;
   mobile: string;

@@ -4,7 +4,7 @@
  * client and lead traffic does not hit the backend cross-origin from the browser.
  */
 import * as api from "./api";
-import type { LeadPayload } from "./types";
+import type { AnswerPayload, LeadPayload, QuestionPayload, ReviewPayload } from "./types";
 
 export async function searchAction(q: string) {
   "use server";
@@ -16,6 +16,27 @@ export async function searchAction(q: string) {
 export async function cityCollegesAction(city: string) {
   "use server";
   return api.getCityColleges(city);
+}
+
+/* Moderated submissions: created content is pending until approved in admin.
+ * Honeypot hits are silently dropped (a bot sees the same "pending" success). */
+
+export async function submitReviewAction(collegeId: number, payload: ReviewPayload) {
+  "use server";
+  if (payload.hp_field && payload.hp_field.trim() !== "") return { status: "rejected" };
+  return api.postReview(collegeId, payload);
+}
+
+export async function submitQuestionAction(collegeId: number, payload: QuestionPayload) {
+  "use server";
+  if (payload.hp_field && payload.hp_field.trim() !== "") return { status: "rejected" };
+  return api.postQuestion(collegeId, payload);
+}
+
+export async function submitAnswerAction(questionId: number, payload: AnswerPayload) {
+  "use server";
+  if (payload.hp_field && payload.hp_field.trim() !== "") return { status: "rejected" };
+  return api.postAnswer(questionId, payload);
 }
 
 export async function requestOtpAction(mobile: string) {

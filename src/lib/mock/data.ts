@@ -22,6 +22,8 @@ import type {
   ExamLite,
   FilterOption,
   ListingResponse,
+  QuestionsResponse,
+  ReviewsResponse,
   SearchResults,
   Specialization,
   Stream,
@@ -792,6 +794,75 @@ export function buildListing(course: string, city: string): ListingResponse {
     results,
     pagination: { page: 1, page_size: 6, total, has_next: total > 6 },
     faqs: total ? faqsFor(courseLabel, cityLabel) : [],
+  };
+}
+
+/* --------------------------------------------- contract: reviews & q&a */
+
+export function buildReviews(): ReviewsResponse {
+  const results = [
+    {
+      id: 1,
+      author_name: "Aarav Mehta",
+      author_context: "MBA, Batch 2023",
+      overall_rating: 4.5,
+      placements: 4.5,
+      faculty: 4,
+      infrastructure: 4,
+      campus_life: 4.5,
+      title: "Strong peer group and supportive faculty",
+      body: "The two years were demanding in a good way. Faculty were approachable and the placement cell prepared us well with mock interviews and resume reviews.",
+      is_verified: true,
+      created_at: "2026-05-12T10:00:00+05:30",
+    },
+    {
+      id: 2,
+      author_name: "Diya Sharma",
+      author_context: "Alumna",
+      overall_rating: 4,
+      placements: 3.5,
+      faculty: 4.5,
+      infrastructure: 3.5,
+      campus_life: 4,
+      title: "Good academics, infrastructure improving",
+      body: "Teaching quality was the highlight for me. Labs and the library are being upgraded. Overall a solid place to study and grow.",
+      is_verified: false,
+      created_at: "2026-04-02T10:00:00+05:30",
+    },
+  ];
+  return {
+    summary: {
+      count: results.length,
+      average_overall: 4.25,
+      sub_averages: { placements: 4, faculty: 4.25, infrastructure: 3.75, campus_life: 4.25 },
+      distribution: { "1": 0, "2": 0, "3": 0, "4": 1, "5": 1 },
+    },
+    results,
+    pagination: { page: 1, page_size: 10, total: results.length, has_next: false },
+  };
+}
+
+export function buildQuestions(): QuestionsResponse {
+  const results = [
+    {
+      id: 1,
+      author_name: "Prospective applicant",
+      body: "What is the typical eligibility for admission here?",
+      created_at: "2026-04-20T10:00:00+05:30",
+      answers: [
+        {
+          id: 1,
+          author_name: "ACL Team",
+          body: "Eligibility follows the affiliating body and the relevant entrance exam. Check the course page for the specific requirement and confirm with the college.",
+          is_official: true,
+          created_at: "2026-04-21T10:00:00+05:30",
+        },
+      ],
+    },
+  ];
+  return {
+    results,
+    pagination: { page: 1, page_size: 10, total: results.length, has_next: false },
   };
 }
 
