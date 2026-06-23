@@ -103,7 +103,7 @@ export default function HeroSearch() {
         <form
           role="search"
           onSubmit={onSubmit}
-          class="flex items-center gap-2 bg-white rounded-[var(--radius-lg)] p-1.5 shadow-lg"
+          class="flex items-center gap-2 bg-white rounded-[var(--radius-lg)] p-1.5 shadow-lg ring-1 ring-transparent transition-shadow focus-within:ring-2 focus-within:ring-primary-300"
         >
           <input
             name="q"
@@ -116,11 +116,11 @@ export default function HeroSearch() {
             placeholder="Try MBA colleges in Varanasi, or CAT exam"
             aria-label="Search colleges, courses or exams"
             aria-expanded={open() && hasSuggestions()}
-            class="flex-1 px-3 py-2.5 outline-none text-[var(--color-ink)] min-w-0"
+            class="flex-1 px-3 py-2.5 outline-none focus:outline-none focus-visible:outline-none text-[var(--color-ink)] min-w-0"
           />
           <button
             type="submit"
-            class="shrink-0 bg-accent-500 hover:bg-accent-400 text-white font-semibold px-5 py-2.5 rounded-[var(--radius-md)]"
+            class="shrink-0 bg-accent-500 hover:bg-accent-400 text-white font-semibold px-5 py-2.5 rounded-[var(--radius-md)] focus-visible:outline-none"
           >
             Search
           </button>

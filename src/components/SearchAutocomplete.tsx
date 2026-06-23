@@ -75,7 +75,7 @@ export default function SearchAutocomplete(props: {
         action="/search"
         method="get"
         onSubmit={submit}
-        class="flex items-center gap-2 bg-[var(--color-surface)] rounded-[var(--radius-md)] border border-[var(--color-line)] p-1.5"
+        class="flex items-center gap-2 bg-[var(--color-surface)] rounded-[var(--radius-md)] border border-[var(--color-line)] p-1.5 ring-1 ring-transparent transition-shadow focus-within:border-primary-300 focus-within:ring-2 focus-within:ring-primary-200"
       >
         <span aria-hidden="true" class="pl-2 text-[var(--color-muted)]">
           ⌕
@@ -91,7 +91,7 @@ export default function SearchAutocomplete(props: {
           placeholder={props.placeholder ?? "Search colleges, courses or exams"}
           aria-label="Search colleges, courses or exams"
           aria-expanded={open() && hasSuggestions()}
-          class="flex-1 bg-transparent py-2 px-1 outline-none text-sm min-w-0 text-[var(--color-ink)] placeholder:text-[var(--color-muted)]"
+          class="flex-1 bg-transparent py-2 px-1 outline-none focus:outline-none focus-visible:outline-none text-sm min-w-0 text-[var(--color-ink)] placeholder:text-[var(--color-muted)]"
         />
         <button
           type="submit"
