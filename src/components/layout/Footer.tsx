@@ -49,7 +49,7 @@ export default function Footer() {
         <div class="grid gap-10 md:grid-cols-4">
           <div>
             <div class="mb-3">
-              <span class="inline-flex bg-white rounded-[var(--radius-md)] px-3 py-2">
+              <span class="inline-flex px-3 py-2">
                 <img src="/V2-aajneeti-logo.png" alt={SITE_NAME} class="h-10 w-auto" />
               </span>
             </div>
