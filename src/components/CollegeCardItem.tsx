@@ -4,6 +4,7 @@ import type { CollegeCard } from "~/lib/types";
 import { track } from "~/lib/analytics";
 import { Badge } from "./ui";
 import CollegeLogo from "./CollegeLogo";
+import CompareToggle from "./CompareToggle";
 
 /** Cover photos shipped in /public, picked deterministically so each card is stable. */
 const COVERS = ["/bg-image.jpg", "/bg-image2.jpg", "/bg-image3.jpg"];
@@ -125,6 +126,12 @@ export default function CollegeCardItem(props: {
             </button>
           </Show>
         </div>
+
+        {/* Add to compare */}
+        <CompareToggle
+          college={{ id: c.id, slug: c.slug, name: c.name, logo: c.logo, city: c.city, type: c.type }}
+          class="mt-3 w-full"
+        />
       </div>
     </article>
   );

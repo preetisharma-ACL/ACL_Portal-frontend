@@ -7,6 +7,7 @@ import LeadForm from "~/components/LeadForm";
 import LeadTrigger from "~/components/LeadTrigger";
 import ReviewsBlock from "~/components/ReviewsBlock";
 import QABlock from "~/components/QABlock";
+import CompareToggle from "~/components/CompareToggle";
 import HeroSlider from "~/components/HeroSlider";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
@@ -209,9 +210,17 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       label="Get admission guidance"
                       variant="accent"
                     />
-                    <LinkButton href={listingPath("mba", "mba", citySlug())} variant="outline">
-                      Compare colleges
-                    </LinkButton>
+                    <CompareToggle
+                      college={{
+                        id: parsed().id,
+                        slug: parsed().slug,
+                        name: h().name,
+                        logo: h().logo,
+                        city: h().city,
+                        type: h().type,
+                      }}
+                      variant="button"
+                    />
                     <LeadTrigger
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}

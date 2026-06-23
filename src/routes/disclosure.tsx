@@ -48,5 +48,5 @@ export default function Disclosure() {
         review it.
       </p>
     </LegalPage>
-  );
+  ); 
 }

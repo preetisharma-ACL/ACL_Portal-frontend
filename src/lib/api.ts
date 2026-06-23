@@ -14,6 +14,7 @@ import type {
   CityLite,
   CollegeCard,
   CollegeDetail,
+  CompareResponse,
   CourseDetail,
   ExamDetail,
   LeadPayload,
@@ -393,6 +394,19 @@ export function getTopColleges(): Promise<CollegeCard[]> {
   return get<any[]>("/colleges/top/")
     .then((arr) => (arr ?? []).map(mapCard))
     .catch(() => []);
+}
+
+/* -------------------------------------------------------------------- compare
+ * GET /colleges/compare/?ids=a,b (2 to 4 valid ids; the backend 400s otherwise
+ * and silently drops unknown ids when >=2 valid remain). */
+
+export function getCompare(ids: number[]): Promise<CompareResponse> {
+  if (USE_MOCK) return Promise.resolve(mock.buildCompare(ids));
+  // The backend 400s when fewer than 2 valid ids remain; degrade to empty so the
+  // page can show the "add more colleges" prompt instead of an error screen.
+  return get<CompareResponse>("/colleges/compare/", { ids: ids.join(",") }).catch(() => ({
+    colleges: [],
+  }));
 }
 
 /* --------------------------------------------------------------------- search */

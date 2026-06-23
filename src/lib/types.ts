@@ -260,6 +260,37 @@ export interface OtpVerifyResponse {
   token: string;
 }
 
+/* --------------------------------------------------------------- compare */
+
+export interface CompareCollege {
+  id: number;
+  slug: string;
+  name: string;
+  logo: string | null;
+  city: string | null;
+  type: string | null;
+  established_year: number | null;
+  approvals: string[];
+  affiliation: string | null;
+  rating: { average: number | null; count: number } | null;
+  fee_range: { min: number | null; max: number | null } | null;
+  key_courses: { name: string; slug: string }[];
+  placements: {
+    highest: number | null;
+    average: number | null;
+    median: number | null;
+    placement_pct: number | null;
+    year: number | null;
+  } | null;
+  ranking: { agency: string | null; rank: number | null; year: number | null } | null;
+  seats: number | null;
+  exams_accepted: string[];
+}
+
+export interface CompareResponse {
+  colleges: CompareCollege[];
+}
+
 /* ----------------------------------------------------------- reviews & q&a */
 
 export interface CollegeReview {

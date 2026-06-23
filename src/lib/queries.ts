@@ -75,6 +75,11 @@ export const questionsQuery = query(async (slugId: string, page: number) => {
   return api.getQuestions(slugId, page);
 }, "questions");
 
+export const compareQuery = query(async (ids: number[]) => {
+  "use server";
+  return api.getCompare(ids);
+}, "compare");
+
 export const searchQuery = query(async (q: string) => {
   "use server";
   if (!q || q.trim().length < 1) return { colleges: [], courses: [], exams: [] };

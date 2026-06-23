@@ -5,6 +5,7 @@ import { ErrorBoundary, Show, Suspense } from "solid-js";
 import "./app.css";
 import Header from "~/components/layout/Header";
 import Footer from "~/components/layout/Footer";
+import CompareTray from "~/components/CompareTray";
 import Analytics from "~/components/Analytics";
 import { ErrorState, LoadingBlock, NotFound } from "~/components/states";
 import { USE_MOCK, NOINDEX } from "~/lib/config";
@@ -48,6 +49,7 @@ export default function App() {
             </ErrorBoundary>
           </main>
           <Footer />
+          <CompareTray />
           <Analytics />
         </MetaProvider>
       )}

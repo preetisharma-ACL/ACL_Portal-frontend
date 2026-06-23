@@ -20,6 +20,7 @@ import type {
   CourseLite,
   ExamDetail,
   ExamLite,
+  CompareResponse,
   FilterOption,
   ListingResponse,
   QuestionsResponse,
@@ -795,6 +796,45 @@ export function buildListing(course: string, city: string): ListingResponse {
     pagination: { page: 1, page_size: 6, total, has_next: total > 6 },
     faqs: total ? faqsFor(courseLabel, cityLabel) : [],
   };
+}
+
+/* ----------------------------------------------------- contract: compare */
+
+export function buildCompare(ids: number[]): CompareResponse {
+  const cities = ["Varanasi", "Lucknow", "Noida", "Gurugram"];
+  const types = ["DEEMED", "GOVT", "PRIVATE", "DEEMED"];
+  const colleges = ids.slice(0, 4).map((id, i) => {
+    const a = Math.abs(id);
+    const base = 100000 + (a % 5) * 40000;
+    return {
+      id,
+      slug: `sample-college-${id}`,
+      name: `Sample College ${id}`,
+      logo: null,
+      city: cities[i % 4],
+      type: types[i % 4],
+      established_year: 1990 + (a % 30),
+      approvals: ["AICTE", "UGC"],
+      affiliation: "State University",
+      rating: { average: 3.5 + (a % 3) * 0.5, count: 3 + (a % 10) },
+      fee_range: { min: base, max: base + 30000 },
+      key_courses: [
+        { name: "MBA", slug: "mba" },
+        { name: "BBA", slug: "bba" },
+      ],
+      placements: {
+        highest: 1200000 + (a % 6) * 200000,
+        average: 500000 + (a % 4) * 100000,
+        median: 480000,
+        placement_pct: 60 + (a % 35),
+        year: 2025,
+      },
+      ranking: { agency: "NIRF", rank: 30 + (a % 60), year: 2025 },
+      seats: 120 + (a % 6) * 30,
+      exams_accepted: ["CAT", "MAT"],
+    };
+  });
+  return { colleges };
 }
 
 /* --------------------------------------------- contract: reviews & q&a */
