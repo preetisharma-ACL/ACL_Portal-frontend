@@ -11,9 +11,9 @@
 import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import { A, createAsync } from "@solidjs/router";
-import { requestOtpAction, verifyOtpAction, submitLeadAction } from "~/lib/actions";
+import { submitLeadAction } from "~/lib/actions";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
-import { CONSENT_TEXT, CONSENT_TEXT_VERSION, USE_MOCK } from "~/lib/config";
+import { CONSENT_TEXT, CONSENT_TEXT_VERSION } from "~/lib/config";
 import { track } from "~/lib/analytics";
 import type { LeadPayload } from "~/lib/types";
 import { Button } from "./ui";
@@ -99,11 +99,6 @@ export default function LeadForm(props: LeadFormProps) {
   const [consent, setConsent] = createSignal(false);
   const [hpField, setHpField] = createSignal(""); // honeypot, must stay empty
 
-  const [otpRequested, setOtpRequested] = createSignal(false);
-  const [requestId, setRequestId] = createSignal("");
-  const [otp, setOtp] = createSignal("");
-  const [otpVerified, setOtpVerified] = createSignal(false);
-
   const [busy, setBusy] = createSignal(false);
   const [error, setError] = createSignal("");
   const [success, setSuccess] = createSignal(false);
@@ -138,49 +133,9 @@ export default function LeadForm(props: LeadFormProps) {
   const mobileValid = () => /^[6-9]\d{9}$/.test(mobile());
   // City is optional on the backend, so it does not gate submission.
   const requiredFilled = () => name().trim().length >= 2 && mobileValid();
-  const canSubmit = () => requiredFilled() && consent() && otpVerified() && !busy();
-
-  async function onSendOtp() {
-    setError("");
-    if (!mobileValid()) {
-      setError("Enter a valid 10 digit mobile number.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const r = await requestOtpAction(mobile());
-      setRequestId(r.request_id);
-      setOtpRequested(true);
-      track("lead_otp_request", { source_page: props.sourcePage });
-    } catch {
-      setError("Could not send the OTP. Please try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function onVerifyOtp() {
-    setError("");
-    if (otp().trim().length < 4) {
-      setError("Enter the OTP sent to your mobile.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const r = await verifyOtpAction(requestId(), otp().trim());
-      if (r.verified) {
-        setOtpVerified(true);
-        setRequestId(r.token); // carry the verified token forward as otp_token
-        track("lead_otp_verified", { source_page: props.sourcePage });
-      } else {
-        setError("That OTP did not match. Please check and try again.");
-      }
-    } catch {
-      setError("Could not verify the OTP. Please try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
+  // No OTP step: the backend accepts leads without one (LEAD_OTP_REQUIRED=false).
+  // Submission is gated on the required fields + the mandatory consent checkbox.
+  const canSubmit = () => requiredFilled() && consent() && !busy();
 
   async function onSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -196,10 +151,6 @@ export default function LeadForm(props: LeadFormProps) {
     }
     if (!consent()) {
       setError("Please tick the consent box so we know how to reach you.");
-      return;
-    }
-    if (!otpVerified()) {
-      setError("Please verify your mobile number with the OTP first.");
       return;
     }
     if (!requiredFilled()) {
@@ -231,15 +182,13 @@ export default function LeadForm(props: LeadFormProps) {
       source_page: props.sourcePage,
       utm,
       consent: { checked: consent(), text_version: CONSENT_TEXT_VERSION },
-      otp_token: requestId(), // holds the verified token after onVerifyOtp
       hp_field: hpField(), // honeypot dropped server-side, never short-circuits here
     };
 
     setBusy(true);
     try {
-      // Always POST the lead. Success is shown ONLY when the lead is created
-      // (a real response, not the honeypot "rejected" sentinel) — never off the
-      // back of OTP verify or a swallowed error.
+      // Success is shown ONLY when the lead is created (a real response, not the
+      // honeypot "rejected" sentinel) — never off the back of a swallowed error.
       const res = (await submitLeadAction(payload)) as { status?: string } | null;
       if (res && res.status !== "rejected") {
         if (!isServer) sessionStorage.setItem("acl_lead_ts", String(Date.now()));
@@ -301,74 +250,20 @@ export default function LeadForm(props: LeadFormProps) {
             />
           </label>
 
-          {/* Mobile + OTP */}
+          {/* Mobile (no OTP step; backend accepts leads without verification) */}
           <label class="block sm:col-span-2">
             <span class="block text-sm font-medium mb-1">Mobile number</span>
-            <div class="flex gap-2">
-              <input
-                class={inputClass}
-                type="tel"
-                inputmode="numeric"
-                autocomplete="tel"
-                placeholder="10 digit mobile"
-                value={mobile()}
-                onInput={(e) => {
-                  setMobile(e.currentTarget.value.replace(/\D/g, "").slice(0, 10));
-                  setOtpVerified(false);
-                  setOtpRequested(false);
-                }}
-                disabled={otpVerified()}
-                required
-              />
-              <Show when={!otpVerified()}>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onSendOtp}
-                  disabled={!mobileValid() || busy()}
-                  class="shrink-0"
-                >
-                  {otpRequested() ? "Resend" : "Send OTP"}
-                </Button>
-              </Show>
-              <Show when={otpVerified()}>
-                <span class="shrink-0 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-success)]">
-                  ✓ Verified
-                </span>
-              </Show>
-            </div>
+            <input
+              class={inputClass}
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel"
+              placeholder="10 digit mobile"
+              value={mobile()}
+              onInput={(e) => setMobile(e.currentTarget.value.replace(/\D/g, "").slice(0, 10))}
+              required
+            />
           </label>
-
-          <Show when={otpRequested() && !otpVerified()}>
-            <label class="block sm:col-span-2">
-              <span class="block text-sm font-medium mb-1">Enter OTP</span>
-              <div class="flex gap-2">
-                <input
-                  class={inputClass}
-                  type="text"
-                  inputmode="numeric"
-                  autocomplete="one-time-code"
-                  placeholder="6 digit OTP"
-                  value={otp()}
-                  onInput={(e) => setOtp(e.currentTarget.value.replace(/\D/g, "").slice(0, 6))}
-                />
-                <Button
-                  type="button"
-                  variant="primary"
-                  onClick={onVerifyOtp}
-                  disabled={otp().trim().length < 4 || busy()}
-                  class="shrink-0"
-                >
-                  Verify
-                </Button>
-              </div>
-              <Show when={USE_MOCK}>
-                <span class="mt-1 block text-xs text-[var(--color-muted)]">
-                  Preview mode: enter any 6 digit code to continue.
-                </span>
-              </Show>
-            </label>
-          </Show>
 
           <label class="block">
             <span class="block text-sm font-medium mb-1">Email</span>
@@ -486,7 +381,7 @@ export default function LeadForm(props: LeadFormProps) {
         </Button>
 
         <p class="mt-2 text-xs text-[var(--color-muted)]">
-          Verify your mobile and tick consent to submit.
+          Tick consent to submit.
         </p>
       </form>
     </Show>

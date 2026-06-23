@@ -87,7 +87,7 @@ export default function Home() {
             <div class="mt-8">
               <HeroSearch />
             </div>
-          </div>
+          </div>  
 
           {/* Prominent stream entry cards: desktop only (on mobile/tablet they
               appear in their own section just below the hero) */}

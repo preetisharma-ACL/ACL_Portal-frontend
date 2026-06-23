@@ -493,7 +493,8 @@ export interface LeadPayload {
   source_page: string;
   utm: Record<string, string>;
   consent: { checked: boolean; text_version: string };
-  otp_token: string;
+  /** Optional: only sent when lead OTP is required (LEAD_OTP_REQUIRED on backend). */
+  otp_token?: string;
   hp_field: string;
 }
 
