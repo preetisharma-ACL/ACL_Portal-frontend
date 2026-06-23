@@ -2,6 +2,7 @@ import { A, createAsync } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
+import SlotImage from "~/components/SlotImage";
 import { Section } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { streamQuery } from "~/lib/queries";
@@ -35,10 +36,10 @@ export default function StreamLanding(props: { slug: string }) {
 
             {/* Breadcrumb hero banner with a cover photo, like the listing page */}
             <section class="relative overflow-hidden bg-neutral-900 text-white">
-              <img
-                src="/bg-image2.jpg"
-                alt=""
-                class="absolute inset-0 h-full w-full object-cover"
+              {/* Managed stream banner slot, falling back to the bundled image. */}
+              <SlotImage
+                slot={[`stream_${props.slug}`, `${props.slug}_banner`, `stream_banner_${props.slug}`, "stream_banner"]}
+                fallback="/bg-image2.jpg"
               />
               <div
                 aria-hidden="true"

@@ -3,6 +3,7 @@ import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import ArticleCard from "~/components/ArticleCard";
+import SlotImage from "~/components/SlotImage";
 import { EmptyState } from "~/components/states";
 import { articleCategoriesQuery, articlesQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
@@ -68,8 +69,9 @@ export default function ArticlesListing(props: { category?: string; author?: str
         jsonLd={[breadcrumbLd(crumbs())]}
       />
 
-      <section class="bg-gradient-to-br from-primary-900 to-primary-700 text-white">
-        <div class="container-x py-8 md:py-10">
+      <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">
+        <SlotImage slot="articles_header" overlay />
+        <div class="container-x py-8 md:py-10 relative z-10">
           <Breadcrumbs crumbs={crumbs()} light />
           <h1 class="mt-3 text-2xl md:text-3xl font-extrabold">{heading()}</h1>
           <p class="mt-2 max-w-2xl text-white/80">

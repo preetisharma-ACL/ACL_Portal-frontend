@@ -24,6 +24,11 @@ export const citiesQuery = query(async () => {
   return api.getCities();
 }, "cities");
 
+export const siteImagesQuery = query(async () => {
+  "use server";
+  return api.getSiteImages();
+}, "site-images");
+
 export const courseQuery = query(async (slug: string) => {
   "use server";
   return api.getCourse(slug);

@@ -1,6 +1,9 @@
-import { type JSX } from "solid-js";
+import { Show, type JSX } from "solid-js";
+import { createAsync } from "@solidjs/router";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
+import SlotImage from "~/components/SlotImage";
+import { siteImagesQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
 
 /**
@@ -13,12 +16,16 @@ export default function LegalPage(props: {
   description: string;
   path: string;
   updated: string;
+  /** Optional managed header-image slot; a banner shows only when uploaded. */
+  headerSlot?: string;
   children: JSX.Element;
 }) {
   const crumbs = [
     { name: "Home", path: "/" },
     { name: props.title, path: props.path },
   ];
+  const images = createAsync(() => siteImagesQuery());
+  const hasBanner = () => !!(props.headerSlot && images()?.[props.headerSlot]?.image_url);
   return (
     <>
       <Seo
@@ -29,6 +36,11 @@ export default function LegalPage(props: {
       />
       <div class="container-x py-8 md:py-12">
         <Breadcrumbs crumbs={crumbs} />
+        <Show when={hasBanner()}>
+          <div class="relative mt-4 h-40 overflow-hidden rounded-[var(--radius-lg)] md:h-52">
+            <SlotImage slot={props.headerSlot!} />
+          </div>
+        </Show>
         <article class="mt-4 max-w-3xl legal-prose">
           <h1 class="text-3xl font-bold">{props.title}</h1>
           <p class="mt-1 text-sm text-[var(--color-muted)]">Last updated {props.updated}</p>

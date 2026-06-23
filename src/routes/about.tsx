@@ -8,6 +8,7 @@ export default function About() {
       description={`${SITE_NAME} is an independent education discovery platform operated by AAJneeti Connect Ltd. Learn how we compile and present college, course and exam information.`}
       path="/about"
       updated="18 June 2026"
+      headerSlot="about_header"
     >
       <p>
         {SITE_NAME} is an independent education discovery platform. We help students and

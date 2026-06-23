@@ -7,6 +7,7 @@ import FilterRail from "~/components/FilterRail";
 import Faq from "~/components/Faq";
 import LeadForm from "~/components/LeadForm";
 import HeroSlider from "~/components/HeroSlider";
+import SlotImage from "~/components/SlotImage";
 import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
@@ -123,6 +124,8 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
             {/* Hero banner with crossfading images */}
             <section class="relative overflow-hidden bg-neutral-900 text-white">
               <HeroSlider />
+              {/* Managed listing_header slot covers the slider when uploaded. */}
+              <SlotImage slot="listing_header" />
               <div
                 aria-hidden="true"
                 class="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/60 to-black/35"

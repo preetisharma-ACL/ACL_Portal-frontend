@@ -32,6 +32,7 @@ import type {
   ReviewPayload,
   ReviewsResponse,
   SearchResults,
+  SiteImages,
   Stream,
   StreamDetail,
 } from "./types";
@@ -310,6 +311,16 @@ export function getStream(slug: string): Promise<StreamDetail> {
 export function getCities(): Promise<CityLite[]> {
   if (USE_MOCK) return Promise.resolve(mock.CITIES);
   return get<CityLite[]>("/taxonomy/cities/");
+}
+
+/* --------------------------------------------------------------- site images
+ * Backend-managed background/hero slots. Returns only active uploaded slots
+ * ({slot: {image_url, alt, caption}}); the UI falls back to bundled defaults
+ * for any slot not present. Resilient: a failure must not blank a hero. */
+
+export function getSiteImages(): Promise<SiteImages> {
+  if (USE_MOCK) return Promise.resolve({});
+  return get<SiteImages>("/site-images/").catch(() => ({}));
 }
 
 /* -------------------------------------------------------------------- courses */

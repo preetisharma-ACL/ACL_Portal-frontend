@@ -261,6 +261,19 @@ export interface OtpVerifyResponse {
   token: string;
 }
 
+/* ------------------------------------------------------------ site images */
+
+export interface SiteImage {
+  image_url: string;
+  alt?: string;
+  caption?: string;
+}
+
+/** Backend returns only active slots that have an uploaded image, as a
+ *  {slot: {image_url, alt, caption}} map. Any slot not present uses a bundled
+ *  default in the UI. */
+export type SiteImages = Record<string, SiteImage>;
+
 /* ---------------------------------------------------------------- accounts */
 
 export type TrackingStatus =

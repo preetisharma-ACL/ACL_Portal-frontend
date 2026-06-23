@@ -3,6 +3,7 @@ import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
+import SlotImage from "~/components/SlotImage";
 import StreamIcon from "~/components/StreamIcon";
 import StreamExplorer from "~/components/StreamExplorer";
 import CityCarousel from "~/components/CityCarousel";
@@ -70,6 +71,9 @@ export default function Home() {
         {/* Crossfading background images, clipped to the hero */}
         <div aria-hidden="true" class="absolute inset-0 overflow-hidden">
           <HeroSlider />
+          {/* Managed home_hero slot covers the slider when uploaded; otherwise
+              the bundled slider shows (no redeploy needed to swap it). */}
+          <SlotImage slot="home_hero" />
           {/* Minimal black overlay: keeps the copy readable, left-weighted so the
               image still shows through on the right. */}
           <div class="absolute inset-0 z-[1] bg-gradient-to-r from-black/70 via-black/45 to-black/20" />

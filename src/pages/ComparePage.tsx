@@ -3,6 +3,7 @@ import { For, Show, createEffect, type JSX } from "solid-js";
 import Seo from "~/components/Seo";
 import CollegeLogo from "~/components/CollegeLogo";
 import LeadForm from "~/components/LeadForm";
+import SlotImage from "~/components/SlotImage";
 import { Card } from "~/components/ui";
 import { compareQuery } from "~/lib/queries";
 import { formatFeeRange, inrShort, titleCaseType } from "~/lib/format";
@@ -210,8 +211,9 @@ export default function ComparePage() {
         canonical="/compare"
       />
 
-      <section class="bg-gradient-to-br from-primary-900 to-primary-700 text-white">
-        <div class="container-x py-8 md:py-10">
+      <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">
+        <SlotImage slot="compare_header" overlay />
+        <div class="container-x py-8 md:py-10 relative z-10">
           <h1 class="text-2xl md:text-3xl font-extrabold">Compare colleges</h1>
           <p class="mt-2 text-white/80">
             Side by side on fees, placements, ranking and more. Best value in each row is marked.
