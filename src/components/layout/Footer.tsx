@@ -50,7 +50,7 @@ export default function Footer() {
           <div>
             <div class="mb-3">
               <span class="inline-flex bg-white rounded-[var(--radius-md)] px-3 py-2">
-                <img src="/acl-logo.png" alt={SITE_NAME} class="h-7 w-auto" />
+                <img src="/V2-aajneeti-logo.png" alt={SITE_NAME} class="h-10 w-auto" />
               </span>
             </div>
             <p class="text-sm text-white/70">
