@@ -4,8 +4,9 @@
  * fetched during SSR (and over the SolidStart server on client navigation),
  * never directly from the browser. This is what makes every page indexable.
  */
-import { query } from "@solidjs/router";
+import { query, redirect } from "@solidjs/router";
 import * as api from "./api";
+import * as account from "./account";
 import type { CourseLite, ListingQuery } from "./types";
 
 export const streamsQuery = query(async () => {
@@ -89,6 +90,37 @@ export const articleCategoriesQuery = query(async () => {
   "use server";
   return api.getArticleCategories();
 }, "article-categories");
+
+/* ---------------------------------------------------------------- accounts */
+
+export const meQuery = query(async () => {
+  "use server";
+  return account.getCurrentUser();
+}, "me");
+
+/** Like meQuery but redirects to the login prompt when not authenticated.
+ *  Used to guard the /account pages (SSR-issued redirect). */
+export const requireMeQuery = query(async () => {
+  "use server";
+  const user = await account.getCurrentUser();
+  if (!user) throw redirect("/?login=1");
+  return user;
+}, "require-me");
+
+export const savedQuery = query(async () => {
+  "use server";
+  return account.getSaved();
+}, "saved");
+
+export const trackingQuery = query(async () => {
+  "use server";
+  return account.getTracking();
+}, "tracking");
+
+export const myLeadsQuery = query(async () => {
+  "use server";
+  return account.getMyLeads();
+}, "my-leads");
 
 export const compareQuery = query(async (ids: number[]) => {
   "use server";

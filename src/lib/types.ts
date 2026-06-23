@@ -260,6 +260,50 @@ export interface OtpVerifyResponse {
   token: string;
 }
 
+/* ---------------------------------------------------------------- accounts */
+
+export type TrackingStatus =
+  | "INTERESTED"
+  | "INQUIRED"
+  | "APPLIED"
+  | "ADMITTED"
+  | "NOT_INTERESTED";
+
+export interface AuthUser {
+  phone: string;
+  name?: string;
+  email?: string;
+  education_background?: string;
+  preferences?: { streams?: string[]; cities?: string[] } | Record<string, unknown> | null;
+}
+
+export interface ProfilePatch {
+  name?: string;
+  email?: string;
+  education_background?: string;
+  preferences?: { streams?: string[]; cities?: string[] };
+}
+
+export interface CollegeInterest {
+  id: number;
+  college_id: number;
+  college_name: string;
+  college_slug: string;
+  status: TrackingStatus;
+  notes?: string;
+  updated_at: string;
+}
+
+export interface MyLead {
+  id?: number;
+  college_name?: string;
+  college?: string;
+  course_interest?: string;
+  city?: string;
+  status?: string;
+  created_at?: string;
+}
+
 /* --------------------------------------------------------------- editorial */
 
 export interface ArticleCategory {

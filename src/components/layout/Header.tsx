@@ -2,6 +2,7 @@ import { A, createAsync } from "@solidjs/router";
 import { createSignal, For } from "solid-js";
 import { SITE_NAME } from "~/lib/config";
 import { streamsQuery } from "~/lib/queries";
+import AccountMenu from "~/components/AccountMenu";
 
 function SearchIcon(props: { class?: string }) {
   return (
@@ -82,6 +83,9 @@ export default function Header() {
             <SearchIcon />
             Search
           </A>
+          <span class="ml-1">
+            <AccountMenu />
+          </span>
         </nav>
 
         <button
@@ -130,6 +134,9 @@ export default function Header() {
               <SearchIcon />
               Search
             </A>
+            <div class="px-3 py-2" onClick={() => setOpen(false)}>
+              <AccountMenu />
+            </div>
           </nav>
         </div>
       </div>

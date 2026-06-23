@@ -9,6 +9,8 @@ import ReviewsBlock from "~/components/ReviewsBlock";
 import QABlock from "~/components/QABlock";
 import CompareToggle from "~/components/CompareToggle";
 import RelatedArticles from "~/components/RelatedArticles";
+import SaveButton from "~/components/SaveButton";
+import TrackStatus from "~/components/TrackStatus";
 import HeroSlider from "~/components/HeroSlider";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
@@ -216,6 +218,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       label="Get admission guidance"
                       variant="accent"
                     />
+                    <SaveButton collegeId={parsed().id} variant="button" />
                     <CompareToggle
                       college={{
                         id: parsed().id,
@@ -585,6 +588,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               {/* Sticky side rail: guidance form, then the compare CTA */}
               <aside class="hidden lg:block">
                 <div class="lg:sticky lg:top-32 space-y-6">
+                  <Card class="p-5">
+                    <TrackStatus collegeId={parsed().id} />
+                  </Card>
                   <Card class="p-5 bg-primary-50 border-primary-100">
                     <LeadForm
                       sourcePage={path()}

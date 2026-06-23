@@ -5,6 +5,7 @@ import { track } from "~/lib/analytics";
 import { Badge } from "./ui";
 import CollegeLogo from "./CollegeLogo";
 import CompareToggle from "./CompareToggle";
+import SaveButton from "./SaveButton";
 
 /** Cover photos shipped in /public, picked deterministically so each card is stable. */
 const COVERS = ["/bg-image.jpg", "/bg-image2.jpg", "/bg-image3.jpg"];
@@ -127,11 +128,14 @@ export default function CollegeCardItem(props: {
           </Show>
         </div>
 
-        {/* Add to compare */}
-        <CompareToggle
-          college={{ id: c.id, slug: c.slug, name: c.name, logo: c.logo, city: c.city, type: c.type }}
-          class="mt-3 w-full"
-        />
+        {/* Save + add to compare */}
+        <div class="mt-3 grid grid-cols-2 gap-2">
+          <SaveButton collegeId={c.id} class="w-full" />
+          <CompareToggle
+            college={{ id: c.id, slug: c.slug, name: c.name, logo: c.logo, city: c.city, type: c.type }}
+            class="w-full"
+          />
+        </div>
       </div>
     </article>
   );

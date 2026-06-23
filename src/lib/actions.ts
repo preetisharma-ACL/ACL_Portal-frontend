@@ -4,6 +4,7 @@
  * client and lead traffic does not hit the backend cross-origin from the browser.
  */
 import * as api from "./api";
+import * as account from "./account";
 import type { AnswerPayload, LeadPayload, QuestionPayload, ReviewPayload } from "./types";
 
 export async function searchAction(q: string) {
@@ -56,5 +57,7 @@ export async function submitLeadAction(payload: LeadPayload) {
   if (payload.hp_field && payload.hp_field.trim() !== "") {
     return { id: 0, status: "rejected" };
   }
-  return api.submitLead(payload);
+  // Attach the access token when logged in so the backend links the lead to the
+  // account (it then shows in lead history); anonymous submission is unchanged.
+  return account.submitLeadMaybeAuthed(payload);
 }

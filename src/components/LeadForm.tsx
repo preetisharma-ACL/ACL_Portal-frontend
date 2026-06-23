@@ -240,7 +240,7 @@ export default function LeadForm(props: LeadFormProps) {
       // Always POST the lead. Success is shown ONLY when the lead is created
       // (a real response, not the honeypot "rejected" sentinel) — never off the
       // back of OTP verify or a swallowed error.
-      const res = await submitLeadAction(payload);
+      const res = (await submitLeadAction(payload)) as { status?: string } | null;
       if (res && res.status !== "rejected") {
         if (!isServer) sessionStorage.setItem("acl_lead_ts", String(Date.now()));
         track("lead_submit", {
