@@ -49,8 +49,8 @@ export default function Footer() {
         <div class="grid gap-10 md:grid-cols-4">
           <div>
             <div class="mb-3">
-              <span class="inline-flex px-3 py-2">
-                <img src="/V2-aajneeti-logo.png" alt={SITE_NAME} class="h-10 w-auto" />
+              <span class="inline-flex  py-2">
+                <img src="/V2-aajneeti-logo.png" alt={SITE_NAME} class="h-14 w-auto" />
               </span>
             </div>
             <p class="text-sm text-white/70">
