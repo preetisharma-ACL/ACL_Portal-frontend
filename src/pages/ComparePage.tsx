@@ -56,7 +56,11 @@ const ROWS: Row[] = [
     value: (c) => c.fee_range?.min ?? null,
     render: (c) => {
       const f = formatFeeRange(c.fee_range);
-      return f ? <span class="font-semibold">{f}</span> : dash();
+      return f ? (
+        <span class="font-semibold">{f}</span>
+      ) : (
+        <span class="text-[var(--color-muted)]">Fees on request</span>
+      );
     },
   },
   { label: "Type", render: (c) => (c.type ? <>{titleCaseType(c.type)}</> : dash()) },

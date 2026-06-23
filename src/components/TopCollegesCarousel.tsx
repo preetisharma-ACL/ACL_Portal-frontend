@@ -1,5 +1,5 @@
 import { A } from "@solidjs/router";
-import { For, createSignal, onMount } from "solid-js";
+import { For, Show, createSignal, onMount } from "solid-js";
 import type { CityLite, CollegeCard } from "~/lib/types";
 import { listingPath } from "~/lib/slug";
 import CollegeLogo from "./CollegeLogo";
@@ -193,10 +193,17 @@ export default function TopCollegesCarousel(props: {
                       </div>
 
                       <p class="mt-1 text-sm">
-                        <span class="font-bold text-primary-700">
-                          {fees ? `${fees} Lacs` : c.fee_range}
-                        </span>{" "}
-                        <span class="text-xs text-[var(--color-muted)]">Total Fees</span>
+                        <Show
+                          when={fees || c.fee_range}
+                          fallback={
+                            <span class="font-medium text-[var(--color-muted)]">Fees on request</span>
+                          }
+                        >
+                          <span class="font-bold text-primary-700">
+                            {fees ? `${fees} Lacs` : c.fee_range}
+                          </span>{" "}
+                          <span class="text-xs text-[var(--color-muted)]">Total Fees</span>
+                        </Show>
                       </p>
 
                       <p class="mt-2 line-clamp-1 border-t border-[var(--color-line)] pt-2 text-[11px] text-[var(--color-muted)]">

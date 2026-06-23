@@ -115,8 +115,13 @@ function ProgramCard(props: { college: CollegeCard; featured?: boolean }) {
         </For>
       </div>
       <p class="mt-3 text-sm">
-        <span class="text-[var(--color-muted)]">Fees </span>
-        <span class="font-semibold">{c.fee_range || "On request"}</span>
+        <Show
+          when={c.fee_range}
+          fallback={<span class="font-semibold text-[var(--color-muted)]">Fees on request</span>}
+        >
+          <span class="text-[var(--color-muted)]">Fees </span>
+          <span class="font-semibold">{c.fee_range}</span>
+        </Show>
       </p>
       <span class="mt-4 inline-flex items-center justify-center gap-1 rounded-[var(--radius-md)] bg-primary-600 text-white text-sm font-semibold py-2 group-hover:bg-primary-700 transition-colors">
         View details
@@ -137,8 +142,9 @@ export default function CourseInfo(props: { slug: string }) {
     <Show when={data()} fallback={<LoadingBlock label="Loading course" />}>
       {(d) => {
         const c = () => d().course;
-        // fee_range is the native {min,max}; format for display (else [object Object]).
-        const fee = () => formatFeeRange(c().fee_range);
+        // fee_range is the native {min,max}; format for display, falling back to
+        // the "Fees on request" state when null (never [object Object]/blank/0).
+        const fee = () => formatFeeRange(c().fee_range) || "Fees on request";
         const overview = () => c().overview || c().description;
         const crumbs = () => [
           { name: "Home", path: "/" },

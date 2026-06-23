@@ -111,7 +111,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
           <>
             <Seo
               title={`${Cc()} in ${m().city}: Fees, Admission and Ranking`}
-              description={`Compare ${m().total_colleges} ${cc()} in ${m().city} by fees (${m().fee_range}), approvals, accepted exams and student rating. Filter by course, type and budget to shortlist the right institute.`}
+              description={`Compare ${m().total_colleges} ${cc()} in ${m().city}${m().fee_range ? ` by fees (${m().fee_range})` : ""}, by approvals, accepted exams and student rating. Filter by course, type and budget to shortlist the right institute.`}
               canonical={path()}
               jsonLd={
                 d().faqs.length
@@ -140,10 +140,12 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     <span class="font-bold text-accent-400">{m().total_colleges}</span>
                     colleges
                   </span>
-                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-                    Fees
-                    <span class="font-semibold">{m().fee_range}</span>
-                  </span>
+                  <Show when={m().fee_range}>
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                      Fees
+                      <span class="font-semibold">{m().fee_range}</span>
+                    </span>
+                  </Show>
                   <For each={m().popular_courses.slice(0, 3)}>
                     {(pc) => (
                       <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
@@ -351,8 +353,9 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     <div class="space-y-3 text-[var(--color-ink)]/90">
                       <p>
                         {m().city} offers a mix of government, private and deemed institutes
-                        {courseName() ? ` for ${courseName()}` : " across courses"}. Fees in this
-                        list span {m().fee_range} for the full programme, so shortlist by both
+                        {courseName() ? ` for ${courseName()}` : " across courses"}.
+                        {m().fee_range ? ` Fees in this list span ${m().fee_range} for the full programme.` : ""}{" "}
+                        Shortlist by both
                         budget and the {cityMode() ? "courses" : "specialisations"} you want to
                         pursue.
                       </p>

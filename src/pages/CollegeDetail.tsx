@@ -354,7 +354,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                               <span class="text-[var(--color-muted)] hidden sm:inline">
                                 {c.duration}
                               </span>
-                              <span class="font-medium">{c.total_fee}</span>
+                              <span class="font-medium" classList={{ "text-[var(--color-muted)]": !c.total_fee }}>
+                                {c.total_fee || "Fees on request"}
+                              </span>
                               <span
                                 aria-hidden="true"
                                 class="text-[var(--color-muted)] transition-transform group-open:rotate-45"
@@ -378,6 +380,23 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                                 {(e) => <Badge>{e}</Badge>}
                               </For>
                             </p>
+                            {/* Null fee -> turn the missing-fee moment into a lead. */}
+                            <Show when={!c.total_fee}>
+                              <div class="flex flex-wrap items-center gap-2 pt-1">
+                                <span class="text-[var(--color-muted)]">
+                                  Fees for {c.course} are available on request.
+                                </span>
+                                <LeadTrigger
+                                  sourcePage={path()}
+                                  courseInterest={c.course}
+                                  defaultCity={h().city}
+                                  heading={`Get fee details for ${c.course} at ${h().short_name}`}
+                                  label="Get fee details"
+                                  variant="outline"
+                                  size="sm"
+                                />
+                              </div>
+                            </Show>
                           </div>
                         </details>
                       )}

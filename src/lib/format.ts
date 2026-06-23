@@ -22,12 +22,22 @@ export function inrShort(value: number): string {
  * a bound is missing. Already-formatted strings are returned as-is so this is
  * safe to call on either the mock (string) or live ({min,max}) shape.
  */
+/** Shown when a college/course has no fee data yet (real fees come later from
+ *  primary sources). Doubles as a lead-capture hook in the UI. */
+export const FEES_ON_REQUEST = "Fees on request";
+
+/**
+ * Format a {min,max} fee range. Returns "" (empty) when there is no real fee
+ * value, so callers render the {@link FEES_ON_REQUEST} state consistently
+ * (`value || FEES_ON_REQUEST`) and automatically switch to numbers once fees
+ * are added. Never returns 0, null, NaN or [object Object].
+ */
 export function formatFeeRange(range: MoneyRange | string | null | undefined): string {
   if (range == null) return "";
-  if (typeof range === "string") return range;
+  if (typeof range === "string") return range.trim();
   const min = Number(range.min) || 0;
   const max = Number(range.max) || 0;
-  if (!min && !max) return "Fees on request";
+  if (!min && !max) return "";
   if (!max || min === max) return inrShort(min || max);
   if (!min) return `Up to ${inrShort(max)}`;
   return `${inrShort(min)} – ${inrShort(max)}`;

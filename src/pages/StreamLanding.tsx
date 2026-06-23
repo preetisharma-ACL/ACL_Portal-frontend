@@ -92,12 +92,17 @@ export default function StreamLanding(props: { slug: string }) {
                         </h3>
                       </A>
                       <div class="flex flex-1 flex-col p-3">
-                        <Show when={c.fee_range}>
-                          <p class="text-sm">
+                        <p class="text-sm">
+                          <Show
+                            when={c.fee_range}
+                            fallback={
+                              <span class="font-medium text-[var(--color-muted)]">Fees on request</span>
+                            }
+                          >
                             <span class="font-bold text-primary-700">{c.fee_range}</span>{" "}
                             <span class="text-xs text-[var(--color-muted)]">Total Fees</span>
-                          </p>
-                        </Show>
+                          </Show>
+                        </p>
                         <Show when={c.duration}>
                           <p class="mt-2 line-clamp-1 border-t border-[var(--color-line)] pt-2 text-[11px] text-[var(--color-muted)]">
                             {c.level} · {c.duration}

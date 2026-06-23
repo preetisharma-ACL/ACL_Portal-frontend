@@ -173,7 +173,7 @@ function mapStreamDetail(r: any): StreamDetail {
       slug: c.slug,
       level: c.level,
       duration: c.typical_duration ?? c.duration,
-      fee_range: c.fee_range ? formatFeeRange(c.fee_range) : c.fee_range,
+      fee_range: formatFeeRange(c.fee_range),
     })),
     top_cities: (r.top_cities ?? []).map((c: any) => ({
       id: c.id ?? 0,

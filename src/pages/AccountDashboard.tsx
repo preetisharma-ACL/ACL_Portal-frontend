@@ -176,8 +176,7 @@ function SavedSection() {
                     {c.name}
                   </A>
                   <p class="text-xs text-[var(--color-muted)]">
-                    {c.city}
-                    <Show when={c.fee_range}> · {formatFeeRange(c.fee_range as never)}</Show>
+                    {c.city} · {formatFeeRange(c.fee_range as never) || "Fees on request"}
                   </p>
                 </div>
                 <button
