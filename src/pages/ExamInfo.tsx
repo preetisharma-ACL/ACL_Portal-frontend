@@ -23,7 +23,9 @@ const TABS = [
 ];
 
 export default function ExamInfo(props: { stream: string; slug: string }) {
-  const data = createAsync(() => examQuery(props.slug));
+  // deferStream so the exam's title/meta/canonical/OG and JSON-LD are
+  // server-rendered into the head, not applied on hydrate.
+  const data = createAsync(() => examQuery(props.slug), { deferStream: true });
   const path = () => `/${props.stream}/${props.slug}-exam`;
   const [active, setActive] = createSignal("overview");
 

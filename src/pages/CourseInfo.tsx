@@ -127,7 +127,9 @@ function ProgramCard(props: { college: CollegeCard; featured?: boolean }) {
 }
 
 export default function CourseInfo(props: { slug: string }) {
-  const data = createAsync(() => courseQuery(props.slug));
+  // deferStream so the course's title/meta/canonical/OG and Course JSON-LD are
+  // server-rendered into the head, not applied on hydrate.
+  const data = createAsync(() => courseQuery(props.slug), { deferStream: true });
   const path = () => `/${props.slug}-course`;
   const [active, setActive] = createSignal("overview");
 

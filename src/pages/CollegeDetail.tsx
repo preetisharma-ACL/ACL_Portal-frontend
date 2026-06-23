@@ -62,7 +62,12 @@ function Block(props: { id: string; title: string; children: JSX.Element }) {
 
 export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab }) {
   const parsed = () => parseSlugId(props.slugId);
-  const data = createAsync(() => collegeQuery(parsed().slug, parsed().id));
+  // deferStream so SSR waits for the college before flushing the head: the
+  // title, canonical, OG/Twitter and JSON-LD (CollegeOrUniversity, Course) must
+  // be in the server HTML for crawlers, not applied after hydration.
+  const data = createAsync(() => collegeQuery(parsed().slug, parsed().id), {
+    deferStream: true,
+  });
   const [active, setActive] = createSignal<string>(
     props.tab ? TAB_ANCHOR[props.tab] : "overview",
   );

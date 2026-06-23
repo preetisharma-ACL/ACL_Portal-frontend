@@ -12,7 +12,9 @@ import { breadcrumbLd } from "~/lib/jsonld";
 const COVERS = ["/bg-image.jpg", "/bg-image2.jpg", "/bg-image3.jpg"];
 
 export default function StreamLanding(props: { slug: string }) {
-  const data = createAsync(() => streamQuery(props.slug));
+  // deferStream so the stream page's title/meta/canonical and breadcrumb JSON-LD
+  // are server-rendered into the head, not applied on hydrate.
+  const data = createAsync(() => streamQuery(props.slug), { deferStream: true });
 
   return (
     <Show when={data()} fallback={<LoadingBlock label="Loading stream" />}>

@@ -45,7 +45,10 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
     page: (sp.page as string) || undefined,
   });
 
-  const data = createAsync(() => listingQuery(q()));
+  // deferStream only the listing data (the head + FAQPage JSON-LD depend on it).
+  // cities/streams power the below-the-fold explore links, so they stay
+  // non-blocking to avoid an unnecessary TTFB hit.
+  const data = createAsync(() => listingQuery(q()), { deferStream: true });
   const cities = createAsync(() => citiesQuery());
   const streams = createAsync(() => streamsQuery());
 
