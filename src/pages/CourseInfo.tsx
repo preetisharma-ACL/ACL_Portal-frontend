@@ -10,6 +10,7 @@ import { EmptyState, LoadingBlock } from "~/components/states";
 import { courseQuery } from "~/lib/queries";
 import { breadcrumbLd, courseLd } from "~/lib/jsonld";
 import { formatFeeRange } from "~/lib/format";
+import RelatedArticles from "~/components/RelatedArticles";
 import type { CollegeCard } from "~/lib/types";
 
 const TABS = [
@@ -497,6 +498,10 @@ export default function CourseInfo(props: { slug: string }) {
                 </div>
               </Show>
             </Section>
+
+            <div class="container-x pb-2">
+              <RelatedArticles course={props.slug} />
+            </div>
 
             {/* CTA band */}
             <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">

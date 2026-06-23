@@ -1,6 +1,6 @@
 /** Builders for schema.org JSON-LD blocks. Kept pure so any page can compose them. */
 import { SITE_NAME, SITE_ORIGIN } from "./config";
-import type { CollegeDetail, CourseDetail, Faq } from "./types";
+import type { ArticleDetail, CollegeDetail, CourseDetail, Faq } from "./types";
 
 export interface Crumb {
   name: string;
@@ -23,6 +23,29 @@ export function breadcrumbLd(crumbs: Crumb[]) {
       item: abs(c.path),
     })),
   };
+}
+
+export function articleLd(article: ArticleDetail, path: string) {
+  const ld: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.meta_description || article.excerpt,
+    datePublished: article.published_at,
+    dateModified: article.published_at,
+    author: {
+      "@type": "Person",
+      name: article.author.name,
+      ...(article.author.slug ? { url: abs(`/articles/author/${article.author.slug}`) } : {}),
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": abs(path) },
+  };
+  if (article.featured_image) ld.image = abs(article.featured_image);
+  return ld;
 }
 
 export function faqLd(faqs: Faq[]) {

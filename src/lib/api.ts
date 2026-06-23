@@ -11,6 +11,10 @@ import { formatFeeRange, inrShort, titleCaseType } from "./format";
 import { slugify } from "./slug";
 import type {
   AnswerPayload,
+  ArticleCategory,
+  ArticleDetail,
+  ArticleQuery,
+  ArticlesPage,
   CityLite,
   CollegeCard,
   CollegeDetail,
@@ -407,6 +411,74 @@ export function getCompare(ids: number[]): Promise<CompareResponse> {
   return get<CompareResponse>("/colleges/compare/", { ids: ids.join(",") }).catch(() => ({
     colleges: [],
   }));
+}
+
+/* ------------------------------------------------------------------ editorial
+ * CMS articles. featured_image/author.photo may be null or a URL; normalize to
+ * string|null. The index uses DRF pagination (count/next/previous/results),
+ * mapped to a simpler {results, count, page, has_next, has_prev}. */
+
+function mapImage(v: any): string | null {
+  if (!v) return null;
+  if (typeof v === "string") return v;
+  if (typeof v === "object" && typeof v.url === "string") return v.url;
+  return null;
+}
+
+function mapArticleCard(r: any) {
+  return {
+    id: r.id,
+    title: r.title,
+    slug: r.slug,
+    excerpt: r.excerpt ?? "",
+    featured_image: mapImage(r.featured_image),
+    category: { name: r.category?.name ?? "", slug: r.category?.slug ?? "" },
+    author: { name: r.author?.name ?? "", slug: r.author?.slug ?? "" },
+    published_at: r.published_at ?? "",
+    reading_time: r.reading_time ?? 0,
+    featured: !!r.featured,
+  };
+}
+
+function mapArticleDetail(r: any): ArticleDetail {
+  return {
+    ...mapArticleCard(r),
+    body: r.body ?? "",
+    category: r.category ?? { name: "", slug: "" },
+    author: { ...(r.author ?? { name: "", slug: "" }), photo: mapImage(r.author?.photo) },
+    status: r.status,
+    meta_title: r.meta_title,
+    meta_description: r.meta_description,
+    canonical_url: r.canonical_url,
+    related_colleges: (r.related_colleges ?? []).map(mapCard),
+    related_courses: r.related_courses ?? [],
+    related_exams: r.related_exams ?? [],
+    related_articles: (r.related_articles ?? []).map(mapArticleCard),
+  };
+}
+
+export function getArticles(params: ArticleQuery = {}): Promise<ArticlesPage> {
+  if (USE_MOCK) return Promise.resolve(mock.buildArticles(params));
+  const page = parseInt(params.page ?? "1", 10) || 1;
+  return get<any>("/articles/", params as Record<string, string | undefined>)
+    .then((r) => ({
+      results: (r.results ?? []).map(mapArticleCard),
+      count: r.count ?? 0,
+      page,
+      has_next: !!r.next,
+      has_prev: !!r.previous,
+    }))
+    .catch(() => ({ results: [], count: 0, page, has_next: false, has_prev: false }));
+}
+
+export function getArticle(slug: string): Promise<ArticleDetail> {
+  if (USE_MOCK) return Promise.resolve(mock.buildArticle(slug));
+  return get<any>(`/articles/${slug}/`).then(mapArticleDetail);
+}
+
+export function getArticleCategories(): Promise<ArticleCategory[]> {
+  if (USE_MOCK) return Promise.resolve(mock.ARTICLE_CATEGORIES);
+  return get<ArticleCategory[]>("/article-categories/").catch(() => []);
 }
 
 /* --------------------------------------------------------------------- search */

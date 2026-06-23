@@ -75,6 +75,21 @@ export const questionsQuery = query(async (slugId: string, page: number) => {
   return api.getQuestions(slugId, page);
 }, "questions");
 
+export const articlesQuery = query(async (params: import("./types").ArticleQuery) => {
+  "use server";
+  return api.getArticles(params);
+}, "articles");
+
+export const articleQuery = query(async (slug: string) => {
+  "use server";
+  return api.getArticle(slug);
+}, "article");
+
+export const articleCategoriesQuery = query(async () => {
+  "use server";
+  return api.getArticleCategories();
+}, "article-categories");
+
 export const compareQuery = query(async (ids: number[]) => {
   "use server";
   return api.getCompare(ids);

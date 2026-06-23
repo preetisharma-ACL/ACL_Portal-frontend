@@ -11,6 +11,7 @@ import { examQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
 import { humanize } from "~/lib/slug";
 import { titleCaseType } from "~/lib/format";
+import RelatedArticles from "~/components/RelatedArticles";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -241,6 +242,10 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
                 </div>
               </Show>
             </Section>
+
+            <div class="container-x pb-2">
+              <RelatedArticles exam={props.slug} />
+            </div>
 
             {/* CTA band */}
             <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">

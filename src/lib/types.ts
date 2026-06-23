@@ -260,6 +260,69 @@ export interface OtpVerifyResponse {
   token: string;
 }
 
+/* --------------------------------------------------------------- editorial */
+
+export interface ArticleCategory {
+  id?: number;
+  name: string;
+  slug: string;
+  description?: string;
+  order?: number;
+}
+
+export interface ArticleAuthor {
+  name: string;
+  slug: string;
+  bio?: string;
+  photo?: string | null;
+  role?: string;
+}
+
+export interface ArticleCard {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  featured_image: string | null;
+  category: { name: string; slug: string };
+  author: { name: string; slug: string };
+  published_at: string;
+  reading_time: number;
+  featured: boolean;
+}
+
+export interface ArticleDetail extends Omit<ArticleCard, "category" | "author"> {
+  body: string;
+  category: ArticleCategory;
+  author: ArticleAuthor;
+  status?: string;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  canonical_url?: string | null;
+  related_colleges: CollegeCard[];
+  related_courses: { id: number; name: string; slug: string; level?: string }[];
+  related_exams: { id: number; name: string; slug: string; conducting_body?: string }[];
+  related_articles: ArticleCard[];
+}
+
+export interface ArticlesPage {
+  results: ArticleCard[];
+  count: number;
+  page: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+export interface ArticleQuery {
+  page?: string;
+  category?: string;
+  college?: string;
+  course?: string;
+  exam?: string;
+  author?: string;
+  featured?: string;
+}
+
 /* --------------------------------------------------------------- compare */
 
 export interface CompareCollege {

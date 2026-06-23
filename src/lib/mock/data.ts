@@ -20,6 +20,10 @@ import type {
   CourseLite,
   ExamDetail,
   ExamLite,
+  ArticleCategory,
+  ArticleDetail,
+  ArticleQuery,
+  ArticlesPage,
   CompareResponse,
   FilterOption,
   ListingResponse,
@@ -795,6 +799,66 @@ export function buildListing(course: string, city: string): ListingResponse {
     results,
     pagination: { page: 1, page_size: 6, total, has_next: total > 6 },
     faqs: total ? faqsFor(courseLabel, cityLabel) : [],
+  };
+}
+
+/* --------------------------------------------------- contract: editorial */
+
+export const ARTICLE_CATEGORIES: ArticleCategory[] = [
+  { id: 1, name: "News", slug: "news", description: "Latest education news.", order: 0 },
+  { id: 2, name: "Exam Prep", slug: "exam-prep", description: "Entrance exam guidance.", order: 1 },
+  { id: 3, name: "College Guides", slug: "college-guides", description: "Choosing colleges.", order: 2 },
+  { id: 4, name: "Career", slug: "career", description: "Career paths.", order: 3 },
+];
+
+const MOCK_AUTHOR = {
+  name: "Neha Kapoor",
+  slug: "neha-kapoor",
+  bio: "Neha writes about admissions and student life with practical, verified guidance.",
+  photo: null,
+  role: "Education Editor",
+};
+
+const MOCK_ARTICLES = Array.from({ length: 6 }, (_, i) => {
+  const cat = ARTICLE_CATEGORIES[i % ARTICLE_CATEGORIES.length];
+  return {
+    id: i + 1,
+    title: `Sample education guide ${i + 1}`,
+    slug: `sample-education-guide-${i + 1}`,
+    excerpt: "A practical, neutral guide to help students compare options and decide with confidence.",
+    featured_image: null,
+    category: { name: cat.name, slug: cat.slug },
+    author: { name: MOCK_AUTHOR.name, slug: MOCK_AUTHOR.slug },
+    published_at: "2026-06-2" + (i % 9) + "T10:00:00+05:30",
+    reading_time: 2 + (i % 4),
+    featured: i < 2,
+  };
+});
+
+export function buildArticles(params: ArticleQuery = {}): ArticlesPage {
+  let results = MOCK_ARTICLES;
+  if (params.category) results = results.filter((a) => a.category.slug === params.category);
+  if (params.author) results = results.filter((a) => a.author.slug === params.author);
+  if (params.featured === "true") results = results.filter((a) => a.featured);
+  return { results, count: results.length, page: 1, has_next: false, has_prev: false };
+}
+
+export function buildArticle(slug: string): ArticleDetail {
+  const card = MOCK_ARTICLES.find((a) => a.slug === slug) ?? MOCK_ARTICLES[0];
+  const cat = ARTICLE_CATEGORIES.find((c) => c.slug === card.category.slug) ?? ARTICLE_CATEGORIES[0];
+  return {
+    ...card,
+    body: "<p>This is sample editorial content for preview mode. The real body is admin-authored HTML rendered with a clean typographic treatment.</p><p>Compare programmes on curriculum, fees and outcomes, and confirm details with the institute before deciding.</p>",
+    category: cat,
+    author: MOCK_AUTHOR,
+    status: "PUBLISHED",
+    meta_title: card.title,
+    meta_description: card.excerpt,
+    canonical_url: null,
+    related_colleges: generateColleges("mba", "varanasi", 3),
+    related_courses: [{ id: 4, name: "MBA", slug: "mba", level: "PG" }],
+    related_exams: [{ id: 2, name: "CAT", slug: "cat", conducting_body: "IIMs" }],
+    related_articles: MOCK_ARTICLES.filter((a) => a.slug !== card.slug).slice(0, 3),
   };
 }
 

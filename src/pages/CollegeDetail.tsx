@@ -8,6 +8,7 @@ import LeadTrigger from "~/components/LeadTrigger";
 import ReviewsBlock from "~/components/ReviewsBlock";
 import QABlock from "~/components/QABlock";
 import CompareToggle from "~/components/CompareToggle";
+import RelatedArticles from "~/components/RelatedArticles";
 import HeroSlider from "~/components/HeroSlider";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
@@ -567,6 +568,8 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </Card>
                   </div>
                 </Block>
+
+                <RelatedArticles college={parsed().slug} />
 
                 {/* Operator disclosure (compliance item 5) */}
                 <p class="mt-6 text-xs text-[var(--color-muted)] max-w-3xl">

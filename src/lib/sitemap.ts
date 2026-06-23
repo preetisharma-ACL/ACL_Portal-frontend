@@ -63,6 +63,30 @@ export async function contentUrls(): Promise<SitemapUrl[]> {
   } catch {
     /* course may be unavailable; skip */
   }
+
+  // Editorial: articles index, category pages and every published article.
+  urls.push({ loc: abs("/articles"), changefreq: "daily", priority: 0.7 });
+  try {
+    const cats = await api.getArticleCategories();
+    for (const c of cats) {
+      urls.push({ loc: abs(`/articles/category/${c.slug}`), changefreq: "weekly", priority: 0.6 });
+    }
+  } catch {
+    /* categories may be unavailable; skip */
+  }
+  try {
+    let page = 1;
+    while (page <= 20) {
+      const a = await api.getArticles({ page: String(page) });
+      for (const art of a.results) {
+        urls.push({ loc: abs(`/articles/${art.slug}`), changefreq: "weekly", priority: 0.7 });
+      }
+      if (!a.has_next) break;
+      page += 1;
+    }
+  } catch {
+    /* articles may be unavailable; skip */
+  }
   return urls;
 }
 
