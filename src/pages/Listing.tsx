@@ -1,5 +1,5 @@
 import { A, createAsync, useParams, useSearchParams } from "@solidjs/router";
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createSignal, onMount } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeCardItem from "~/components/CollegeCardItem";
@@ -10,10 +10,11 @@ import HeroSlider from "~/components/HeroSlider";
 import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
-import { citiesQuery, cityCollegesQuery, listingQuery, streamsQuery } from "~/lib/queries";
+import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
+import { cityCollegesAction } from "~/lib/actions";
 import { cityCollegesPath, listingPath, parseListingSlug } from "~/lib/slug";
 import { breadcrumbLd, faqLd } from "~/lib/jsonld";
-import type { FilterOption, ListingQuery } from "~/lib/types";
+import type { CollegeCard, FilterOption, ListingQuery } from "~/lib/types";
 
 /**
  * College listing. Two modes share this page:
@@ -49,11 +50,17 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
   const streams = createAsync(() => streamsQuery());
 
   // City-mode only: the full set of colleges in the city (all pages), so the
-  // on-page search can match a college by name across every page, not just the
-  // current one. Filtered client side since the backend has no name search.
-  const allCityColleges = createAsync(() =>
-    cityMode() && city() ? cityCollegesQuery(city()) : Promise.resolve(undefined),
-  );
+  // on-page search can match a college by name across every page. Fetched lazily
+  // on the client AFTER mount (not during SSR/navigation) so it never delays the
+  // page from opening; it is only needed once the user uses the search box.
+  const [allCityColleges, setAllCityColleges] = createSignal<CollegeCard[] | undefined>(undefined);
+  onMount(() => {
+    if (cityMode() && city()) {
+      cityCollegesAction(city())
+        .then(setAllCityColleges)
+        .catch(() => {});
+    }
+  });
   const [collegeSearch, setCollegeSearch] = createSignal("");
   const searching = () => collegeSearch().trim().length >= 1;
   const collegeMatches = () => {

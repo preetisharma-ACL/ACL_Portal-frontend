@@ -23,11 +23,6 @@ export const citiesQuery = query(async () => {
   return api.getCities();
 }, "cities");
 
-export const cityCollegesQuery = query(async (city: string) => {
-  "use server";
-  return api.getCityColleges(city);
-}, "city-colleges");
-
 export const courseQuery = query(async (slug: string) => {
   "use server";
   return api.getCourse(slug);

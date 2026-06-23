@@ -13,6 +13,11 @@ export async function searchAction(q: string) {
   return api.search(term);
 }
 
+export async function cityCollegesAction(city: string) {
+  "use server";
+  return api.getCityColleges(city);
+}
+
 export async function requestOtpAction(mobile: string) {
   "use server";
   return api.requestOtp(mobile);
