@@ -151,7 +151,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
 
               {/* Cover: a slider of the college's own images (HERO first), else
                   the bundled neutral slider. */}
-              <div class="relative mt-3 h-56 sm:h-72 md:h-[22rem] lg:h-[26rem] overflow-hidden">
+              <div class="relative mt-3 h-72 sm:h-96 md:h-[30rem] lg:h-[36rem] overflow-hidden">
                 <CollegeCover media={d().media} name={h().name} />
                 <div
                   aria-hidden="true"

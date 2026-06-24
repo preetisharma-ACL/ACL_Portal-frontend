@@ -43,29 +43,15 @@ export default function CollegeCover(props: { media: MediaItem[]; name: string }
       <div class="absolute inset-0 z-0 overflow-hidden bg-neutral-900">
         <For each={images()}>
           {(m, i) => (
-            <div
-              class="absolute inset-0 transition-opacity duration-1000 ease-in-out motion-reduce:transition-none"
+            <img
+              src={m.url}
+              alt={m.caption || `${props.name} campus`}
+              decoding="async"
+              loading={i() === 0 ? "eager" : "lazy"}
+              onError={(e) => (e.currentTarget.style.display = "none")}
+              class="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ease-in-out motion-reduce:transition-none"
               classList={{ "opacity-100": active() === i(), "opacity-0": active() !== i() }}
-            >
-              {/* Blurred fill so the banner is never empty/letterboxed... */}
-              <img
-                src={m.url}
-                alt=""
-                aria-hidden="true"
-                decoding="async"
-                class="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
-              />
-              <div aria-hidden="true" class="absolute inset-0 bg-black/25" />
-              {/* ...with the full image shown, centered and uncropped, on top. */}
-              <img
-                src={m.url}
-                alt={m.caption || `${props.name} campus`}
-                decoding="async"
-                loading={i() === 0 ? "eager" : "lazy"}
-                onError={(e) => (e.currentTarget.style.display = "none")}
-                class="absolute inset-0 mx-auto h-full w-full object-contain"
-              />
-            </div>
+            />
           )}
         </For>
         {/* Slide dots when more than one image */}
