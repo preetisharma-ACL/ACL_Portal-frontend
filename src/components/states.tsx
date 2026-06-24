@@ -25,22 +25,23 @@ export function NotFound(props: { title?: string; message?: string }) {
 }
 
 /**
- * Branded loader shown inside Suspense fallbacks (incl. the first-visit page
- * loader). Two concentric rings in the brand primary + secondary colours spin in
- * opposite directions, instead of a grey skeleton.
+ * Branded typewriter loader shown inside Suspense fallbacks (incl. the
+ * first-visit page loader), instead of a grey skeleton. The carriage/keyboard
+ * use the brand primary gradient (styles live in app.css under `.typewriter`).
  */
 export function LoadingBlock(props: { label?: string }) {
   return (
     <div
-      class="container-x flex min-h-[55vh] flex-col items-center justify-center gap-5 py-16 text-center"
+      class="container-x flex min-h-[55vh] flex-col items-center justify-center gap-10 py-16 text-center"
       role="status"
       aria-live="polite"
     >
-      <div class="relative h-14 w-14" aria-hidden="true">
-        {/* Outer ring: primary */}
-        <span class="absolute inset-0 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-600" />
-        {/* Inner ring: secondary (accent), spinning the other way */}
-        <span class="absolute inset-[6px] animate-spin rounded-full border-[3px] border-accent-100 border-b-accent-500 [animation-direction:reverse] [animation-duration:0.9s]" />
+      <div class="typewriter" aria-hidden="true">
+        <div class="slide">
+          <i />
+        </div>
+        <div class="paper" />
+        <div class="keyboard" />
       </div>
       <p class="text-sm font-medium text-[var(--color-muted)]">{props.label ?? "Loading"}</p>
     </div>
