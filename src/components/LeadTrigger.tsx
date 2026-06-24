@@ -30,8 +30,31 @@ export default function LeadTrigger(
       >
         {props.label ?? "Get free admission guidance"}
       </button>
-      <Modal open={open()} onClose={() => setOpen(false)} title={props.heading ?? "Get free admission guidance"}>
-        <LeadForm {...props} onSuccess={() => setOpen(false)} />
+      <Modal
+        open={open()}
+        onClose={() => setOpen(false)}
+        title={props.heading ?? "Get free admission guidance"}
+        hideHeader
+      >
+        {/* Rich header (logo + title + subtitle + tagline). The form renders with
+            hideHeading so the heading is not duplicated. */}
+        <div class="bg-gradient-to-b from-primary-50 via-primary-50/40 to-[var(--color-surface)] px-5 pt-5 pb-4 sm:px-6">
+          <img src="/acl-logo.png" alt="ACL Education" class="h-9 w-auto" />
+          <h2 class="mt-3 pr-9 text-xl font-extrabold leading-tight tracking-tight text-[var(--color-ink)]">
+            {props.heading ?? "Get free admission guidance"}
+          </h2>
+          <p class="mt-1 text-sm text-[var(--color-muted)]">
+            {props.courseInterest
+              ? `Independent guidance for ${props.courseInterest}`
+              : "Courses, fees, cutoffs and admissions, in one place"}
+          </p>
+          <p class="mt-3 text-center text-[15px] font-bold text-primary-600">
+            Free for students. No spam, ever.
+          </p>
+        </div>
+        <div class="px-5 py-5 sm:px-6">
+          <LeadForm {...props} hideHeading onSuccess={() => setOpen(false)} />
+        </div>
       </Modal>
     </>
   );

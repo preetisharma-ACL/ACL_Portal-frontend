@@ -7,6 +7,9 @@ export default function Modal(props: {
   onClose: () => void;
   title: string;
   children: JSX.Element;
+  /** Hide the default title bar so the body can supply its own header.
+      A floating close button is rendered instead. */
+  hideHeader?: boolean;
 }) {
   createEffect(() => {
     if (isServer) return;
@@ -36,31 +39,53 @@ export default function Modal(props: {
         aria-label={props.title}
       >
         <div
-          class="absolute inset-0 bg-black/50 animate-backdrop-in"
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm animate-backdrop-in"
           onClick={props.onClose}
           aria-hidden="true"
         />
-        <div class="relative bg-[var(--color-surface)] w-full sm:max-w-lg rounded-t-[var(--radius-xl)] sm:rounded-[var(--radius-xl)] shadow-xl max-h-[92vh] overflow-y-auto animate-modal-in">
-          <div class="sticky top-0 flex items-center justify-between gap-4 px-5 py-4 border-b border-[var(--color-line)] bg-[var(--color-surface)]">
-            <h2 class="font-bold text-lg">{props.title}</h2>
-            <button
-              type="button"
-              onClick={props.onClose}
-              aria-label="Close"
-              class="p-2 rounded-[var(--radius-md)] hover:bg-[var(--color-canvas)]"
-            >
-              <span aria-hidden="true" class="text-xl leading-none">
-                ×
-              </span>
-            </button>
-          </div>
-          <div class="p-5">
+        <div class="relative flex max-h-[94vh] w-full flex-col overflow-hidden rounded-t-[var(--radius-xl)] bg-[var(--color-surface)] shadow-2xl ring-1 ring-black/5 animate-modal-in sm:max-w-lg sm:rounded-[var(--radius-xl)]">
+          <Show
+            when={!props.hideHeader}
+            fallback={
+              <button
+                type="button"
+                onClick={props.onClose}
+                aria-label="Close"
+                class="absolute right-3 top-3 z-20 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-surface)]/80 text-[var(--color-muted)] backdrop-blur transition-colors hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)]"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            }
+          >
+            {/* Header: brand accent bar + title + close */}
+            <div class="sticky top-0 z-10 border-b border-[var(--color-line)] bg-[var(--color-surface)]/95 backdrop-blur">
+              <div class="h-1 w-full bg-gradient-to-r from-primary-600 via-accent-500 to-primary-700" />
+              <div class="flex items-center justify-between gap-4 px-5 py-3.5 sm:px-6">
+                <h2 class="text-lg font-extrabold tracking-tight text-[var(--color-ink)]">
+                  {props.title}
+                </h2>
+                <button
+                  type="button"
+                  onClick={props.onClose}
+                  aria-label="Close"
+                  class="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[var(--color-muted)] transition-colors hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)]"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </Show>
+          <div class={props.hideHeader ? "overflow-y-auto" : "overflow-y-auto px-5 py-5 sm:px-6"}>
             {/* Contain any data suspension (e.g. the lead form's city/course
                 dropdowns) to the modal, so it never triggers the app-level
                 "Loading page" fallback (which looked like a full reload). */}
             <Suspense
               fallback={
-                <div class="py-10 text-center text-sm text-[var(--color-muted)]">Loading…</div>
+                <div class="py-12 text-center text-sm text-[var(--color-muted)]">Loading…</div>
               }
             >
               {props.children}

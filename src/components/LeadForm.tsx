@@ -214,131 +214,202 @@ export default function LeadForm(props: LeadFormProps) {
     }
   }
 
-  const inputClass = `w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 ${
-    props.dense ? "py-2" : "py-2.5"
-  } text-sm outline-none focus:border-primary-500`;
+  // Icon-prefixed boxed fields (matches the reference popup layout).
+  const fieldBox = `flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] ${
+    props.dense ? "px-3.5 py-3" : "px-4 py-3.5"
+  } transition-all duration-150 hover:border-[var(--color-muted)]/40 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-100`;
+  const innerInput =
+    "w-full min-w-0 bg-transparent text-[15px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)]/80";
+  const innerSelect = `${innerInput} cursor-pointer appearance-none`;
+  const iconCls = "h-5 w-5 shrink-0 text-[var(--color-muted)]";
+  const clearBtn = "shrink-0 text-[var(--color-muted)]/70 transition-colors hover:text-[var(--color-ink)]";
 
   return (
     <Show
       when={!success()}
       fallback={
-        <div class="text-center py-6">
-          <div class="mx-auto mb-3 grid place-items-center w-12 h-12 rounded-full bg-[var(--color-success)]/10 text-[var(--color-success)] text-2xl">
-            ✓
+        <div class="animate-fade px-2 py-8 text-center">
+          <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[var(--color-success)]/10 text-[var(--color-success)] ring-8 ring-[var(--color-success)]/5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
           </div>
-          <h3 class="font-semibold text-lg">Request received</h3>
-          <p class="mt-2 text-sm text-[var(--color-muted)]">
+          <h3 class="mt-4 text-xl font-extrabold tracking-tight">Request received</h3>
+          <p class="mx-auto mt-2 max-w-xs text-sm text-[var(--color-muted)]">
             Thank you. Our team will reach out with guidance relevant to your enquiry.
           </p>
         </div>
       }
     >
-      <form onSubmit={onSubmit} novalidate>
+      <form onSubmit={onSubmit} novalidate class={props.dense ? "space-y-3" : "space-y-3.5"}>
         <Show when={!props.hideHeading}>
-          <h3 class="font-semibold text-lg">
-            {props.heading ?? "Get free admission guidance"}
-          </h3>
-          <p class="mt-1 text-sm text-[var(--color-muted)]">
-            Independent guidance on courses, fees and admissions. We do not charge students.
-          </p>
+          <div class="mb-1">
+            <h3 class="text-xl font-extrabold tracking-tight text-[var(--color-ink)]">
+              {props.heading ?? "Get free admission guidance"}
+            </h3>
+            <p class="mt-1 text-sm text-[var(--color-muted)]">
+              Independent guidance on courses, fees and admissions. We do not charge students.
+            </p>
+          </div>
         </Show>
-        <div class={`mt-4 grid sm:grid-cols-2 ${props.dense ? "gap-2.5" : "gap-3"}`}>
-          <label class="block sm:col-span-2">
-            <span class="block text-sm font-medium mb-1">Full name</span>
-            <input
-              class={inputClass}
-              type="text"
-              autocomplete="name"
-              value={name()}
-              onInput={(e) => setName(e.currentTarget.value)}
-              required
-            />
-          </label>
 
+        {/* Full name */}
+        <div class={fieldBox}>
+          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21a8 8 0 0 0-16 0" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <input
+            class={innerInput}
+            type="text"
+            autocomplete="name"
+            aria-label="Full name"
+            placeholder="Full Name *"
+            value={name()}
+            onInput={(e) => setName(e.currentTarget.value)}
+            required
+          />
+          <Show when={name()}>
+            <button type="button" aria-label="Clear name" class={clearBtn} onClick={() => setName("")}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+            </button>
+          </Show>
+        </div>
+
+        {/* Email */}
+        <div class={fieldBox}>
+          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="m3 7 9 6 9-6" />
+          </svg>
+          <input
+            class={innerInput}
+            type="email"
+            autocomplete="email"
+            aria-label="Email address"
+            placeholder="Email Address"
+            value={email()}
+            onInput={(e) => setEmail(e.currentTarget.value)}
+          />
+          <Show when={email()}>
+            <button type="button" aria-label="Clear email" class={clearBtn} onClick={() => setEmail("")}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+            </button>
+          </Show>
+        </div>
+
+        {/* Mobile + City */}
+        <div class="grid gap-3.5 sm:grid-cols-2">
           {/* Mobile (no OTP step; backend accepts leads without verification) */}
-          <label class="block sm:col-span-2">
-            <span class="block text-sm font-medium mb-1">Mobile number</span>
+          <div class={fieldBox}>
+            <span class="flex shrink-0 items-center gap-1.5">
+              <span class="flex h-3.5 w-5 flex-col overflow-hidden rounded-[2px] ring-1 ring-black/10" aria-hidden="true">
+                <span class="h-1/3 bg-[#ff9933]" />
+                <span class="h-1/3 bg-white" />
+                <span class="h-1/3 bg-[#138808]" />
+              </span>
+              <span class="text-sm font-medium text-[var(--color-ink)]">+91</span>
+            </span>
             <input
-              class={inputClass}
+              class={innerInput}
               type="tel"
               inputmode="numeric"
               autocomplete="tel"
-              placeholder="10 digit mobile"
+              aria-label="Mobile number"
+              placeholder="Mobile Number *"
               value={mobile()}
               onInput={(e) => setMobile(e.currentTarget.value.replace(/\D/g, "").slice(0, 10))}
               required
             />
-          </label>
+          </div>
 
-          <label class="block">
-            <span class="block text-sm font-medium mb-1">Email</span>
+          {/* City */}
+          <div class={fieldBox}>
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
             <input
-              class={inputClass}
-              type="email"
-              autocomplete="email"
-              value={email()}
-              onInput={(e) => setEmail(e.currentTarget.value)}
-            />
-          </label>
-
-          <label class="block">
-            <span class="block text-sm font-medium mb-1">City</span>
-            <input
-              class={inputClass}
+              class={innerInput}
               type="text"
               autocomplete="address-level2"
-              placeholder="Your city"
+              aria-label="City you live in"
+              placeholder="City You Live In"
               value={city()}
               onInput={(e) => setCity(e.currentTarget.value)}
             />
-          </label>
+            <Show when={city()}>
+              <button type="button" aria-label="Clear city" class={clearBtn} onClick={() => setCity("")}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              </button>
+            </Show>
+          </div>
+        </div>
 
-          <label class="block">
-            <span class="block text-sm font-medium mb-1">Course of interest</span>
+        {/* Course + Qualification */}
+        <div class="grid gap-3.5 sm:grid-cols-2">
+          <div class={fieldBox}>
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+              <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+            </svg>
             <select
-              class={inputClass}
+              class={innerSelect}
+              aria-label="Course interested in"
               value={course()}
               onChange={(e) => setCourse(e.currentTarget.value)}
             >
-              <option value="">Select course</option>
+              <option value="">Course Interested In</option>
               <For each={courses() ?? []}>
                 {(c) => <option value={c.slug}>{c.name}</option>}
               </For>
             </select>
-          </label>
+            <svg class="h-4 w-4 shrink-0 text-[var(--color-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </div>
 
-          <label class="block">
-            <span class="block text-sm font-medium mb-1">Current qualification</span>
+          <div class={fieldBox}>
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+            </svg>
             <select
-              class={inputClass}
+              class={innerSelect}
+              aria-label="Current qualification"
               value={qualification()}
               onChange={(e) => setQualification(e.currentTarget.value)}
             >
-              <option value="">Select</option>
+              <option value="">Qualification</option>
               {QUALIFICATIONS.map((q) => (
                 <option value={q}>{q}</option>
               ))}
             </select>
-          </label>
+            <svg class="h-4 w-4 shrink-0 text-[var(--color-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </div>
+        </div>
 
-          <label class="block sm:col-span-2">
-            <span class="block text-sm font-medium mb-1">Intended intake year</span>
-            <select
-              class={inputClass}
-              value={intakeYear()}
-              onChange={(e) => setIntakeYear(e.currentTarget.value)}
-            >
-              <option value="">Select</option>
-              {INTAKE_YEARS.map((y) => (
-                <option value={y}>{y}</option>
-              ))}
-            </select>
-          </label>
+        {/* Intake year */}
+        <div class={fieldBox}>
+          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+          </svg>
+          <select
+            class={innerSelect}
+            aria-label="Intended intake year"
+            value={intakeYear()}
+            onChange={(e) => setIntakeYear(e.currentTarget.value)}
+          >
+            <option value="">Intended Intake Year</option>
+            {INTAKE_YEARS.map((y) => (
+              <option value={y}>{y}</option>
+            ))}
+          </select>
+          <svg class="h-4 w-4 shrink-0 text-[var(--color-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
         </div>
 
         {/* Honeypot: hidden from people and from browser autofill (no common
             field name or label), tempting only to naive bots. Must stay empty. */}
-        <div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+        <div class="absolute -left-[9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
           <input
             type="text"
             tabindex="-1"
@@ -351,16 +422,16 @@ export default function LeadForm(props: LeadFormProps) {
         </div>
 
         {/* Consent: unbundled, not pre-ticked (compliance item 3) */}
-        <label class={`flex items-start gap-3 text-sm ${props.dense ? "mt-3" : "mt-4"}`}>
+        <label class="flex cursor-pointer items-start gap-2.5 pt-1 text-[13px] leading-relaxed text-[var(--color-muted)]">
           <input
             type="checkbox"
-            class="mt-1 shrink-0"
+            class="mt-0.5 h-4 w-4 shrink-0 accent-primary-600"
             checked={consent()}
             onChange={(e) => setConsent(e.currentTarget.checked)}
           />
-          <span class="text-[var(--color-ink)]/90">
+          <span>
             {CONSENT_TEXT}{" "}
-            <A href="/privacy-policy" class="text-primary-700 hover:underline">
+            <A href="/privacy-policy" class="font-medium text-primary-700 hover:underline">
               Read the Privacy Policy
             </A>
             .
@@ -368,24 +439,44 @@ export default function LeadForm(props: LeadFormProps) {
         </label>
 
         <Show when={error()}>
-          <p class="mt-3 text-sm text-[var(--color-danger)]" role="alert">
-            {error()}
+          <p
+            class="flex items-start gap-2 rounded-[var(--radius-md)] border border-[var(--color-danger)]/20 bg-[var(--color-danger)]/5 px-3 py-2.5 text-sm text-[var(--color-danger)]"
+            role="alert"
+          >
+            <span aria-hidden="true" class="mt-0.5">⚠</span>
+            <span>{error()}</span>
           </p>
         </Show>
 
-        <Button
-          type="submit"
-          variant={props.submitVariant ?? "accent"}
-          size={props.dense ? "md" : "lg"}
-          class={`w-full ${props.dense ? "mt-3" : "mt-4"}`}
-          disabled={!canSubmit()}
-        >
-          {busy() ? "Please wait..." : "Submit request"}
-        </Button>
-
-        <p class="mt-2 text-xs text-[var(--color-muted)]">
-          Tick consent to submit.
-        </p>
+        <div class="pt-0.5">
+          <Button
+            type="submit"
+            variant={props.submitVariant ?? "primary"}
+            size="lg"
+            class="w-full text-base font-bold uppercase tracking-wide shadow-sm transition-transform active:scale-[0.99]"
+            disabled={!canSubmit()}
+          >
+            <Show
+              when={!busy()}
+              fallback={
+                <span class="inline-flex items-center gap-2">
+                  <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4Z" />
+                  </svg>
+                  Submitting…
+                </span>
+              }
+            >
+              Submit
+            </Show>
+          </Button>
+          <p class="mt-2.5 text-center text-xs text-[var(--color-muted)]">
+            <Show when={!consent()} fallback="By submitting you agree to be contacted about your enquiry.">
+              Tick the consent box to submit.
+            </Show>
+          </p>
+        </div>
       </form>
     </Show>
   );
