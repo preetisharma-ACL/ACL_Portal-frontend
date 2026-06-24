@@ -1,5 +1,5 @@
 import { Show, type JSX, createEffect, onCleanup } from "solid-js";
-import { isServer } from "solid-js/web";
+import { Portal, isServer } from "solid-js/web";
 
 /** Accessible modal dialog. Renders nothing on the server until opened on the client. */
 export default function Modal(props: {
@@ -25,8 +25,12 @@ export default function Modal(props: {
 
   return (
     <Show when={props.open}>
+      {/* Portal to <body> so the modal escapes any ancestor stacking context /
+          overflow / transform (e.g. the homepage hero's z-index) and always
+          layers above the page. */}
+      <Portal>
       <div
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
         role="dialog"
         aria-modal="true"
         aria-label={props.title}
@@ -53,6 +57,7 @@ export default function Modal(props: {
           <div class="p-5">{props.children}</div>
         </div>
       </div>
+      </Portal>
     </Show>
   );
 }

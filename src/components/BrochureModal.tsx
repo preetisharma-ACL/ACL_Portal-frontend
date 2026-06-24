@@ -1,5 +1,5 @@
 import { Show, createEffect, onCleanup } from "solid-js";
-import { isServer } from "solid-js/web";
+import { Portal, isServer } from "solid-js/web";
 import type { CollegeCard } from "~/lib/types";
 import LeadForm from "./LeadForm";
 import CollegeLogo from "./CollegeLogo";
@@ -36,8 +36,9 @@ export default function BrochureModal(props: {
   return (
     <Show when={props.target}>
       {(t) => (
+        <Portal>
         <div
-          class="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
+          class="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label={`Download brochure for ${t().college.name}`}
@@ -126,6 +127,7 @@ export default function BrochureModal(props: {
             </div>
           </div>
         </div>
+        </Portal>
       )}
     </Show>
   );
