@@ -36,12 +36,16 @@ export function LoadingBlock(props: { label?: string }) {
       role="status"
       aria-live="polite"
     >
-      <div class="typewriter" aria-hidden="true">
-        <div class="slide">
-          <i />
+      {/* Scaled via a wrapper because `.typewriter` itself runs a transform
+          (bounce) animation that a scale on the same element would override. */}
+      <div class="scale-[1.35]" aria-hidden="true">
+        <div class="typewriter">
+          <div class="slide">
+            <i />
+          </div>
+          <div class="paper" />
+          <div class="keyboard" />
         </div>
-        <div class="paper" />
-        <div class="keyboard" />
       </div>
       <p class="text-sm font-medium text-[var(--color-muted)]">{props.label ?? "Loading"}</p>
     </div>
