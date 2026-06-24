@@ -142,77 +142,61 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 <Breadcrumbs crumbs={crumbs()} />
               </div>
 
-              {/* Cover: a slider of the college's own images (HERO first), else
-                  the bundled neutral slider. */}
-              <div class="relative mt-3 h-48 sm:h-64 md:h-80 overflow-hidden">
+              {/* Cover: a taller slider of the college's own images (HERO first),
+                  else the bundled neutral slider. */}
+              <div class="relative mt-3 h-64 sm:h-80 md:h-[26rem] lg:h-[32rem] overflow-hidden">
                 <CollegeCover media={d().media} name={h().name} />
                 <div
                   aria-hidden="true"
-                  class="absolute inset-0 z-[1] bg-gradient-to-t from-black/40 via-black/5 to-transparent"
+                  class="absolute inset-0 z-[1] bg-gradient-to-t from-black/55 via-black/10 to-black/10"
                 />
               </div>
 
-              {/* Profile: logo overlaps the cover; name and the rest sit below it */}
+              {/* Profile header */}
               <div class="container-x pb-6">
-                {/* Logo card overlapping the cover (only the logo overlaps) */}
-                <div class="relative z-10 -mt-10 sm:-mt-12 grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-[var(--radius-xl)] bg-white border border-[var(--color-line)] shadow-md p-2.5">
-                  <CollegeLogo
-                    name={h().name}
-                    logo={h().logo}
-                    id={h().id}
-                    class="max-h-full max-w-full text-2xl rounded-[var(--radius-md)]"
-                  />
-                </div>
-
-                {/* Name + meta + actions, below the cover on white */}
-                <div class="mt-4 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                  <div class="min-w-0">
-                    <h1 class="text-2xl md:text-3xl font-extrabold break-words leading-tight">
-                      {h().name}
-                    </h1>
-                    <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-                      <For each={h().approvals}>
-                        {(a) => (
-                          <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-ink)]/80">
-                            {a}
-                          </span>
-                        )}
-                      </For>
-                      <Show when={h().rating > 0}>
-                        <span class="inline-flex items-center gap-1.5">
-                          <span aria-hidden="true" class="text-[var(--color-warning)]">
-                            <For each={[0, 1, 2, 3, 4]}>
-                              {(i) => <span>{i < Math.round(h().rating) ? "★" : "☆"}</span>}
-                            </For>
-                          </span>
-                          <span class="text-sm font-semibold">{h().rating.toFixed(1)}</span>
-                          <span class="text-sm text-[var(--color-muted)]">
-                            {h().review_count} reviews
-                          </span>
-                        </span>
-                      </Show>
-                    </div>
-                    <p class="mt-2 text-sm text-[var(--color-muted)]">
-                      {[h().city, h().type, h().established ? `Established ${h().established}` : ""]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                    <div class="mt-2 flex items-center gap-2 text-sm">
-                      <span class="text-[var(--color-muted)]">Not sure what fits you?</span>
-                      <LeadTrigger
-                        sourcePage={path()}
-                        courseInterest={d().courses_fees[0]?.course}
-                        defaultCity={h().city}
-                        heading={`Get guidance for ${h().short_name}`}
-                        label="Talk to an advisor"
-                        variant="ghost"
-                        size="sm"
+                <div class="-mt-14 flex flex-col gap-5 sm:-mt-16 lg:flex-row lg:items-end lg:justify-between">
+                  {/* Identity: logo card + name + meta + badges */}
+                  <div class="flex min-w-0 items-end gap-4">
+                    <div class="relative z-10 grid h-24 w-24 shrink-0 place-items-center rounded-[var(--radius-xl)] bg-white p-3 shadow-lg ring-1 ring-black/5 sm:h-28 sm:w-28">
+                      <CollegeLogo
+                        name={h().name}
+                        logo={h().logo}
+                        id={h().id}
+                        class="max-h-full max-w-full rounded-[var(--radius-md)] text-2xl"
                       />
+                    </div>
+                    <div class="min-w-0 pb-0.5">
+                      <h1 class="text-2xl font-extrabold leading-tight break-words md:text-3xl">
+                        {h().name}
+                      </h1>
+                      <p class="mt-1.5 text-sm text-[var(--color-muted)]">
+                        {[h().city, h().type, h().established ? `Est. ${h().established}` : ""]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                      <div class="mt-2.5 flex flex-wrap items-center gap-2">
+                        <For each={h().approvals}>
+                          {(a) => (
+                            <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-ink)]/80">
+                              {a}
+                            </span>
+                          )}
+                        </For>
+                        <Show when={h().rating > 0}>
+                          <span class="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-warning)]/10 px-2.5 py-0.5">
+                            <span aria-hidden="true" class="text-[var(--color-warning)]">★</span>
+                            <span class="text-sm font-bold">{h().rating.toFixed(1)}</span>
+                            <span class="text-xs text-[var(--color-muted)]">
+                              ({h().review_count})
+                            </span>
+                          </span>
+                        </Show>
+                      </div>
                     </div>
                   </div>
 
                   {/* Actions: guidance-level only (compliance: never apply to a college) */}
-                  <div class="flex flex-wrap items-center gap-2 lg:justify-end lg:pt-1 shrink-0">
+                  <div class="flex flex-wrap items-center gap-2.5 lg:shrink-0 lg:justify-end">
                     <LeadTrigger
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
@@ -242,6 +226,19 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       variant="ghost"
                     />
                   </div>
+                </div>
+
+                <div class="mt-3 flex items-center gap-2 text-sm">
+                  <span class="text-[var(--color-muted)]">Not sure what fits you?</span>
+                  <LeadTrigger
+                    sourcePage={path()}
+                    courseInterest={d().courses_fees[0]?.course}
+                    defaultCity={h().city}
+                    heading={`Get guidance for ${h().short_name}`}
+                    label="Talk to an advisor"
+                    variant="ghost"
+                    size="sm"
+                  />
                 </div>
               </div>
             </div>
