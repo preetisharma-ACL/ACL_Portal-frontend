@@ -111,7 +111,9 @@ function Panel(props: {
 }) {
   return (
     <section>
-      <header class="mb-4 flex items-center justify-between gap-3 border-b-2 border-primary-600 pb-3">
+      {/* Sticky on desktop, parked just under the filter toolbar (nav 64px +
+          toolbar ~89px). Opaque page-colour bg so rows scroll cleanly under. */}
+      <header class="mb-4 flex items-center justify-between gap-3 border-b-2 border-primary-600 pb-3 lg:sticky lg:top-[153px] lg:z-20 lg:bg-[var(--color-canvas)] lg:pt-3">
         <div class="flex items-center gap-2.5">
           <span class="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] bg-primary-600 text-white">
             <Show
