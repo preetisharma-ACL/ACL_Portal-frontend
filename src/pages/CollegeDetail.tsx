@@ -217,7 +217,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
                       defaultCity={h().city}
-                      heading={`Get admission guidance for ${h().short_name}`}
+                      heading={`Get admission guidance for ${h().name}`}
                       label="Get admission guidance"
                       variant="accent"
                     />
@@ -237,7 +237,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
                       defaultCity={h().city}
-                      heading={`Get the prospectus for ${h().short_name}`}
+                      heading={`Get the prospectus for ${h().name}`}
                       label="Download brochure"
                       variant="ghost"
                     />
@@ -250,7 +250,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     sourcePage={path()}
                     courseInterest={d().courses_fees[0]?.course}
                     defaultCity={h().city}
-                    heading={`Get guidance for ${h().short_name}`}
+                    heading={`Get guidance for ${h().name}`}
                     label="Talk to an advisor"
                     variant="ghost"
                     size="sm"
@@ -404,7 +404,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                                   sourcePage={path()}
                                   courseInterest={c.course}
                                   defaultCity={h().city}
-                                  heading={`Get fee details for ${c.course} at ${h().short_name}`}
+                                  heading={`Get fee details for ${c.course} at ${h().name}`}
                                   label="Get fee details"
                                   variant="outline"
                                   size="sm"
@@ -723,7 +723,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                   <Card class="p-5 bg-primary-50 border-primary-100">
                     <h2 class="font-semibold text-lg">Compare and decide</h2>
                     <p class="mt-2 text-sm text-[var(--color-muted)]">
-                      Get free guidance on courses, fees and admission for {h().short_name} and
+                      Get free guidance on courses, fees and admission for {h().name} and
                       similar institutes.
                     </p>
                     <div class="mt-4 grid gap-2">

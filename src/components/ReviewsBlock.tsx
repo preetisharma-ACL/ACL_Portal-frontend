@@ -4,6 +4,7 @@ import { reviewsQuery } from "~/lib/queries";
 import { submitReviewAction } from "~/lib/actions";
 import { Badge, Button } from "./ui";
 import { StarPicker, StarRating } from "./Stars";
+import { formatDate as fmtDate } from "~/lib/format";
 import type { ReviewPayload } from "~/lib/types";
 
 const SUB_LABELS: { key: keyof ReviewPayload; label: string }[] = [
@@ -12,14 +13,6 @@ const SUB_LABELS: { key: keyof ReviewPayload; label: string }[] = [
   { key: "infrastructure", label: "Infrastructure" },
   { key: "campus_life", label: "Campus life" },
 ];
-
-function fmtDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
-  } catch {
-    return "";
-  }
-}
 
 const inputClass =
   "w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2.5 text-sm outline-none focus:border-primary-500";

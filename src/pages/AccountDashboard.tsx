@@ -1,55 +1,31 @@
 import { A, createAsync, revalidate } from "@solidjs/router";
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, Suspense, createSignal } from "solid-js";
 import Seo from "~/components/Seo";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Card, Button } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { requireMeQuery, savedQuery, trackingQuery, myLeadsQuery } from "~/lib/queries";
 import { updateProfile, unsaveCollege, setTracking } from "~/lib/account";
-import { openLogin, TRACKING_LABELS, TRACKING_STATUSES } from "~/lib/authUi";
-import { formatFeeRange } from "~/lib/format";
+import { TRACKING_LABELS, TRACKING_STATUSES } from "~/lib/authUi";
+import { formatDate as fmtDate, formatFeeRange } from "~/lib/format";
 import type { AuthUser, CollegeInterest, MyLead, TrackingStatus } from "~/lib/types";
 
 const inputClass =
   "w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2.5 text-sm outline-none focus:border-primary-500";
 
-function fmtDate(iso?: string): string {
-  if (!iso) return "";
-  try {
-    return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-  } catch {
-    return "";
-  }
-}
-
 export default function AccountDashboard() {
-  // deferStream so the auth check resolves server-side; requireMeQuery issues a
-  // redirect to the login prompt when there is no session (protected page).
+  // requireMeQuery redirects to the login prompt when unauthenticated. Render
+  // deterministically: a single Suspense boundary shows the loading state on
+  // both SSR and the first client paint, then the resolved Dashboard — so the
+  // SSR and hydration trees always agree (no nextSibling hydration crash).
   const user = createAsync(() => requireMeQuery(), { deferStream: true });
 
   return (
     <>
       <Seo title="My Account" description="Your saved colleges, application tracker and enquiries." noindex />
-      <Show
-        when={user()}
-        fallback={
-          <Show when={user() === null} fallback={<LoadingBlock label="Loading your account" />}>
-            <div class="container-x py-16">
-              <div class="mx-auto max-w-md rounded-[var(--radius-xl)] border border-[var(--color-line)] bg-[var(--color-surface)] p-8 text-center">
-                <h1 class="text-xl font-bold">Please log in</h1>
-                <p class="mt-2 text-sm text-[var(--color-muted)]">
-                  Log in to see your saved colleges, application tracker and enquiries.
-                </p>
-                <Button variant="accent" size="lg" class="mt-5" onClick={() => openLogin()}>
-                  Log in
-                </Button>
-              </div>
-            </div>
-          </Show>
-        }
-      >
-        {(u) => <Dashboard user={u()} />}
-      </Show>
+      <Suspense fallback={<LoadingBlock label="Loading your account" />}>
+        <Show when={user()}>{(u) => <Dashboard user={u()} />}</Show>
+      </Suspense>
     </>
   );
 }
@@ -87,6 +63,7 @@ function ProfileCard(props: { user: AuthUser }) {
   const [cities, setCities] = createSignal((prefs.cities ?? []).join(", "));
   const [busy, setBusy] = createSignal(false);
   const [saved, setSaved] = createSignal(false);
+  const [error, setError] = createSignal("");
 
   const toList = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
@@ -94,15 +71,24 @@ function ProfileCard(props: { user: AuthUser }) {
     e.preventDefault();
     setBusy(true);
     setSaved(false);
+    setError("");
     try {
-      await updateProfile({
+      const updated = await updateProfile({
         name: name().trim(),
         email: email().trim(),
         education_background: edu().trim(),
         preferences: { streams: toList(streams()), cities: toList(cities()) },
       });
-      await revalidate("me");
+      if (!updated) {
+        setError("Could not save your profile. Please try again.");
+        return;
+      }
+      // Re-read the user so the dashboard (require-me) and header (me) reflect
+      // the saved values and they persist after reload.
+      await Promise.all([revalidate("require-me"), revalidate("me")]);
       setSaved(true);
+    } catch {
+      setError("Something went wrong saving your profile. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -145,7 +131,10 @@ function ProfileCard(props: { user: AuthUser }) {
             {busy() ? "Saving..." : "Save profile"}
           </Button>
           <Show when={saved()}>
-            <span class="text-sm font-medium text-[var(--color-success)]">Saved</span>
+            <span class="text-sm font-medium text-[var(--color-success)]">Saved ✓</span>
+          </Show>
+          <Show when={error()}>
+            <span class="text-sm font-medium text-[var(--color-danger)]">{error()}</span>
           </Show>
         </div>
       </form>

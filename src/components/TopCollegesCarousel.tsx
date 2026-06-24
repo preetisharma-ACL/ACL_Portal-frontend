@@ -129,10 +129,7 @@ export default function TopCollegesCarousel(props: {
               {(c) => {
                 const href = `/college/${c.slug}-${c.id}`;
                 const state = props.cities.find((ct) => ct.name === c.city)?.state;
-                const score = (c.rating * 2).toFixed(1);
-                const reviews = 40 + (Math.abs(c.id * 53) % 3960);
                 const fees = feesLacs(c.fee_range);
-                const rank = 1 + (Math.abs(c.id * 7) % 40);
                 const loc = [c.city, c.approvals[0]].filter(Boolean).join(" | ");
                 return (
                   <article class="group flex snap-start flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm transition-shadow hover:shadow-md">
@@ -149,12 +146,14 @@ export default function TopCollegesCarousel(props: {
                         aria-hidden="true"
                         class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10"
                       />
-                      <span class="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md bg-white/95 px-1.5 py-0.5 text-[11px] font-bold text-primary-900 shadow-sm">
-                        <span aria-hidden="true" class="text-[var(--color-warning)]">
-                          ★
+                      <Show when={c.rating > 0}>
+                        <span class="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md bg-white/95 px-1.5 py-0.5 text-[11px] font-bold text-primary-900 shadow-sm">
+                          <span aria-hidden="true" class="text-[var(--color-warning)]">
+                            ★
+                          </span>
+                          {c.rating.toFixed(1)}/5
                         </span>
-                        {score}/10
-                      </span>
+                      </Show>
                       <div class="absolute inset-x-0 bottom-0 flex items-center gap-2.5 p-3">
                         <span class="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-white shadow ring-1 ring-black/10">
                           <CollegeLogo
@@ -179,17 +178,14 @@ export default function TopCollegesCarousel(props: {
                         <p class="line-clamp-2 text-sm font-bold leading-snug text-[var(--color-ink)]">
                           {c.key_courses[0]}
                         </p>
-                        <span class="shrink-0 text-right">
-                          <span class="inline-flex items-center gap-0.5 text-xs font-bold text-[var(--color-ink)]">
+                        <Show when={c.rating > 0}>
+                          <span class="inline-flex shrink-0 items-center gap-0.5 text-xs font-bold text-[var(--color-ink)]">
                             <span aria-hidden="true" class="text-[var(--color-warning)]">
                               ★
                             </span>
                             {c.rating.toFixed(1)}/5
                           </span>
-                          <span class="block text-[10px] text-[var(--color-muted)]">
-                            {reviews} reviews
-                          </span>
-                        </span>
+                        </Show>
                       </div>
 
                       <p class="mt-1 text-sm">
@@ -207,8 +203,7 @@ export default function TopCollegesCarousel(props: {
                       </p>
 
                       <p class="mt-2 line-clamp-1 border-t border-[var(--color-line)] pt-2 text-[11px] text-[var(--color-muted)]">
-                        Ranked {rank} out of 500
-                        {state ? ` · ${state}` : ""} · {c.type}
+                        {[c.city, state, c.type].filter(Boolean).join(" · ")}
                       </p>
 
                       <div class="mt-1 divide-y divide-[var(--color-line)] border-t border-[var(--color-line)] text-xs">

@@ -27,7 +27,12 @@ function SearchIcon(props: { class?: string }) {
  * fail-safe if the streams fetch errors or returns empty, so core navigation
  * can never disappear. Mirrors the streams the backend serves.
  */
+// Mirrors the live streams the backend serves, so SSR (before the streams
+// resource resolves) and the resolved nav render the SAME items on every page
+// type — keeping the primary nav consistent across home/listing/detail.
 const DEFAULT_NAV: { name: string; slug: string }[] = [
+  { name: "Pharmacy", slug: "pharmacy" },
+  { name: "University", slug: "university" },
   { name: "Engineering", slug: "engineering" },
   { name: "Management", slug: "management" },
   { name: "Medical", slug: "medical" },
@@ -44,12 +49,12 @@ export default function Header() {
   const [open, setOpen] = createSignal(false);
   // Nav derives from the live streams taxonomy so the links always match the
   // slugs the backend serves; falls back to DEFAULT_NAV so it is never empty.
-  const streams = createAsync(() => streamsQuery());
+  // deferStream so the real streams are resolved server-side on EVERY page (not
+  // just where they happen to be warm), giving an identical nav everywhere.
+  const streams = createAsync(() => streamsQuery(), { deferStream: true });
   const navStreams = () => {
     const s = streams();
-    return s && s.length
-      ? s.slice(0, 5).map((x) => ({ name: x.name, slug: x.slug }))
-      : DEFAULT_NAV;
+    return s && s.length ? s.slice(0, 6).map((x) => ({ name: x.name, slug: x.slug })) : DEFAULT_NAV;
   };
 
   return (

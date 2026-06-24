@@ -43,6 +43,21 @@ export function formatFeeRange(range: MoneyRange | string | null | undefined): s
   return `${inrShort(min)} – ${inrShort(max)}`;
 }
 
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+/** Deterministic date format ("12 Jun 2026"). Uses UTC getters so the server and
+ *  client always produce the same string (toLocaleDateString varies by host
+ *  timezone/locale and causes SSR hydration mismatches). */
+export function formatDate(iso?: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
 /** "PRIVATE" -> "Private", "DEEMED" -> "Deemed". */
 export function titleCaseType(type: string | null | undefined): string {
   if (!type) return "";

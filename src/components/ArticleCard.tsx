@@ -1,18 +1,10 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
+import { formatDate } from "~/lib/format";
 import type { ArticleCard as ArticleCardT } from "~/lib/types";
 
-export function fmtArticleDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  } catch {
-    return "";
-  }
-}
+/** Deterministic (SSR-safe) date format; re-exported for the article pages. */
+export const fmtArticleDate = formatDate;
 
 /** Article card. Featured variant is wider/taller for the index hero slot. */
 export default function ArticleCard(props: { article: ArticleCardT; featured?: boolean }) {

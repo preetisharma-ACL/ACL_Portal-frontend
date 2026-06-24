@@ -3,14 +3,7 @@ import { For, Show, createSignal } from "solid-js";
 import { questionsQuery } from "~/lib/queries";
 import { submitAnswerAction, submitQuestionAction } from "~/lib/actions";
 import { Badge, Button } from "./ui";
-
-function fmtDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
-  } catch {
-    return "";
-  }
-}
+import { formatDate as fmtDate } from "~/lib/format";
 
 const inputClass =
   "w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2.5 text-sm outline-none focus:border-primary-500";

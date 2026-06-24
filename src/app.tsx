@@ -38,7 +38,8 @@ export default function App() {
             <ErrorBoundary
               fallback={(err, reset) =>
                 err?.status === 404 ? (
-                  <NotFound message="We could not find what you were looking for." />
+                  // Same 404 page as the catch-all route (consistent everywhere).
+                  <NotFound />
                 ) : (
                   <ErrorState reset={reset} />
                 )
