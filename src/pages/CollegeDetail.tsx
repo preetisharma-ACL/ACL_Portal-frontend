@@ -12,6 +12,7 @@ import RelatedArticles from "~/components/RelatedArticles";
 import SaveButton from "~/components/SaveButton";
 import TrackStatus from "~/components/TrackStatus";
 import CollegeCover from "~/components/CollegeCover";
+import Lightbox from "~/components/Lightbox";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
@@ -73,6 +74,8 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
   const [active, setActive] = createSignal<string>(
     props.tab ? TAB_ANCHOR[props.tab] : "overview",
   );
+  // Gallery lightbox: index of the open image (null = closed).
+  const [lightbox, setLightbox] = createSignal<number | null>(null);
 
   // On a sub-route, scroll to the matching section once mounted on the client.
   onMount(() => {
@@ -96,6 +99,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
             ? `${h().name} ${TAB_TITLE[props.tab]}: ${h().city}`
             : `${h().name}: Courses, Fees, Admission and Placements`;
         const citySlug = () => h().city.toLowerCase().replace(/\s+/g, "-");
+        const galleryImages = () =>
+          d()
+            .media.filter((mm) => mm.category !== "HERO" && mm.url)
+            .map((mm) => ({ url: mm.url, caption: mm.caption }));
         const crumbs = () => [
           { name: "Home", path: "/" },
           { name: h().city, path: listingPath("mba", "mba", citySlug()) },
@@ -538,29 +545,47 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 {/* Gallery */}
                 <Show when={visible.gallery()}>
                 <Block id="gallery" title="Gallery">
-                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <For each={d().media.filter((m) => m.category !== "HERO")}>
-                      {(m) => (
-                        <figure class="rounded-[var(--radius-md)] overflow-hidden border border-[var(--color-line)]">
+                  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <For each={galleryImages()}>
+                      {(m, i) => (
+                        <button
+                          type="button"
+                          onClick={() => setLightbox(i())}
+                          aria-label={`View image ${i() + 1}`}
+                          class="group relative block aspect-[4/3] overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)]"
+                        >
                           <img
                             src={m.url || "/placeholders/campus-cover.svg"}
-                            alt={m.caption}
+                            alt={m.caption || `${h().name} photo ${i() + 1}`}
                             loading="lazy"
                             decoding="async"
                             onError={(e) =>
                               (e.currentTarget.src = "/placeholders/campus-cover.svg")
                             }
-                            class="w-full h-32 object-cover bg-[var(--color-canvas)]"
+                            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
-                          <figcaption class="px-2 py-1 text-xs text-[var(--color-muted)]">
-                            {m.caption}
-                          </figcaption>
-                        </figure>
+                          <span
+                            aria-hidden="true"
+                            class="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20"
+                          />
+                          <Show when={m.caption}>
+                            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-left text-xs text-white">
+                              {m.caption}
+                            </span>
+                          </Show>
+                        </button>
                       )}
                     </For>
                   </div>
                 </Block>
                 </Show>
+
+                <Lightbox
+                  images={galleryImages()}
+                  index={lightbox()}
+                  onClose={() => setLightbox(null)}
+                  onIndex={setLightbox}
+                />
 
                 {/* Reviews */}
                 <Block id="reviews" title="Reviews">
