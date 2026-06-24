@@ -66,6 +66,11 @@ export const listingQuery = query(async (q: ListingQuery) => {
   return api.getListing(q);
 }, "listing");
 
+export const allCollegesQuery = query(async () => {
+  "use server";
+  return api.getAllColleges();
+}, "all-colleges");
+
 export const collegeQuery = query(async (slug: string, id: number) => {
   "use server";
   return api.getCollege(slug, id);

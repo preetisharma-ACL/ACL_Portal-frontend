@@ -118,6 +118,9 @@ function mapCard(r: any): CollegeCard {
     rating: Number(r.rating) || 0,
     type: titleCaseType(r.type),
     hero_image: r.hero_image ?? r.image_url ?? r.image ?? undefined,
+    nirf_rank: r.nirf_rank ?? null,
+    highest_package: r.highest_package ?? null,
+    review_count: r.review_count ?? 0,
   };
 }
 
@@ -399,6 +402,24 @@ export async function getCityColleges(city: string): Promise<CollegeCard[]> {
       page_size: "50",
       page: String(page),
     });
+    out.push(...(r.results ?? []).map(mapCard));
+    if (!r.pagination?.has_next) break;
+  }
+  return out;
+}
+
+/**
+ * Every published institution across the platform (all pages of /listings/),
+ * for the directory page (/university). The backend caps page_size at 50, so we
+ * page through. Mock mode returns one city's set as a stand-in.
+ */
+export async function getAllColleges(): Promise<CollegeCard[]> {
+  if (USE_MOCK) {
+    return mock.buildListing("", "varanasi").results;
+  }
+  const out: CollegeCard[] = [];
+  for (let page = 1; page <= 20; page++) {
+    const r = await get<any>("/listings/", { page_size: "50", page: String(page) });
     out.push(...(r.results ?? []).map(mapCard));
     if (!r.pagination?.has_next) break;
   }

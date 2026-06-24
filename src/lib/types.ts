@@ -64,6 +64,12 @@ export interface CollegeCard {
    *  When absent, the card uses a per-college neutral gradient (never a shared
    *  stock photo). */
   hero_image?: string;
+  /** NIRF ranking, when the listing provides it (used by the directory). */
+  nirf_rank?: { agency: string; rank: number; year: number; category: string } | null;
+  /** Highest placement package, when provided. */
+  highest_package?: string | null;
+  /** Number of published reviews, when provided. */
+  review_count?: number;
 }
 
 export interface CourseDetail {
