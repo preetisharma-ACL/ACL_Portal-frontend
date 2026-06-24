@@ -14,8 +14,9 @@ import { A } from "@solidjs/router";
 import { submitLeadAction } from "~/lib/actions";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
 import { CONSENT_TEXT, CONSENT_TEXT_VERSION } from "~/lib/config";
+import { humanize, slugify } from "~/lib/slug";
 import { track } from "~/lib/analytics";
-import type { CityLite, LeadPayload } from "~/lib/types";
+import type { LeadPayload } from "~/lib/types";
 import { Button } from "./ui";
 
 export interface LeadFormProps {
@@ -90,8 +91,9 @@ export default function LeadForm(props: LeadFormProps) {
   const [name, setName] = createSignal("");
   const [mobile, setMobile] = createSignal("");
   const [email, setEmail] = createSignal("");
-  // City is submitted as a backend city SLUG (not a display name).
-  const [city, setCity] = createSignal(props.citySlug ?? "");
+  // City is a free-text field (backend accepts any string). Prefill with a
+  // readable name from context (defaultCity, or the citySlug humanised); editable.
+  const [city, setCity] = createSignal(props.defaultCity ?? humanize(props.citySlug ?? ""));
   // Course of interest is submitted as a backend course SLUG.
   const [course, setCourse] = createSignal(props.courseSlug ?? "");
   const [qualification, setQualification] = createSignal("");
@@ -103,20 +105,14 @@ export default function LeadForm(props: LeadFormProps) {
   const [error, setError] = createSignal("");
   const [success, setSuccess] = createSignal(false);
 
-  // City/course options are loaded into plain signals (NOT createAsync) so the
-  // form renders immediately and never suspends — the dropdowns just populate
-  // when the data arrives. This avoids the whole-form "Loading…" in the popup.
-  const [cities, setCitiesData] = createSignal<CityLite[]>([]);
+  // Course options load into a plain signal (NOT createAsync) so the form renders
+  // immediately and never suspends — the dropdown populates when data arrives.
   const [courses, setCoursesData] = createSignal<{ name: string; slug: string }[]>([]);
+  // City is free text, but the backend requires a KNOWN city slug (or empty) —
+  // it 400s on arbitrary strings. We keep this list to map the typed city to a
+  // slug on submit; an unmatched city is sent empty so submission never fails.
+  const [cities, setCitiesData] = createSignal<{ name: string; slug: string }[]>([]);
 
-  // If only a display name was given, resolve it to a slug once cities load.
-  createEffect(() => {
-    if (city() || !props.defaultCity) return;
-    const match = cities().find(
-      (c) => c.name.toLowerCase() === props.defaultCity!.toLowerCase(),
-    );
-    if (match) setCity(match.slug);
-  });
   // Best-effort: resolve a course display label to a slug once courses load.
   createEffect(() => {
     if (course() || !props.courseInterest) return;
@@ -128,12 +124,12 @@ export default function LeadForm(props: LeadFormProps) {
   let utm: Record<string, string> = {};
   onMount(() => {
     utm = captureUtm();
-    // Fetch dropdown options on the client (cached/prefetched, usually instant).
-    void citiesQuery()
-      .then((c) => setCitiesData(c ?? []))
-      .catch(() => {});
+    // Fetch options on the client (cached/prefetched, usually instant).
     void coursesQuery()
       .then((c) => setCoursesData(c ?? []))
+      .catch(() => {});
+    void citiesQuery()
+      .then((c) => setCitiesData(c ?? []))
       .catch(() => {});
   });
 
@@ -165,14 +161,16 @@ export default function LeadForm(props: LeadFormProps) {
       return;
     }
 
-    // Only ever send a city slug the backend actually knows; otherwise empty
-    // (which the backend accepts). Guards stale/mismatched prefilled slugs.
-    const known = cities() ?? [];
-    const safeCity = known.some((c) => c.slug === city()) ? city() : "";
+    // City is typed freely, but the backend requires a known city slug (or empty)
+    // — map the typed value to a matching slug, else send empty (never 400).
+    const typedCity = city().trim();
+    const citySlug = slugify(typedCity);
+    const matchedCity = cities().find(
+      (c) => c.slug === citySlug || c.name.toLowerCase() === typedCity.toLowerCase(),
+    );
+    const safeCity = matchedCity ? matchedCity.slug : "";
 
-    // Same guard for the course: send the selected slug only if it is a known
-    // backend course (from the dropdown options or the trusted courseSlug prop),
-    // otherwise empty. Prevents an "Unknown course." 400.
+    // Course still sends a backend-known slug only (or empty) to avoid a 400.
     const courseSlugs = new Set((courses() ?? []).map((c) => c.slug));
     if (props.courseSlug) courseSlugs.add(props.courseSlug);
     const safeCourse = courseSlugs.has(course()) ? course() : "";
@@ -181,7 +179,7 @@ export default function LeadForm(props: LeadFormProps) {
       name: name().trim(),
       mobile: mobile().trim(),
       email: email().trim(),
-      city: safeCity, // verified backend city slug, or empty
+      city: safeCity, // typed city mapped to a known slug, or empty
       course_interest: safeCourse, // verified backend course slug, or empty
       qualification: qualification(),
       // Integer when chosen; omitted when blank (backend rejects "" and null).
@@ -285,16 +283,14 @@ export default function LeadForm(props: LeadFormProps) {
 
           <label class="block">
             <span class="block text-sm font-medium mb-1">City</span>
-            <select
+            <input
               class={inputClass}
+              type="text"
+              autocomplete="address-level2"
+              placeholder="Your city"
               value={city()}
-              onChange={(e) => setCity(e.currentTarget.value)}
-            >
-              <option value="">Select city</option>
-              <For each={cities() ?? []}>
-                {(c) => <option value={c.slug}>{c.name}</option>}
-              </For>
-            </select>
+              onInput={(e) => setCity(e.currentTarget.value)}
+            />
           </label>
 
           <label class="block">

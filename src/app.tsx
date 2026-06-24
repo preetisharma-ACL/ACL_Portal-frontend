@@ -14,14 +14,14 @@ import { citiesQuery, coursesQuery } from "~/lib/queries";
 import { USE_MOCK, NOINDEX } from "~/lib/config";
 
 export default function App() {
-  // Warm the lead-form dropdown data (cities + the course list, which is a few
-  // requests) in the background after first paint, so the lead/brochure popups
-  // open instantly instead of showing a brief "Loading…" while they fetch.
+  // Warm the lead-form data (course list + cities, used to map the typed city to
+  // a known slug) in the background after first paint, so the lead/brochure
+  // popups open instantly and submit cleanly.
   onMount(() => {
     if (isServer) return;
     const warm = () => {
-      void citiesQuery();
       void coursesQuery();
+      void citiesQuery();
     };
     if ("requestIdleCallback" in window) {
       (window as Window & { requestIdleCallback: (cb: () => void, o?: object) => void })
