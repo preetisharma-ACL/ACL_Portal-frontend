@@ -80,13 +80,24 @@ function ProfileCard(props: { user: AuthUser }) {
         preferences: { streams: toList(streams()), cities: toList(cities()) },
       });
       if (!updated) {
+        // Keep the entered values; never blank the form on failure.
         setError("Could not save your profile. Please try again.");
         return;
       }
-      // Re-read the user so the dashboard (require-me) and header (me) reflect
-      // the saved values and they persist after reload.
-      await Promise.all([revalidate("require-me"), revalidate("me")]);
+      // Reflect the persisted values straight from the PATCH response (the saved
+      // state) into the form, on THIS instance — so the success shows and the
+      // fields keep the saved values without a remount.
+      const p = (updated.preferences ?? {}) as { streams?: string[]; cities?: string[] };
+      setName(updated.name ?? "");
+      setEmail(updated.email ?? "");
+      setEdu(updated.education_background ?? "");
+      setStreams((p.streams ?? []).join(", "));
+      setCities((p.cities ?? []).join(", "));
       setSaved(true);
+      // Refresh the header's user in the background. Do NOT revalidate the
+      // dashboard's own query (require-me) here: that refetch remounts this card
+      // and would discard the success state. A full reload re-reads /me/ anyway.
+      void revalidate("me");
     } catch {
       setError("Something went wrong saving your profile. Please try again.");
     } finally {
