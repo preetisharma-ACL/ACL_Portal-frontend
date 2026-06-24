@@ -36,13 +36,13 @@ function sortList(list: CollegeCard[], mode: string): CollegeCard[] {
 const selectClass =
   "h-10 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-ink)] outline-none transition-colors hover:border-[var(--color-muted)]/50 focus:border-primary-500 cursor-pointer";
 
-/** One institution row in a panel. */
+/** One institution row, as a standalone card that flows on the page. */
 function Row(props: { c: CollegeCard }) {
   const c = props.c;
   return (
     <A
       href={`/college/${c.slug}-${c.id}`}
-      class="group flex items-center gap-3 border-b border-[var(--color-line)] px-4 py-3 transition-colors last:border-b-0 hover:bg-[var(--color-canvas)]"
+      class="group flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-3 transition-all hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-sm"
     >
       <CollegeLogo
         name={c.name}
@@ -101,7 +101,8 @@ function Row(props: { c: CollegeCard }) {
   );
 }
 
-/** A side panel (universities or colleges) with a sticky header and its list. */
+/** A column (universities or colleges): a clean header bar + a list of cards
+ *  that flow with the page (no inner scroll box). */
 function Panel(props: {
   title: string;
   count: number;
@@ -109,8 +110,8 @@ function Panel(props: {
   items: CollegeCard[];
 }) {
   return (
-    <section class="flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm">
-      <header class="flex items-center justify-between gap-3 border-b border-[var(--color-line)] bg-gradient-to-r from-primary-50 to-[var(--color-surface)] px-4 py-3">
+    <section>
+      <header class="sticky top-32 z-20 -mx-1 mb-4 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border-b-2 border-primary-600 bg-[var(--color-canvas)]/95 px-1 pb-3 pt-1 backdrop-blur">
         <div class="flex items-center gap-2.5">
           <span class="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] bg-primary-600 text-white">
             <Show
@@ -133,18 +134,18 @@ function Panel(props: {
           {props.count}
         </span>
       </header>
-      <div class="no-scrollbar max-h-[68vh] overflow-y-auto">
-        <Show
-          when={props.items.length}
-          fallback={
-            <p class="px-4 py-12 text-center text-sm text-[var(--color-muted)]">
-              No matches. Try clearing a filter.
-            </p>
-          }
-        >
+      <Show
+        when={props.items.length}
+        fallback={
+          <p class="rounded-[var(--radius-md)] border border-dashed border-[var(--color-line)] px-4 py-12 text-center text-sm text-[var(--color-muted)]">
+            No matches. Try clearing a filter.
+          </p>
+        }
+      >
+        <div class="space-y-2.5">
           <For each={props.items}>{(c) => <Row c={c} />}</For>
-        </Show>
-      </div>
+        </div>
+      </Show>
     </section>
   );
 }
@@ -208,8 +209,16 @@ export default function Directory() {
       />
 
       <Show when={data()} fallback={<LoadingBlock label="Loading institutions" />}>
-        {/* Hero */}
+        {/* Hero with banner image */}
         <section class="relative overflow-hidden bg-primary-900 text-white">
+          <img
+            src="/bg-image.jpg"
+            alt=""
+            aria-hidden="true"
+            class="absolute inset-0 h-full w-full object-cover object-center opacity-40"
+          />
+          {/* Readability overlay over the banner */}
+          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-900/90 to-primary-900/55" />
           <div aria-hidden="true" class="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-accent-500/20 blur-3xl" />
           <div class="container-x relative z-10 py-10 md:py-14">
             <Breadcrumbs crumbs={crumbs()} light />
@@ -296,7 +305,7 @@ export default function Directory() {
 
         {/* Two panels */}
         <div class="container-x py-8">
-          <div class="grid gap-6 lg:grid-cols-2">
+          <div class="grid items-start gap-6 lg:grid-cols-2">
             <Panel title="Universities" icon="uni" count={universities().length} items={universities()} />
             <Panel title="Colleges and institutes" icon="college" count={colleges().length} items={colleges()} />
           </div>
