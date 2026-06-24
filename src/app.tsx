@@ -1,7 +1,8 @@
 import { Meta, MetaProvider } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { ErrorBoundary, Show, Suspense } from "solid-js";
+import { ErrorBoundary, Show, Suspense, onMount } from "solid-js";
+import { isServer } from "solid-js/web";
 import "./app.css";
 import Header from "~/components/layout/Header";
 import Footer from "~/components/layout/Footer";
@@ -9,9 +10,27 @@ import CompareTray from "~/components/CompareTray";
 import LoginModal from "~/components/LoginModal";
 import Analytics from "~/components/Analytics";
 import { ErrorState, LoadingBlock, NotFound } from "~/components/states";
+import { citiesQuery, coursesQuery } from "~/lib/queries";
 import { USE_MOCK, NOINDEX } from "~/lib/config";
 
 export default function App() {
+  // Warm the lead-form dropdown data (cities + the course list, which is a few
+  // requests) in the background after first paint, so the lead/brochure popups
+  // open instantly instead of showing a brief "Loading…" while they fetch.
+  onMount(() => {
+    if (isServer) return;
+    const warm = () => {
+      void citiesQuery();
+      void coursesQuery();
+    };
+    if ("requestIdleCallback" in window) {
+      (window as Window & { requestIdleCallback: (cb: () => void, o?: object) => void })
+        .requestIdleCallback(warm, { timeout: 3000 });
+    } else {
+      setTimeout(warm, 1500);
+    }
+  });
+
   return (
     <Router
       root={(props) => (
