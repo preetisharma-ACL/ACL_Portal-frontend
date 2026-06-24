@@ -1,4 +1,4 @@
-import { Show, createEffect, onCleanup } from "solid-js";
+import { Show, Suspense, createEffect, onCleanup } from "solid-js";
 import { Portal, isServer } from "solid-js/web";
 import type { CollegeCard } from "~/lib/types";
 import LeadForm from "./LeadForm";
@@ -114,15 +114,21 @@ export default function BrochureModal(props: {
               </p>
 
               <div class="mt-3">
-                <LeadForm
-                  sourcePage={`/college/${t().college.slug}-${t().college.id}#brochure`}
-                  courseInterest={t().college.key_courses[0]}
-                  defaultCity={t().college.city}
-                  hideHeading
-                  submitVariant="primary"
-                  dense
-                  onSuccess={() => {}}
-                />
+                <Suspense
+                  fallback={
+                    <div class="py-10 text-center text-sm text-[var(--color-muted)]">Loading…</div>
+                  }
+                >
+                  <LeadForm
+                    sourcePage={`/college/${t().college.slug}-${t().college.id}#brochure`}
+                    courseInterest={t().college.key_courses[0]}
+                    defaultCity={t().college.city}
+                    hideHeading
+                    submitVariant="primary"
+                    dense
+                    onSuccess={() => {}}
+                  />
+                </Suspense>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Show, type JSX, createEffect, onCleanup } from "solid-js";
+import { Show, Suspense, type JSX, createEffect, onCleanup } from "solid-js";
 import { Portal, isServer } from "solid-js/web";
 
 /** Accessible modal dialog. Renders nothing on the server until opened on the client. */
@@ -54,7 +54,18 @@ export default function Modal(props: {
               </span>
             </button>
           </div>
-          <div class="p-5">{props.children}</div>
+          <div class="p-5">
+            {/* Contain any data suspension (e.g. the lead form's city/course
+                dropdowns) to the modal, so it never triggers the app-level
+                "Loading page" fallback (which looked like a full reload). */}
+            <Suspense
+              fallback={
+                <div class="py-10 text-center text-sm text-[var(--color-muted)]">Loading…</div>
+              }
+            >
+              {props.children}
+            </Suspense>
+          </div>
         </div>
       </div>
       </Portal>
