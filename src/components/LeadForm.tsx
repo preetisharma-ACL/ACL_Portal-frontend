@@ -10,12 +10,12 @@
  */
 import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
-import { A, createAsync } from "@solidjs/router";
+import { A } from "@solidjs/router";
 import { submitLeadAction } from "~/lib/actions";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
 import { CONSENT_TEXT, CONSENT_TEXT_VERSION } from "~/lib/config";
 import { track } from "~/lib/analytics";
-import type { LeadPayload } from "~/lib/types";
+import type { CityLite, LeadPayload } from "~/lib/types";
 import { Button } from "./ui";
 
 export interface LeadFormProps {
@@ -103,31 +103,38 @@ export default function LeadForm(props: LeadFormProps) {
   const [error, setError] = createSignal("");
   const [success, setSuccess] = createSignal(false);
 
-  // City options come from the taxonomy so we always submit a valid city slug.
-  const cities = createAsync(() => citiesQuery());
+  // City/course options are loaded into plain signals (NOT createAsync) so the
+  // form renders immediately and never suspends — the dropdowns just populate
+  // when the data arrives. This avoids the whole-form "Loading…" in the popup.
+  const [cities, setCitiesData] = createSignal<CityLite[]>([]);
+  const [courses, setCoursesData] = createSignal<{ name: string; slug: string }[]>([]);
+
   // If only a display name was given, resolve it to a slug once cities load.
   createEffect(() => {
     if (city() || !props.defaultCity) return;
-    const match = (cities() ?? []).find(
+    const match = cities().find(
       (c) => c.name.toLowerCase() === props.defaultCity!.toLowerCase(),
     );
     if (match) setCity(match.slug);
   });
-
-  // Course options come from the streams taxonomy so every value is a real
-  // backend course slug. If no slug was passed but a display label was, try to
-  // resolve it to a slug once courses load (best effort; user can still change).
-  const courses = createAsync(() => coursesQuery());
+  // Best-effort: resolve a course display label to a slug once courses load.
   createEffect(() => {
     if (course() || !props.courseInterest) return;
     const label = props.courseInterest.toLowerCase();
-    const match = (courses() ?? []).find((c) => c.name.toLowerCase() === label);
+    const match = courses().find((c) => c.name.toLowerCase() === label);
     if (match) setCourse(match.slug);
   });
 
   let utm: Record<string, string> = {};
   onMount(() => {
     utm = captureUtm();
+    // Fetch dropdown options on the client (cached/prefetched, usually instant).
+    void citiesQuery()
+      .then((c) => setCitiesData(c ?? []))
+      .catch(() => {});
+    void coursesQuery()
+      .then((c) => setCoursesData(c ?? []))
+      .catch(() => {});
   });
 
   const mobileValid = () => /^[6-9]\d{9}$/.test(mobile());
