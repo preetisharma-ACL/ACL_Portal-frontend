@@ -218,13 +218,13 @@ export default function Directory() {
             class="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Neutral (black) readability overlay, stronger on the text side */}
-          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
+          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30" />
           <div class="container-x relative z-10 py-10 md:py-14">
             <Breadcrumbs crumbs={crumbs()} light />
-            <h1 class="mt-4 max-w-3xl text-3xl font-extrabold leading-tight md:text-4xl">
+            <h1 class="mt-4 max-w-3xl text-3xl font-extrabold leading-tight text-white [text-shadow:_0_2px_10px_rgb(0_0_0_/_55%)] md:text-4xl">
               Explore universities and colleges
             </h1>
-            <p class="mt-3 max-w-2xl text-white/80">
+            <p class="mt-3 max-w-2xl text-white/90 [text-shadow:_0_1px_6px_rgb(0_0_0_/_50%)]">
               Every institution in one place. Search by name or course, and filter by city, course
               and type. Guidance is free for students.
             </p>
