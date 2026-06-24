@@ -24,16 +24,25 @@ export function NotFound(props: { title?: string; message?: string }) {
   );
 }
 
-/** Lightweight skeleton used inside Suspense fallbacks. */
+/**
+ * Branded loader shown inside Suspense fallbacks (incl. the first-visit page
+ * loader). Two concentric rings in the brand primary + secondary colours spin in
+ * opposite directions, instead of a grey skeleton.
+ */
 export function LoadingBlock(props: { label?: string }) {
   return (
-    <div class="container-x py-16" role="status" aria-live="polite">
-      <div class="animate-pulse space-y-4">
-        <div class="h-7 w-1/3 rounded bg-[var(--color-line)]" />
-        <div class="h-4 w-2/3 rounded bg-[var(--color-line)]" />
-        <div class="h-40 rounded-[var(--radius-lg)] bg-[var(--color-line)]" />
+    <div
+      class="container-x flex min-h-[55vh] flex-col items-center justify-center gap-5 py-16 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="relative h-14 w-14" aria-hidden="true">
+        {/* Outer ring: primary */}
+        <span class="absolute inset-0 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-600" />
+        {/* Inner ring: secondary (accent), spinning the other way */}
+        <span class="absolute inset-[6px] animate-spin rounded-full border-[3px] border-accent-100 border-b-accent-500 [animation-direction:reverse] [animation-duration:0.9s]" />
       </div>
-      <span class="sr-only">{props.label ?? "Loading"}</span>
+      <p class="text-sm font-medium text-[var(--color-muted)]">{props.label ?? "Loading"}</p>
     </div>
   );
 }
