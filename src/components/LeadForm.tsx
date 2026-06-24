@@ -491,7 +491,7 @@ export default function LeadForm(props: LeadFormProps) {
             type="submit"
             variant={props.submitVariant ?? "primary"}
             size="lg"
-            class="w-full bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-base font-bold uppercase tracking-wide text-white shadow-md shadow-primary-600/25 transition-all duration-150 hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 hover:shadow-lg hover:shadow-primary-600/30 active:translate-y-0 active:scale-[0.99] active:from-accent-600 active:via-accent-500 active:to-accent-600 active:shadow-accent-500/30"
+            class="w-full bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-base font-bold uppercase tracking-wide text-white transition-all duration-150 hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 active:translate-y-0 active:scale-[0.99] active:from-accent-600 active:via-accent-500 active:to-accent-600"
             disabled={busy()}
           >
             <Show
