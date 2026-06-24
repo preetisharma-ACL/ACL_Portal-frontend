@@ -260,14 +260,19 @@ function mapCollege(r: any): CollegeDetail {
       cutoff: x.cutoff != null ? String(x.cutoff) : (x.value ?? ""),
       year: x.year != null ? String(x.year) : "",
     })),
-    media: (r.media ?? []).map((x: any) => ({
-      // Backend `type` is the slot category (HERO/GALLERY); keep image/video
-      // separate (defaults to image, the common case).
-      category: x.type === "HERO" ? "HERO" : x.type === "GALLERY" ? "GALLERY" : (x.category ?? "GALLERY"),
-      type: x.media_type === "video" || x.is_video ? ("video" as const) : ("image" as const),
-      url: x.url ?? x.image ?? "",
-      caption: x.caption ?? x.title ?? "",
-    })),
+    media: (r.media ?? [])
+      .map((x: any) => ({
+        // Backend `type` is the slot category: HERO is the cover; GALLERY/IMAGE
+        // go in the gallery. All are images.
+        category: x.type === "HERO" ? ("HERO" as const) : ("GALLERY" as const),
+        type: "image" as const,
+        // Backend field is image_url (NOT url) — reading the wrong name left the
+        // <img> src empty and showed placeholders.
+        url: x.image_url ?? x.url ?? x.image ?? "",
+        caption: x.caption ?? x.title ?? "",
+        order: x.order ?? 0,
+      }))
+      .filter((m: { url: string }) => m.url),
     contact: {
       address: campus.address ?? "",
       city: h.primary_city ?? campus.city ?? "",

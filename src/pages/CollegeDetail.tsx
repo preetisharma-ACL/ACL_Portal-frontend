@@ -11,7 +11,7 @@ import CompareToggle from "~/components/CompareToggle";
 import RelatedArticles from "~/components/RelatedArticles";
 import SaveButton from "~/components/SaveButton";
 import TrackStatus from "~/components/TrackStatus";
-import HeroSlider from "~/components/HeroSlider";
+import CollegeCover from "~/components/CollegeCover";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, LinkButton } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
@@ -142,22 +142,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 <Breadcrumbs crumbs={crumbs()} />
               </div>
 
-              {/* Cover: the college's own image when available, else the bundled
-                  slider (neutral fallback). */}
+              {/* Cover: a slider of the college's own images (HERO first), else
+                  the bundled neutral slider. */}
               <div class="relative mt-3 h-48 sm:h-64 md:h-80 overflow-hidden">
-                <Show
-                  when={d().media.find((m) => m.category === "HERO" && m.url)}
-                  fallback={<HeroSlider />}
-                >
-                  {(img) => (
-                    <img
-                      src={img().url}
-                      alt={img().caption || `${h().name} campus`}
-                      decoding="async"
-                      class="absolute inset-0 h-full w-full object-cover"
-                    />
-                  )}
-                </Show>
+                <CollegeCover media={d().media} name={h().name} />
                 <div
                   aria-hidden="true"
                   class="absolute inset-0 z-[1] bg-gradient-to-t from-black/40 via-black/5 to-transparent"

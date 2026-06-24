@@ -197,6 +197,7 @@ export interface MediaItem {
   category: "HERO" | "GALLERY" | string;
   url: string;
   caption: string;
+  order?: number;
 }
 
 export interface CollegeDetail {
