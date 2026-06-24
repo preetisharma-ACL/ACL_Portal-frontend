@@ -210,16 +210,15 @@ export default function Directory() {
 
       <Show when={data()} fallback={<LoadingBlock label="Loading institutions" />}>
         {/* Hero with banner image */}
-        <section class="relative overflow-hidden bg-primary-900 text-white">
+        <section class="relative overflow-hidden bg-black text-white">
           <img
             src="/bg-image.jpg"
             alt=""
             aria-hidden="true"
-            class="absolute inset-0 h-full w-full object-cover object-center opacity-40"
+            class="absolute inset-0 h-full w-full object-cover object-center"
           />
-          {/* Readability overlay over the banner */}
-          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-900/90 to-primary-900/55" />
-          <div aria-hidden="true" class="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-accent-500/20 blur-3xl" />
+          {/* Neutral (black) readability overlay, stronger on the text side */}
+          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
           <div class="container-x relative z-10 py-10 md:py-14">
             <Breadcrumbs crumbs={crumbs()} light />
             <h1 class="mt-4 max-w-3xl text-3xl font-extrabold leading-tight md:text-4xl">
