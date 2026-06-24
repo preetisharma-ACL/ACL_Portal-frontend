@@ -1,7 +1,6 @@
 import { A } from "@solidjs/router";
 import { For, Show, createSignal, onMount } from "solid-js";
 import type { CityLite, CollegeCard } from "~/lib/types";
-import { listingPath } from "~/lib/slug";
 import CollegeLogo from "./CollegeLogo";
 import BrochureModal, { type BrochureTarget } from "./BrochureModal";
 
@@ -268,7 +267,7 @@ export default function TopCollegesCarousel(props: {
 
         <div class="mt-8 text-center">
           <A
-            href={listingPath("mba", "mba", "varanasi")}
+            href="/university"
             class="inline-flex items-center gap-2 rounded-full bg-primary-50 px-6 py-2.5 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
           >
             View more colleges
