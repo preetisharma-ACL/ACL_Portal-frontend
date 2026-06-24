@@ -59,7 +59,7 @@ const CITY_IMAGES: Record<string, string> = {
 };
 
 const coverFor = (c: CollegeCard) =>
-  COLLEGE_COVERS[c.slug] ?? CITY_IMAGES[c.city] ?? "/bg-image.jpg";
+  c.hero_image ?? COLLEGE_COVERS[c.slug] ?? CITY_IMAGES[c.city] ?? "/bg-image.jpg";
 
 const feesLacs = (range: string) => range.match(/([\d.]+)\s*L/i)?.[1] ?? null;
 
