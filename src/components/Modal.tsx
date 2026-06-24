@@ -79,7 +79,7 @@ export default function Modal(props: {
               </div>
             </div>
           </Show>
-          <div class={props.hideHeader ? "overflow-y-auto" : "overflow-y-auto px-5 py-5 sm:px-6"}>
+          <div class={props.hideHeader ? "no-scrollbar overflow-y-auto" : "no-scrollbar overflow-y-auto px-5 py-5 sm:px-6"}>
             {/* Contain any data suspension (e.g. the lead form's city/course
                 dropdowns) to the modal, so it never triggers the app-level
                 "Loading page" fallback (which looked like a full reload). */}

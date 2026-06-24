@@ -243,6 +243,16 @@
   }
 }
 
+/* Hide the scrollbar while keeping the element scrollable (used by the lead
+   modal so a slightly-too-tall form never shows an ugly track). */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Focus visibility for accessibility. In @layer base so component utilities
    (e.g. focus-visible:outline-none on the search inputs) can override it. */
 @layer base {

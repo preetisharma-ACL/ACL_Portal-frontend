@@ -38,7 +38,7 @@ export default function LeadTrigger(
       >
         {/* Rich header (logo + title + subtitle + tagline). The form renders with
             hideHeading so the heading is not duplicated. */}
-        <div class="bg-gradient-to-b from-primary-50 via-primary-50/40 to-[var(--color-surface)] px-5 pt-5 pb-4 sm:px-6">
+        <div class="bg-gradient-to-b from-primary-50 via-primary-50/40 to-[var(--color-surface)] px-5 pt-5 pb-3 sm:px-6">
           <img src="/acl-logo.png" alt="ACL Education" class="h-9 w-auto" />
           <h2 class="mt-3 pr-9 text-xl font-extrabold leading-tight tracking-tight text-[var(--color-ink)]">
             {props.heading ?? "Get free admission guidance"}

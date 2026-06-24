@@ -8,7 +8,7 @@
  * by one time password. source_page and UTM parameters are captured
  * automatically and a hidden honeypot plus a client side rate guard deter spam.
  */
-import { For, Show, createEffect, createSignal, onMount } from "solid-js";
+import { For, Show, createEffect, createSignal, createUniqueId, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import { A } from "@solidjs/router";
 import { submitLeadAction } from "~/lib/actions";
@@ -214,15 +214,41 @@ export default function LeadForm(props: LeadFormProps) {
     }
   }
 
-  // Icon-prefixed boxed fields (matches the reference popup layout).
-  const fieldBox = `flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] ${
-    props.dense ? "px-3.5 py-3" : "px-4 py-3.5"
-  } transition-all duration-150 hover:border-[var(--color-muted)]/40 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-100`;
-  const innerInput =
-    "w-full min-w-0 bg-transparent text-[15px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)]/80";
-  const innerSelect = `${innerInput} cursor-pointer appearance-none`;
-  const iconCls = "h-5 w-5 shrink-0 text-[var(--color-muted)]";
-  const clearBtn = "shrink-0 text-[var(--color-muted)]/70 transition-colors hover:text-[var(--color-ink)]";
+  // Unique per-instance prefix so label `for`/input `id` stay unique even when
+  // the form is rendered more than once on a page (e.g. sidebar + modal).
+  const uid = createUniqueId();
+  const fid = (k: string) => `${uid}-${k}`;
+
+  // Floating-label outlined fields: the label lifts onto the border line when the
+  // field is focused or filled (Material-style notched outline).
+  const inputCtl =
+    "peer w-full rounded-[var(--radius-md)] border-2 border-[var(--color-line)] bg-[var(--color-surface)] py-3 pl-11 pr-4 text-[15px] text-[var(--color-ink)] outline-none transition-colors placeholder:text-transparent hover:border-[var(--color-muted)]/40 focus:border-primary-500";
+  const selectCtl = `${inputCtl} cursor-pointer appearance-none pr-10`;
+  const iconCls =
+    "pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-muted)] transition-colors peer-focus:text-primary-600";
+  const chevronCls =
+    "pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)] transition-colors peer-focus:text-primary-600";
+  // Resting (over the input) -> floats to the top border on focus/fill.
+  const floatLbl =
+    "pointer-events-none absolute left-11 top-1/2 -translate-y-1/2 bg-[var(--color-surface)] px-1 text-[15px] text-[var(--color-muted)] transition-all duration-150 peer-focus:left-3 peer-focus:top-0 peer-focus:text-xs peer-focus:font-semibold peer-focus:text-primary-600 peer-[:not(:placeholder-shown)]:left-3 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-semibold";
+  // Mobile has a +91 prefix, so its resting label sits further right.
+  const floatLblMobile = floatLbl.replace("left-11", "left-[4.75rem]");
+  // Selects always show a value, so their label stays floated on the border.
+  const floatLblStatic =
+    "pointer-events-none absolute left-3 top-0 -translate-y-1/2 bg-[var(--color-surface)] px-1 text-xs font-semibold text-[var(--color-muted)] transition-colors peer-focus:text-primary-600";
+  const clearBtn =
+    "absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]/70 transition-colors hover:text-[var(--color-ink)]";
+  // Factories (not constants) so each call yields a fresh node for reuse.
+  const xIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true">
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+  const chevronIcon = () => (
+    <svg class={chevronCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
 
   return (
     <Show
@@ -241,7 +267,7 @@ export default function LeadForm(props: LeadFormProps) {
         </div>
       }
     >
-      <form onSubmit={onSubmit} novalidate class={props.dense ? "space-y-3" : "space-y-3.5"}>
+      <form onSubmit={onSubmit} novalidate class="space-y-3">
         <Show when={!props.hideHeading}>
           <div class="mb-1">
             <h3 class="text-xl font-extrabold tracking-tight text-[var(--color-ink)]">
@@ -254,55 +280,70 @@ export default function LeadForm(props: LeadFormProps) {
         </Show>
 
         {/* Full name */}
-        <div class={fieldBox}>
-          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M20 21a8 8 0 0 0-16 0" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
+        <div class="relative">
           <input
-            class={innerInput}
+            id={fid("name")}
+            class={inputCtl}
             type="text"
             autocomplete="name"
-            aria-label="Full name"
-            placeholder="Full Name *"
+            placeholder="Full Name"
             value={name()}
             onInput={(e) => setName(e.currentTarget.value)}
             required
           />
+          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21a8 8 0 0 0-16 0" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <label for={fid("name")} class={floatLbl}>
+            Full Name <span class="text-[var(--color-danger)]">*</span>
+          </label>
           <Show when={name()}>
             <button type="button" aria-label="Clear name" class={clearBtn} onClick={() => setName("")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              {xIcon()}
             </button>
           </Show>
         </div>
 
         {/* Email */}
-        <div class={fieldBox}>
-          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="5" width="18" height="14" rx="2" />
-            <path d="m3 7 9 6 9-6" />
-          </svg>
+        <div class="relative">
           <input
-            class={innerInput}
+            id={fid("email")}
+            class={inputCtl}
             type="email"
             autocomplete="email"
-            aria-label="Email address"
             placeholder="Email Address"
             value={email()}
             onInput={(e) => setEmail(e.currentTarget.value)}
           />
+          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="m3 7 9 6 9-6" />
+          </svg>
+          <label for={fid("email")} class={floatLbl}>Email Address</label>
           <Show when={email()}>
             <button type="button" aria-label="Clear email" class={clearBtn} onClick={() => setEmail("")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              {xIcon()}
             </button>
           </Show>
         </div>
 
         {/* Mobile + City */}
-        <div class="grid gap-3.5 sm:grid-cols-2">
+        <div class="grid gap-3 sm:grid-cols-2">
           {/* Mobile (no OTP step; backend accepts leads without verification) */}
-          <div class={fieldBox}>
-            <span class="flex shrink-0 items-center gap-1.5">
+          <div class="relative">
+            <input
+              id={fid("mobile")}
+              class={`${inputCtl} pl-[4.75rem]`}
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel"
+              placeholder="Mobile Number"
+              value={mobile()}
+              onInput={(e) => setMobile(e.currentTarget.value.replace(/\D/g, "").slice(0, 10))}
+              required
+            />
+            <span class="pointer-events-none absolute left-3.5 top-1/2 flex -translate-y-1/2 items-center gap-1.5">
               <span class="flex h-3.5 w-5 flex-col overflow-hidden rounded-[2px] ring-1 ring-black/10" aria-hidden="true">
                 <span class="h-1/3 bg-[#ff9933]" />
                 <span class="h-1/3 bg-white" />
@@ -310,101 +351,97 @@ export default function LeadForm(props: LeadFormProps) {
               </span>
               <span class="text-sm font-medium text-[var(--color-ink)]">+91</span>
             </span>
-            <input
-              class={innerInput}
-              type="tel"
-              inputmode="numeric"
-              autocomplete="tel"
-              aria-label="Mobile number"
-              placeholder="Mobile Number *"
-              value={mobile()}
-              onInput={(e) => setMobile(e.currentTarget.value.replace(/\D/g, "").slice(0, 10))}
-              required
-            />
+            <label for={fid("mobile")} class={floatLblMobile}>
+              Mobile Number <span class="text-[var(--color-danger)]">*</span>
+            </label>
           </div>
 
           {/* City */}
-          <div class={fieldBox}>
-            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
+          <div class="relative">
             <input
-              class={innerInput}
+              id={fid("city")}
+              class={inputCtl}
               type="text"
               autocomplete="address-level2"
-              aria-label="City you live in"
               placeholder="City You Live In"
               value={city()}
               onInput={(e) => setCity(e.currentTarget.value)}
             />
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <label for={fid("city")} class={floatLbl}>City You Live In</label>
             <Show when={city()}>
               <button type="button" aria-label="Clear city" class={clearBtn} onClick={() => setCity("")}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-4 w-4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                {xIcon()}
               </button>
             </Show>
           </div>
         </div>
 
         {/* Course + Qualification */}
-        <div class="grid gap-3.5 sm:grid-cols-2">
-          <div class={fieldBox}>
-            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M22 10 12 5 2 10l10 5 10-5Z" />
-              <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
-            </svg>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="relative">
             <select
-              class={innerSelect}
-              aria-label="Course interested in"
+              id={fid("course")}
+              class={selectCtl}
               value={course()}
               onChange={(e) => setCourse(e.currentTarget.value)}
             >
-              <option value="">Course Interested In</option>
+              <option value="">Select</option>
               <For each={courses() ?? []}>
                 {(c) => <option value={c.slug}>{c.name}</option>}
               </For>
             </select>
-            <svg class="h-4 w-4 shrink-0 text-[var(--color-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+              <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+            </svg>
+            <label for={fid("course")} class={floatLblStatic}>Course Interested In</label>
+            {chevronIcon()}
           </div>
 
-          <div class={fieldBox}>
-            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-            </svg>
+          <div class="relative">
             <select
-              class={innerSelect}
-              aria-label="Current qualification"
+              id={fid("qual")}
+              class={selectCtl}
               value={qualification()}
               onChange={(e) => setQualification(e.currentTarget.value)}
             >
-              <option value="">Qualification</option>
+              <option value="">Select</option>
               {QUALIFICATIONS.map((q) => (
                 <option value={q}>{q}</option>
               ))}
             </select>
-            <svg class="h-4 w-4 shrink-0 text-[var(--color-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+            </svg>
+            <label for={fid("qual")} class={floatLblStatic}>Qualification</label>
+            {chevronIcon()}
           </div>
         </div>
 
         {/* Intake year */}
-        <div class={fieldBox}>
-          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-          </svg>
+        <div class="relative">
           <select
-            class={innerSelect}
-            aria-label="Intended intake year"
+            id={fid("intake")}
+            class={selectCtl}
             value={intakeYear()}
             onChange={(e) => setIntakeYear(e.currentTarget.value)}
           >
-            <option value="">Intended Intake Year</option>
+            <option value="">Select</option>
             {INTAKE_YEARS.map((y) => (
               <option value={y}>{y}</option>
             ))}
           </select>
-          <svg class="h-4 w-4 shrink-0 text-[var(--color-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+          </svg>
+          <label for={fid("intake")} class={floatLblStatic}>Intended Intake Year</label>
+          {chevronIcon()}
         </div>
 
         {/* Honeypot: hidden from people and from browser autofill (no common
@@ -453,7 +490,7 @@ export default function LeadForm(props: LeadFormProps) {
             type="submit"
             variant={props.submitVariant ?? "primary"}
             size="lg"
-            class="w-full text-base font-bold uppercase tracking-wide shadow-sm transition-transform active:scale-[0.99]"
+            class="w-full text-base font-bold uppercase tracking-wide shadow-md shadow-primary-600/20 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary-600/30 active:translate-y-0 active:scale-[0.99] disabled:translate-y-0 disabled:shadow-none"
             disabled={!canSubmit()}
           >
             <Show
