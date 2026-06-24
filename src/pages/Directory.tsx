@@ -111,7 +111,7 @@ function Panel(props: {
 }) {
   return (
     <section>
-      <header class="sticky top-32 z-20 -mx-1 mb-4 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border-b-2 border-primary-600 bg-[var(--color-canvas)]/95 px-1 pb-3 pt-1 backdrop-blur">
+      <header class="mb-4 flex items-center justify-between gap-3 border-b-2 border-primary-600 pb-3">
         <div class="flex items-center gap-2.5">
           <span class="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] bg-primary-600 text-white">
             <Show
