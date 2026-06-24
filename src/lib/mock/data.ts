@@ -1036,24 +1036,22 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
       ],
       accepted_exams: p.relatedExams.map((e) => e.name),
     },
-    placements: [
-      {
-        year: "2025",
-        highest_package: "INR 24.0 LPA",
-        average_package: "INR 8.6 LPA",
-        median_package: "INR 7.9 LPA",
-        top_recruiters: p.recruiters,
-        placement_rate: "92 percent",
+    placements: {
+      summary: {
+        year: 2025,
+        highest_package: "₹24L",
+        average_package: "₹8.6L",
+        median_package: "₹7.9L",
+        placement_percentage: 92,
+        students_placed: 480,
+        recruiters_count: p.recruiters.length,
       },
-      {
-        year: "2024",
-        highest_package: "INR 21.5 LPA",
-        average_package: "INR 8.1 LPA",
-        median_package: "INR 7.4 LPA",
-        top_recruiters: p.recruiters.slice(0, 3),
-        placement_rate: "90 percent",
-      },
-    ],
+      recruiters: p.recruiters,
+      highlights: [
+        "Dedicated placement cell with mock interviews",
+        "Pre-placement training and resume reviews",
+      ],
+    },
     rankings: [
       { agency: "Sample Rankings", rank: "#34", category: `${profileFor(streamSlug).courses[0].name} institutes`, year: "2025" },
       { agency: "Demo Survey", rank: "#12", category: "North India", year: "2025" },
@@ -1091,7 +1089,19 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
     detail.overview.campus_size = undefined;
     detail.overview.website = undefined;
     detail.courses_fees = [];
-    detail.placements = [];
+    detail.placements = {
+      summary: {
+        year: null,
+        highest_package: "",
+        average_package: "",
+        median_package: "",
+        placement_percentage: null,
+        students_placed: null,
+        recruiters_count: null,
+      },
+      recruiters: [],
+      highlights: [],
+    };
     detail.rankings = [];
     detail.cutoffs = [];
     detail.media = [];

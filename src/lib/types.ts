@@ -60,6 +60,10 @@ export interface CollegeCard {
   approvals: string[];
   rating: number;
   type: string;
+  /** Optional per-college cover image, if the listing API ever provides one.
+   *  When absent, the card uses a per-college neutral gradient (never a shared
+   *  stock photo). */
+  hero_image?: string;
 }
 
 export interface CourseDetail {
@@ -167,13 +171,21 @@ export interface CourseFeeRow {
   exams_accepted: string[];
 }
 
-export interface PlacementRow {
-  year: string;
-  highest_package: string;
-  average_package: string;
-  median_package: string;
-  top_recruiters: string[];
-  placement_rate: string;
+/** Placements block (backend shape: { summary, recruiters, highlights }).
+ *  Package figures are formatted strings ("" when null); the section hides when
+ *  there is nothing to show. */
+export interface PlacementsBlock {
+  summary: {
+    year: number | null;
+    highest_package: string;
+    average_package: string;
+    median_package: string;
+    placement_percentage: number | null;
+    students_placed: number | null;
+    recruiters_count: number | null;
+  };
+  recruiters: string[];
+  highlights: string[];
 }
 
 export interface RankingRow {
@@ -230,7 +242,7 @@ export interface CollegeDetail {
     important_dates: { label: string; date: string }[];
     accepted_exams: string[];
   };
-  placements: PlacementRow[];
+  placements: PlacementsBlock;
   rankings: RankingRow[];
   cutoffs: CutoffRow[];
   media: MediaItem[];

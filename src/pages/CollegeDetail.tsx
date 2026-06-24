@@ -121,7 +121,19 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               d().admissions.accepted_exams.length ||
               d().admissions.important_dates.length
             ),
-          placements: () => d().placements.length > 0,
+          placements: () => {
+            const p = d().placements;
+            const s = p.summary;
+            return !!(
+              s.highest_package ||
+              s.average_package ||
+              s.median_package ||
+              s.placement_percentage != null ||
+              s.students_placed != null ||
+              p.recruiters.length ||
+              p.highlights.length
+            );
+          },
           rankings: () => d().rankings.length > 0,
           cutoffs: () => d().cutoffs.length > 0,
           gallery: () => d().media.some((m) => m.category !== "HERO"),
@@ -445,38 +457,78 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 {/* Placements */}
                 <Show when={visible.placements()}>
                 <Block id="placements" title="Placements">
-                  <Show when={d().placements.length}>
-                    <div class="overflow-x-auto">
-                      <table class="w-full text-sm border-collapse">
-                        <thead>
-                          <tr class="text-left text-[var(--color-muted)] border-b border-[var(--color-line)]">
-                            <th class="py-2 pr-4 font-medium">Year</th>
-                            <th class="py-2 pr-4 font-medium">Highest</th>
-                            <th class="py-2 pr-4 font-medium">Average</th>
-                            <th class="py-2 pr-4 font-medium">Median</th>
-                            <th class="py-2 pr-4 font-medium">Placement rate</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <For each={d().placements}>
-                            {(p) => (
-                              <tr class="border-b border-[var(--color-line)]">
-                                <td class="py-2 pr-4 font-medium">{p.year}</td>
-                                <td class="py-2 pr-4">{p.highest_package}</td>
-                                <td class="py-2 pr-4">{p.average_package}</td>
-                                <td class="py-2 pr-4">{p.median_package}</td>
-                                <td class="py-2 pr-4">{p.placement_rate}</td>
-                              </tr>
-                            )}
-                          </For>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="mt-4 text-sm">
-                      <span class="text-[var(--color-muted)]">Top recruiters: </span>
-                      {d().placements[0]?.top_recruiters.join(", ")}
-                    </div>
-                  </Show>
+                  {(() => {
+                    const p = () => d().placements;
+                    const s = () => p().summary;
+                    const stats = () =>
+                      [
+                        { label: "Highest package", value: s().highest_package },
+                        { label: "Average package", value: s().average_package },
+                        { label: "Median package", value: s().median_package },
+                        {
+                          label: "Placement rate",
+                          value: s().placement_percentage != null ? `${s().placement_percentage}%` : "",
+                        },
+                        {
+                          label: "Students placed",
+                          value: s().students_placed != null ? String(s().students_placed) : "",
+                        },
+                      ].filter((x) => x.value);
+                    return (
+                      <>
+                        <Show when={stats().length}>
+                          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                            <For each={stats()}>
+                              {(stat) => (
+                                <div class="rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-canvas)] p-4">
+                                  <p class="text-xl font-extrabold text-primary-700">{stat.value}</p>
+                                  <p class="mt-1 text-xs text-[var(--color-muted)]">{stat.label}</p>
+                                </div>
+                              )}
+                            </For>
+                          </div>
+                          <Show when={s().year}>
+                            <p class="mt-2 text-xs text-[var(--color-muted)]">
+                              Placement data for {s().year}.
+                            </p>
+                          </Show>
+                        </Show>
+
+                        <Show when={p().recruiters.length}>
+                          <h3 class="mt-6 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                            Top recruiters
+                          </h3>
+                          <div class="mt-2 flex flex-wrap gap-2">
+                            <For each={p().recruiters}>
+                              {(rec) => (
+                                <span class="rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-1.5 text-sm font-medium">
+                                  {rec}
+                                </span>
+                              )}
+                            </For>
+                          </div>
+                        </Show>
+
+                        <Show when={p().highlights.length}>
+                          <h3 class="mt-6 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                            Placement highlights
+                          </h3>
+                          <ul class="mt-2 grid gap-2 sm:grid-cols-2">
+                            <For each={p().highlights}>
+                              {(hl) => (
+                                <li class="flex items-start gap-2 text-sm">
+                                  <span aria-hidden="true" class="mt-0.5 text-[var(--color-success)]">
+                                    ✓
+                                  </span>
+                                  <span>{hl}</span>
+                                </li>
+                              )}
+                            </For>
+                          </ul>
+                        </Show>
+                      </>
+                    );
+                  })()}
                 </Block>
                 </Show>
 

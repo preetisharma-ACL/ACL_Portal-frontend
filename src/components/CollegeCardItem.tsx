@@ -7,8 +7,16 @@ import CollegeLogo from "./CollegeLogo";
 import CompareToggle from "./CompareToggle";
 import SaveButton from "./SaveButton";
 
-/** Cover photos shipped in /public, picked deterministically so each card is stable. */
-const COVERS = ["/bg-image.jpg", "/bg-image2.jpg", "/bg-image3.jpg"];
+/** Per-college neutral cover gradients, keyed by id so each card is distinct and
+ *  stable (never one shared stock photo repeated across colleges). */
+const COVER_GRADIENTS = [
+  "from-primary-700 via-primary-800 to-primary-900",
+  "from-[#0c3066] via-[#03204a] to-[#011838]",
+  "from-[#1b2a4a] to-[#0a1832]",
+  "from-accent-600 via-primary-800 to-primary-900",
+  "from-[#3a2740] to-[#160f24]",
+  "from-[#123a3f] to-[#08222a]",
+];
 
 /**
  * Image-led college result card used on listing, course and exam pages. The
@@ -21,23 +29,30 @@ export default function CollegeCardItem(props: {
 }) {
   const c = props.college;
   const href = `/college/${c.slug}-${c.id}`;
-  const cover = COVERS[Math.abs(c.id) % COVERS.length];
+  const grad = COVER_GRADIENTS[Math.abs(c.id) % COVER_GRADIENTS.length];
   const onCardClick = () => track("card_click", { college_id: c.id, college: c.name });
 
   return (
     <article class="group flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]">
-      {/* Cover: photo + dark gradient, with rating pill and logo/name overlay */}
+      {/* Cover: the college's own photo when available, else a per-college
+          neutral gradient (distinct per college, never a shared stock image),
+          with rating pill and logo/name overlay. */}
       <div class="relative h-40">
-        <img
-          src={cover}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          class="absolute inset-0 h-full w-full object-cover"
-        />
+        <Show
+          when={c.hero_image}
+          fallback={<div class={`absolute inset-0 bg-gradient-to-br ${grad}`} />}
+        >
+          <img
+            src={c.hero_image!}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+        </Show>
         <div
           aria-hidden="true"
-          class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/15"
+          class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/10"
         />
 
         <Show when={c.rating > 0}>

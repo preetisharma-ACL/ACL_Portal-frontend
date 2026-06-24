@@ -117,6 +117,7 @@ function mapCard(r: any): CollegeCard {
     approvals: r.approvals ?? [],
     rating: Number(r.rating) || 0,
     type: titleCaseType(r.type),
+    hero_image: r.hero_image ?? r.image_url ?? r.image ?? undefined,
   };
 }
 
@@ -235,18 +236,30 @@ function mapCollege(r: any): CollegeDetail {
       important_dates: [],
       accepted_exams,
     },
-    // Consume the real backend blocks (these were previously hardcoded to []).
-    placements: (r.placements ?? []).map((x: any) => ({
-      year: x.year != null ? String(x.year) : "",
-      highest_package:
-        x.highest != null ? inrShort(Number(x.highest)) : (x.highest_package ?? ""),
-      average_package:
-        x.average != null ? inrShort(Number(x.average)) : (x.average_package ?? ""),
-      median_package: x.median != null ? inrShort(Number(x.median)) : (x.median_package ?? ""),
-      placement_rate:
-        x.placement_pct != null ? `${x.placement_pct}%` : (x.placement_rate ?? ""),
-      top_recruiters: x.top_recruiters ?? [],
-    })),
+    // Placements block: { summary, recruiters, highlights }. Package figures
+    // formatted (₹) when present, "" when null so the UI hides them.
+    placements: (() => {
+      const p = r.placements ?? {};
+      const sm = p.summary ?? {};
+      const money = (v: any) => (v != null ? inrShort(Number(v)) : "");
+      return {
+        summary: {
+          year: sm.year ?? null,
+          highest_package: money(sm.highest_package),
+          average_package: money(sm.average_package),
+          median_package: money(sm.median_package),
+          placement_percentage: sm.placement_percentage ?? null,
+          students_placed: sm.students_placed ?? null,
+          recruiters_count: sm.recruiters_count ?? null,
+        },
+        recruiters: (p.recruiters ?? []).map((x: any) =>
+          typeof x === "string" ? x : (x?.name ?? ""),
+        ).filter(Boolean),
+        highlights: (p.highlights ?? []).map((x: any) =>
+          typeof x === "string" ? x : (x?.text ?? x?.title ?? ""),
+        ).filter(Boolean),
+      };
+    })(),
     rankings: (r.rankings ?? []).map((x: any) => ({
       agency: x.agency ?? "",
       rank: x.rank != null ? `#${x.rank}` : "",
