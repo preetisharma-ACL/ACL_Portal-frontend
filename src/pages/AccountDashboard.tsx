@@ -154,7 +154,9 @@ function ProfileCard(props: { user: AuthUser }) {
 }
 
 function SavedSection() {
-  const saved = createAsync(() => savedQuery());
+  // deferStream so SSR waits for the list and the client hydrates the same tree
+  // (avoids an SSR-vs-client DOM mismatch -> "nextSibling" hydration error).
+  const saved = createAsync(() => savedQuery(), { deferStream: true });
   async function remove(id: number) {
     await unsaveCollege(id);
     await revalidate("saved");
@@ -196,7 +198,7 @@ function SavedSection() {
 }
 
 function TrackerSection() {
-  const tracking = createAsync(() => trackingQuery());
+  const tracking = createAsync(() => trackingQuery(), { deferStream: true });
   return (
     <section id="tracker" class="scroll-mt-20">
       <h2 class="mb-1 text-xl font-bold">Application tracker</h2>
@@ -267,7 +269,7 @@ function TrackerRow(props: { item: CollegeInterest }) {
 }
 
 function LeadHistorySection() {
-  const leads = createAsync(() => myLeadsQuery());
+  const leads = createAsync(() => myLeadsQuery(), { deferStream: true });
   return (
     <section id="enquiries" class="scroll-mt-20">
       <h2 class="mb-3 text-xl font-bold">Your enquiries</h2>

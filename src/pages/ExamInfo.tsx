@@ -8,7 +8,7 @@ import LeadTrigger from "~/components/LeadTrigger";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
 import { examQuery } from "~/lib/queries";
-import { breadcrumbLd } from "~/lib/jsonld";
+import { breadcrumbLd, examLd } from "~/lib/jsonld";
 import { humanize } from "~/lib/slug";
 import { titleCaseType } from "~/lib/format";
 import RelatedArticles from "~/components/RelatedArticles";
@@ -45,7 +45,7 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
               title={`${e().name} Exam: Eligibility, Pattern, Dates and Syllabus`}
               description={`${e().name} by ${e().conducting_body}. ${e().overview.slice(0, 130)}`}
               canonical={path()}
-              jsonLd={breadcrumbLd(crumbs())}
+              jsonLd={[breadcrumbLd(crumbs()), examLd(e(), path())]}
             />
 
             {/* Header */}

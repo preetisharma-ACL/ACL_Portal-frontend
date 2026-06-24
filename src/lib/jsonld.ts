@@ -127,6 +127,36 @@ export function collegeCoursesLd(d: CollegeDetail, path: string) {
   }));
 }
 
+/**
+ * Entrance-exam landing page. schema.org has no dedicated "Exam" type, so we use
+ * EducationEvent (an event held for educational purposes), with the conducting
+ * body as organizer. Pairs with BreadcrumbList on the page.
+ */
+export function examLd(
+  exam: { name: string; conducting_body?: string; overview?: string; mode?: string },
+  path: string,
+) {
+  const online = (exam.mode ?? "").toLowerCase().includes("online");
+  return {
+    "@context": "https://schema.org",
+    "@type": "EducationEvent",
+    name: `${exam.name} Exam`,
+    url: abs(path),
+    description:
+      exam.overview ||
+      `${exam.name} entrance exam${
+        exam.conducting_body ? ` conducted by ${exam.conducting_body}` : ""
+      }.`,
+    eventAttendanceMode: online
+      ? "https://schema.org/OnlineEventAttendanceMode"
+      : "https://schema.org/OfflineEventAttendanceMode",
+    ...(exam.conducting_body
+      ? { organizer: { "@type": "Organization", name: exam.conducting_body } }
+      : {}),
+    provider: { "@type": "Organization", name: SITE_NAME },
+  };
+}
+
 export function courseLd(d: CourseDetail, path: string) {
   return {
     "@context": "https://schema.org",

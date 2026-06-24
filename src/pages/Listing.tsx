@@ -13,7 +13,7 @@ import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
 import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
 import { cityCollegesAction } from "~/lib/actions";
-import { cityCollegesPath, listingPath, parseListingSlug } from "~/lib/slug";
+import { cityCollegesPath, humanize, listingPath, parseListingSlug } from "~/lib/slug";
 import { breadcrumbLd, faqLd } from "~/lib/jsonld";
 import type { CollegeCard, FilterOption, ListingQuery } from "~/lib/types";
 
@@ -81,7 +81,13 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
             ? cityCollegesPath(city())
             : `/${params.stream}/colleges/${params.listing}`;
         // meta.course is "" in city mode; build copy that reads cleanly either way.
-        const courseName = () => m().course;
+        // For stream-in-city pages the backend meta.course is often empty
+        // (the slug carries a STREAM, e.g. "management", not a course), which
+        // dropped the stream word from the H1. Fall back to the stream/course
+        // from the slug so the H1/title always name both stream and city
+        // ("Management Colleges in Varanasi"). City mode stays "Colleges".
+        const courseName = () =>
+          m().course || (baseCourse() ? humanize(baseCourse()) : "");
         const Cc = () => (courseName() ? `${courseName()} Colleges` : "Colleges");
         const cc = () => (courseName() ? `${courseName()} colleges` : "colleges");
         const crumbs = () =>
@@ -92,8 +98,8 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               ]
             : [
                 { name: "Home", path: "/" },
-                { name: m().course, path: `/${params.stream}` },
-                { name: `${m().course} colleges in ${m().city}`, path: path() },
+                { name: courseName(), path: `/${params.stream}` },
+                { name: `${cc()} in ${m().city}`, path: path() },
               ];
 
         const specializations = (): FilterOption[] =>
@@ -270,7 +276,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                                 href={cityMode() ? "/" : `/${params.stream}`}
                                 class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] text-sm px-4 py-2.5 text-primary-700 hover:bg-primary-50"
                               >
-                                {cityMode() ? "Back to home" : `Browse ${m().course} by city`}
+                                {cityMode() ? "Back to home" : `Browse ${courseName()} by city`}
                               </A>
                             </div>
                           </EmptyState>
@@ -436,7 +442,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 {(cs) => (
                   <div class="mt-10">
                     <h3 class="text-lg font-bold">
-                      {cityMode() ? "Colleges in other cities" : `${m().course} colleges in other cities`}
+                      {cityMode() ? "Colleges in other cities" : `${cc()} in other cities`}
                     </h3>
                     <div class="mt-4 flex flex-wrap gap-2.5">
                       <For each={cs().filter((c) => c.slug !== city())}>
@@ -452,7 +458,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                             <span aria-hidden="true" class="text-accent-500">
                               ◉
                             </span>
-                            {cityMode() ? `Colleges in ${c.name}` : `${m().course} in ${c.name}`}
+                            {cityMode() ? `Colleges in ${c.name}` : `${courseName()} in ${c.name}`}
                           </A>
                         )}
                       </For>
