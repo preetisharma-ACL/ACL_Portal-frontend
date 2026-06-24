@@ -268,7 +268,10 @@ export default function LeadForm(props: LeadFormProps) {
         </div>
       }
     >
-      <form onSubmit={onSubmit} novalidate class="space-y-3">
+      {/* @container so the two-column rows below react to the FORM's width, not
+          the viewport: single column in a narrow sidebar, two columns in the
+          wider popup. */}
+      <form onSubmit={onSubmit} novalidate class="@container space-y-3">
         <Show when={!props.hideHeading}>
           <div class="mb-1">
             <h3 class="text-xl font-extrabold tracking-tight text-[var(--color-ink)]">
@@ -330,7 +333,7 @@ export default function LeadForm(props: LeadFormProps) {
         </div>
 
         {/* Mobile + City */}
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div class="grid gap-3 @sm:grid-cols-2">
           {/* Mobile (no OTP step; backend accepts leads without verification) */}
           <div class="relative">
             <input
@@ -382,7 +385,7 @@ export default function LeadForm(props: LeadFormProps) {
         </div>
 
         {/* Course + Qualification */}
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div class="grid gap-3 @sm:grid-cols-2">
           <div class="relative">
             <select
               id={fid("course")}

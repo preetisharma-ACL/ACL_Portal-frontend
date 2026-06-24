@@ -284,7 +284,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               </div>
             </nav>
 
-            <div class="container-x grid gap-8 lg:grid-cols-[1fr_20rem] py-8">
+            <div class="container-x grid gap-8 lg:grid-cols-[1fr_22rem] py-8">
               <div class="min-w-0">
                 {/* Overview */}
                 <Block id="overview" title="Overview">
