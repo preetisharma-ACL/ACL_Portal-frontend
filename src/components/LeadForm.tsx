@@ -136,9 +136,10 @@ export default function LeadForm(props: LeadFormProps) {
   const mobileValid = () => /^[6-9]\d{9}$/.test(mobile());
   // City is optional on the backend, so it does not gate submission.
   const requiredFilled = () => name().trim().length >= 2 && mobileValid();
-  // No OTP step: the backend accepts leads without one (LEAD_OTP_REQUIRED=false).
-  // Submission is gated on the required fields + the mandatory consent checkbox.
-  const canSubmit = () => requiredFilled() && consent() && !busy();
+  // The submit button stays enabled (and vibrant) whenever idle, even with empty
+  // fields, so it always shows the brand gradient; onSubmit() still enforces the
+  // required fields + mandatory consent and shows an inline error if missing. It
+  // is disabled only while a request is in flight (busy) to prevent double sends.
 
   async function onSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -490,8 +491,8 @@ export default function LeadForm(props: LeadFormProps) {
             type="submit"
             variant={props.submitVariant ?? "primary"}
             size="lg"
-            class="w-full text-base font-bold uppercase tracking-wide shadow-md shadow-primary-600/20 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary-600/30 active:translate-y-0 active:scale-[0.99] disabled:translate-y-0 disabled:shadow-none"
-            disabled={!canSubmit()}
+            class="w-full bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-base font-bold uppercase tracking-wide text-white shadow-md shadow-primary-600/25 transition-all duration-150 hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 hover:shadow-lg hover:shadow-primary-600/30 active:translate-y-0 active:scale-[0.99] active:from-accent-600 active:via-accent-500 active:to-accent-600 active:shadow-accent-500/30"
+            disabled={busy()}
           >
             <Show
               when={!busy()}
