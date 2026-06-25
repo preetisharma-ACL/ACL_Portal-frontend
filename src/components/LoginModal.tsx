@@ -148,6 +148,7 @@ export default function LoginModal() {
                 type="tel"
                 inputmode="numeric"
                 autocomplete="tel"
+                maxlength="10"
                 placeholder="10 digit mobile"
                 value={phone()}
                 disabled={sent()}

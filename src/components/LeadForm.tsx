@@ -342,6 +342,7 @@ export default function LeadForm(props: LeadFormProps) {
               type="tel"
               inputmode="numeric"
               autocomplete="tel"
+              maxlength="10"
               placeholder="Mobile Number"
               value={mobile()}
               onInput={(e) => setMobile(e.currentTarget.value.replace(/\D/g, "").slice(0, 10))}
