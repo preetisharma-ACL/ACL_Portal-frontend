@@ -1,7 +1,6 @@
 import { For, type JSX } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
-import LeadTrigger from "~/components/LeadTrigger";
 import { Section } from "~/components/ui";
 import { breadcrumbLd } from "~/lib/jsonld";
 import { SITE_NAME } from "~/lib/config";
@@ -282,27 +281,6 @@ export default function AboutPage() {
           </a>
         </div>
       </Section>
-
-      {/* Final CTA (secondary/navy) */}
-      <section class="bg-accent-600 text-white">
-        <div class="container-x py-12 text-center md:py-14">
-          <h2 class="text-2xl font-extrabold text-white md:text-3xl">
-            Get free admission guidance
-          </h2>
-          <p class="mx-auto mt-2 max-w-xl text-sm text-white/80 md:text-base">
-            Independent guidance on courses, fees and admissions. Free for students, no spam.
-          </p>
-          <div class="mt-6 flex justify-center">
-            <LeadTrigger
-              sourcePage="/about"
-              heading="Get free admission guidance"
-              label="Get free guidance"
-              variant="primary"
-              size="lg"
-            />
-          </div>
-        </div>
-      </section>
     </>
   );
 }
