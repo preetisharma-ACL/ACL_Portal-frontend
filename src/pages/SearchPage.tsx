@@ -242,7 +242,7 @@ export default function SearchPage(props: { query: string }) {
                         return (
                           <A
                             href={`/college/${c.slug}-${c.id}`}
-                            class="group flex items-start gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5"
+                            class="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5"
                           >
                             <CollegeLogo
                               name={c.name}
