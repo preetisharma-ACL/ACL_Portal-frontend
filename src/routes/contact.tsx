@@ -1,5 +1,5 @@
-import LegalPage from "~/components/LegalPage";
+import ContactPage from "~/pages/ContactPage";
 
 export default function Contact() {
-  return <LegalPage slug="contact" path="/contact" />;
+  return <ContactPage />;
 }
