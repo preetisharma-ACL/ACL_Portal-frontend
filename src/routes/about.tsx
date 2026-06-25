@@ -1,5 +1,5 @@
-import LegalPage from "~/components/LegalPage";
+import AboutPage from "~/pages/AboutPage";
 
 export default function About() {
-  return <LegalPage slug="about" path="/about" />;
+  return <AboutPage />;
 }
