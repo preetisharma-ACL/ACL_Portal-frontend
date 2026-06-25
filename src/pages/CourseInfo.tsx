@@ -123,7 +123,7 @@ function ProgramCard(props: { college: CollegeCard; featured?: boolean }) {
           <span class="font-semibold">{c.fee_range}</span>
         </Show>
       </p>
-      <span class="mt-4 inline-flex items-center justify-center gap-1 rounded-[var(--radius-md)] bg-primary-600 text-white text-sm font-semibold py-2 group-hover:bg-primary-700 transition-colors">
+      <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-900">
         View details
         <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
       </span>
