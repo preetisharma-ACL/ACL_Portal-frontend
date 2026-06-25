@@ -127,23 +127,29 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Hero: banner image (no overlay) with the content in a frosted
-                glass card so it stays crisp and readable over the artwork. */}
-            <section class="relative overflow-hidden bg-neutral-100">
+            {/* Hero: text composed INTO the banner artwork. A scrim colour-matched
+                to the banner's light pink blends left-to-right so the dark text
+                reads as part of the design, not a card pasted on top. */}
+            <section class="relative overflow-hidden bg-[#fbe9ee]">
               <img
                 src="/college-banner.png"
                 alt=""
                 aria-hidden="true"
                 class="absolute inset-0 h-full w-full object-cover object-center"
               />
-              <div class="container-x relative z-10 py-10 md:py-14">
-                <div class="max-w-2xl rounded-[var(--radius-xl)] bg-[var(--color-surface)]/80 p-6 shadow-lg ring-1 ring-black/5 backdrop-blur-md sm:p-8">
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 bg-gradient-to-r from-[#fbe9ee] from-20% via-[#fbe9ee]/70 to-transparent"
+              />
+              <div class="container-x relative z-10 py-10 md:py-16">
+                <div class="max-w-xl">
                   <Breadcrumbs crumbs={crumbs()} />
-                  <h1 class="mt-3 text-2xl font-extrabold leading-tight text-[var(--color-ink)] md:text-3xl">
+                  <h1 class="mt-3 text-3xl font-extrabold leading-tight text-[var(--color-ink)] md:text-4xl">
                     {Cc()} in {m().city}
                   </h1>
+                  <div aria-hidden="true" class="mt-3 h-1 w-14 rounded-full bg-primary-600" />
                   <p
-                    class="mt-2 text-sm text-[var(--color-muted)]"
+                    class="mt-3 max-w-lg text-sm leading-relaxed text-[var(--color-ink)]/75 md:text-[15px]"
                     classList={{ "line-clamp-2": !introOpen() }}
                   >
                     {m().intro ||
@@ -157,18 +163,18 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     {introOpen() ? "Show less" : "Read more"}
                   </button>
                   <div class="mt-4 flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-primary-100 bg-white/70 px-3 py-1.5 text-sm backdrop-blur-sm">
                       <span class="font-bold text-primary-700">{m().total_colleges}</span>
                       colleges
                     </span>
                     <Show when={m().fee_range}>
-                      <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-primary-100 bg-white/70 px-3 py-1.5 text-sm backdrop-blur-sm">
                         Fees <span class="font-semibold">{m().fee_range}</span>
                       </span>
                     </Show>
                     <For each={m().popular_courses.slice(0, 3)}>
                       {(pc) => (
-                        <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                        <span class="inline-flex items-center rounded-full border border-primary-100 bg-white/60 px-3 py-1.5 text-sm backdrop-blur-sm">
                           {pc.name}
                         </span>
                       )}
@@ -435,20 +441,25 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
 
                 {/* Right rail: guidance CTA (xl+). Category-level guidance (compliance 2). */}
                 <aside class="hidden xl:block">
-                  <div class="sticky top-20 overflow-hidden rounded-[var(--radius-lg)] border border-primary-100 bg-gradient-to-br from-primary-50 to-[var(--color-surface)] p-5">
-                    <span class="grid h-12 w-12 place-items-center rounded-full bg-primary-600 text-white">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" aria-hidden="true">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
-                      </svg>
-                    </span>
-                    <h3 class="mt-3 text-base font-bold text-[var(--color-ink)]">
-                      Get personalised guidance
+                  {/* Glassmorphism recommendations card with illustration */}
+                  <div class="sticky top-20 overflow-hidden rounded-[var(--radius-xl)] border border-white/60 bg-white/55 p-6 text-center shadow-2xl shadow-primary-900/10 ring-1 ring-black/5 backdrop-blur-2xl">
+                    <div aria-hidden="true" class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary-200/40 blur-2xl" />
+                    <img
+                      src="/guidance-illustration.png"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                      class="relative mx-auto h-36 w-auto object-contain"
+                    />
+                    <h3 class="relative mt-3 text-base font-bold text-[var(--color-ink)]">
+                      Get personalised recommendations
                     </h3>
-                    <p class="mt-1 text-sm text-[var(--color-muted)]">
-                      Tell us your preferences and our advisors help you shortlist {m().city}{" "}
-                      colleges by fees, cutoffs and placements. Free for students.
+                    <p class="relative mt-1.5 text-sm text-[var(--color-muted)]">
+                      Tell us your preferences and our advisors shortlist {m().city} colleges by
+                      fees, cutoffs and placements. Free for students.
                     </p>
-                    <div class="mt-4">
+                    <div class="relative mt-4">
                       <LeadTrigger
                         sourcePage={path()}
                         citySlug={city()}
