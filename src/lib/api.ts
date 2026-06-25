@@ -202,11 +202,15 @@ function mapCollege(r: any): CollegeDetail {
   const ov = r.overview ?? {};
   const campus = (ov.campuses ?? [])[0] ?? {};
   const name = h.name ?? r.name ?? "";
+  // Fees period from the backend (TOTAL/YEAR/SEMESTER) shown as a suffix; TOTAL
+  // is the full programme fee, so it carries no per-period suffix.
+  const feePeriodSuffix = (p: string) =>
+    p === "YEAR" ? " / year" : p === "SEMESTER" ? " / semester" : "";
   const courses_fees = (r.courses_fees ?? []).map((x: any) => ({
     course: x.specialization ? `${x.course} (${x.specialization})` : x.course,
     duration: x.duration ?? "",
     total_fee: x.fees_amount
-      ? `${inrShort(Number(x.fees_amount))}${x.fees_period === "YEAR" ? " / year" : ""}`
+      ? `${inrShort(Number(x.fees_amount))}${feePeriodSuffix(x.fees_period)}`
       : "",
     eligibility: x.eligibility ?? "",
     exams_accepted: x.exams_accepted ?? [],
