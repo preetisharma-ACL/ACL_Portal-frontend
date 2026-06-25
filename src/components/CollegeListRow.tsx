@@ -103,7 +103,7 @@ export default function CollegeListRow(props: {
         </div>
 
         {/* Actions */}
-        <div class="flex shrink-0 flex-row gap-2 sm:w-40 sm:flex-col">
+        <div class="flex shrink-0 flex-row gap-2 sm:w-36 sm:flex-col">
           <SaveButton collegeId={c.id} class="flex-1 sm:w-full" />
           <CompareToggle
             college={{ id: c.id, slug: c.slug, name: c.name, logo: c.logo, city: c.city, type: c.type }}
@@ -114,7 +114,7 @@ export default function CollegeListRow(props: {
             fallback={
               <A
                 href={`${href}#contact`}
-                class="flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-md)] bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700 sm:w-full"
+                class="flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-md)] bg-accent-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-400 sm:w-full"
               >
                 Get info
               </A>
@@ -123,7 +123,7 @@ export default function CollegeListRow(props: {
             <button
               type="button"
               onClick={() => props.onGetInfo?.(c)}
-              class="flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-md)] bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700 sm:w-full"
+              class="flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-md)] bg-accent-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-400 sm:w-full"
             >
               Get info
             </button>

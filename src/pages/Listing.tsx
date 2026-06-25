@@ -127,15 +127,25 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Top info card */}
-            <div class="container-x pt-6">
-              <Breadcrumbs crumbs={crumbs()} />
-              <div class="mt-4 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-sm sm:p-6">
-                <h1 class="text-2xl font-extrabold leading-tight text-[var(--color-ink)] md:text-3xl">
+            {/* Hero: college banner image + black left-to-right overlay */}
+            <section class="relative overflow-hidden bg-neutral-900 text-white">
+              <img
+                src="/college-banner.png"
+                alt=""
+                aria-hidden="true"
+                class="absolute inset-0 h-full w-full object-cover object-center"
+              />
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/30"
+              />
+              <div class="container-x relative z-10 py-8 md:py-10">
+                <Breadcrumbs crumbs={crumbs()} light />
+                <h1 class="mt-3 text-2xl font-extrabold leading-tight text-white [text-shadow:0_2px_10px_rgb(0_0_0_/_55%)] md:text-3xl">
                   {Cc()} in {m().city}
                 </h1>
                 <p
-                  class="mt-2 max-w-3xl text-sm text-[var(--color-muted)]"
+                  class="mt-2 max-w-3xl text-sm text-white/85"
                   classList={{ "line-clamp-2": !introOpen() }}
                 >
                   {m().intro ||
@@ -144,30 +154,30 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 <button
                   type="button"
                   onClick={() => setIntroOpen((v) => !v)}
-                  class="mt-2 text-sm font-semibold text-primary-700 hover:underline"
+                  class="mt-2 text-sm font-semibold text-white underline decoration-white/40 underline-offset-2 hover:decoration-white"
                 >
                   {introOpen() ? "Show less" : "Read more"}
                 </button>
                 <div class="mt-4 flex flex-wrap gap-2">
-                  <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
-                    <span class="font-bold text-primary-700">{m().total_colleges}</span>
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                    <span class="font-bold text-accent-400">{m().total_colleges}</span>
                     colleges
                   </span>
                   <Show when={m().fee_range}>
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
                       Fees <span class="font-semibold">{m().fee_range}</span>
                     </span>
                   </Show>
                   <For each={m().popular_courses.slice(0, 3)}>
                     {(pc) => (
-                      <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                      <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
                         {pc.name}
                       </span>
                     )}
                   </For>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Body: filter rail + results + guidance rail */}
             <div class="container-x py-6">
