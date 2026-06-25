@@ -104,9 +104,7 @@ export default function BrochureModal(props: {
 
             {/* Right: the lead form */}
             <div class="max-h-[90vh] overflow-y-auto p-5 md:col-span-3">
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700">
-                Free brochure
-              </span>
+             
               <h3 class="mt-2 text-lg font-bold">Download the brochure</h3>
               <p class="mt-1 text-sm text-[var(--color-muted)]">
                 Get the latest brochure and free guidance for{" "}
