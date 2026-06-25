@@ -3,7 +3,7 @@ import { For, Show, type JSX } from "solid-js";
 import SearchAutocomplete from "~/components/SearchAutocomplete";
 import CollegeLogo from "~/components/CollegeLogo";
 import SlotImage from "~/components/SlotImage";
-import { searchQuery } from "~/lib/queries";
+import { allCollegesQuery, searchQuery } from "~/lib/queries";
 
 type Scope = "all" | "colleges" | "courses" | "exams";
 
@@ -42,6 +42,14 @@ export default function SearchPage(props: { query: string }) {
   const [sp, setSp] = useSearchParams();
   const scope = (): Scope => (sp.type as Scope) || "all";
   const results = createAsync(() => searchQuery(props.query));
+  // Search results only carry id/name/slug, so enrich each college with its
+  // logo, city and type from the cached all-colleges list (non-blocking).
+  const allColleges = createAsync(() => allCollegesQuery());
+  const cardById = () => {
+    const m = new Map<number, { logo: string; city: string; type: string }>();
+    for (const cc of allColleges() ?? []) m.set(cc.id, { logo: cc.logo, city: cc.city, type: cc.type });
+    return m;
+  };
 
   const show = (s: Scope) => scope() === "all" || scope() === s;
   const counts = () => {
@@ -189,7 +197,9 @@ export default function SearchPage(props: { query: string }) {
                   >
                     <For each={r.colleges}>
                       {(c) => {
-                        const meta = [c.city, c.type].filter(Boolean).join(" · ");
+                        const ec = () => cardById().get(c.id);
+                        const meta = () =>
+                          [c.city || ec()?.city, c.type || ec()?.type].filter(Boolean).join(" · ");
                         return (
                           <A
                             href={`/college/${c.slug}-${c.id}`}
@@ -197,6 +207,7 @@ export default function SearchPage(props: { query: string }) {
                           >
                             <CollegeLogo
                               name={c.name}
+                              logo={ec()?.logo}
                               id={c.id}
                               class="h-12 w-12 shrink-0 rounded-[var(--radius-md)] text-base"
                             />
@@ -205,7 +216,7 @@ export default function SearchPage(props: { query: string }) {
                                 {c.name}
                               </span>
                               <span class="mt-0.5 block text-xs text-[var(--color-muted)]">
-                                {meta || "View college details"}
+                                {meta() || "View college details"}
                               </span>
                             </span>
                             <span
