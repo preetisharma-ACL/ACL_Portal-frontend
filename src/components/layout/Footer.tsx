@@ -1,6 +1,6 @@
 import { A } from "@solidjs/router";
 import { For } from "solid-js";
-import { OPERATOR_DISCLOSURE, SITE_NAME } from "~/lib/config";
+import { COMPLIANCE_DISCLAIMER, SITE_NAME } from "~/lib/config";
 
 const STREAMS = [
   { label: "MBA Colleges", href: "/mba/colleges/mba-colleges-varanasi" },
@@ -17,10 +17,11 @@ const RESOURCES = [
 ];
 
 const LEGAL = [
-  { label: "About", href: "/about" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
   { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms", href: "/terms" },
-  { label: "Disclosure", href: "/disclosure" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Disclaimer", href: "/disclaimer" },
 ];
 
 function Column(props: { title: string; links: { label: string; href: string }[] }) {
@@ -64,8 +65,8 @@ export default function Footer() {
         </div>
 
         <div class="mt-10 pt-6 border-t border-white/15 text-sm text-white/60 space-y-2">
-          {/* Compliance item 5: AAJneeti-operated disclosure in the footer. */}
-          <p>{OPERATOR_DISCLOSURE}</p>
+          {/* Site-wide compliance disclaimer (Google Ads requirement). */}
+          <p>{COMPLIANCE_DISCLAIMER}</p>
           <p>© 2026 AAJneeti Connect Ltd. All rights reserved.</p>
         </div>
       </div>

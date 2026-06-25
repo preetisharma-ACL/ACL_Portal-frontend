@@ -555,3 +555,13 @@ export interface LeadResponse {
   id: number;
   status: string;
 }
+
+/** Admin-editable content page (privacy/terms/disclaimer/about/contact). */
+export interface Page {
+  slug: string;
+  title: string;
+  /** HTML body, rendered in a prose layout. */
+  body: string;
+  last_updated: string;
+  meta_description: string;
+}

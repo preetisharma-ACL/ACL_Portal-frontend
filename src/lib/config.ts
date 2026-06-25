@@ -34,9 +34,13 @@ export const GA4_ID = env.VITE_GA4_ID || "";
 export const OPERATOR_DISCLOSURE =
   "This is an independent education discovery platform operated by AAJneeti Connect Ltd. We are not affiliated with the institutions listed unless explicitly stated.";
 
+/** Verbatim compliance disclaimer required in the site-wide footer (Google Ads). */
+export const COMPLIANCE_DISCLAIMER =
+  "ACL Education is an independent education information and counselling platform operated by AAJneeti Connect Ltd. We are not affiliated with or the official admissions channel for any college or university listed. Information is compiled from public sources and does not guarantee admission.";
+
 /** Current version of the consent text. Sent with every lead submission.
  *  Bump this whenever CONSENT_TEXT changes so records match what was shown. */
-export const CONSENT_TEXT_VERSION = "2026-06-v2";
+export const CONSENT_TEXT_VERSION = "2026-06-v3";
 
 export const CONSENT_TEXT =
-  "I agree that AAJneeti Connect Ltd. and relevant institutions may contact me about my enquiry. I have read the Privacy Policy.";
+  "By submitting this form, I confirm that I am 18 years or older (or have my parent's or guardian's consent), and I agree to the Privacy Policy and Terms & Conditions. I consent to be contacted by ACL Education and its partner institutions by call, WhatsApp, SMS, and email regarding my enquiry, even if I am registered under DND.";

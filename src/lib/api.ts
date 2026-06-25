@@ -27,6 +27,7 @@ import type {
   ListingResponse,
   OtpRequestResponse,
   OtpVerifyResponse,
+  Page,
   QuestionPayload,
   QuestionsResponse,
   ReviewPayload,
@@ -588,6 +589,26 @@ export function getArticles(params: ArticleQuery = {}): Promise<ArticlesPage> {
 export function getArticle(slug: string): Promise<ArticleDetail> {
   if (USE_MOCK) return Promise.resolve(mock.buildArticle(slug));
   return get<any>(`/articles/${slug}/`).then(mapArticleDetail);
+}
+
+/** Admin-editable content/legal page by slug. */
+export function getPage(slug: string): Promise<Page> {
+  if (USE_MOCK) {
+    return Promise.resolve({
+      slug,
+      title: slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+      body: "<p>Preview content. The live page is served from the content API.</p>",
+      last_updated: "2026-06-25",
+      meta_description: "",
+    });
+  }
+  return get<any>(`/pages/${slug}/`).then((p) => ({
+    slug: p.slug ?? slug,
+    title: p.title ?? "",
+    body: p.body ?? "",
+    last_updated: p.last_updated ?? "",
+    meta_description: p.meta_description ?? "",
+  }));
 }
 
 export function getArticleCategories(): Promise<ArticleCategory[]> {

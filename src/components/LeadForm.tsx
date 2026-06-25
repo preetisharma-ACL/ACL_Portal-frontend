@@ -13,7 +13,7 @@ import { isServer } from "solid-js/web";
 import { A } from "@solidjs/router";
 import { submitLeadAction } from "~/lib/actions";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
-import { CONSENT_TEXT, CONSENT_TEXT_VERSION } from "~/lib/config";
+import { CONSENT_TEXT_VERSION } from "~/lib/config";
 import { humanize, slugify } from "~/lib/slug";
 import { track } from "~/lib/analytics";
 import type { LeadPayload } from "~/lib/types";
@@ -470,12 +470,20 @@ export default function LeadForm(props: LeadFormProps) {
             checked={consent()}
             onChange={(e) => setConsent(e.currentTarget.checked)}
           />
+          {/* Wording mirrors CONSENT_TEXT (config); Privacy Policy + Terms are
+              linked. Bump CONSENT_TEXT_VERSION if this wording changes. */}
           <span>
-            {CONSENT_TEXT}{" "}
+            By submitting this form, I confirm that I am 18 years or older (or have my parent's or
+            guardian's consent), and I agree to the{" "}
             <A href="/privacy-policy" class="font-medium text-primary-700 hover:underline">
-              Read the Privacy Policy
+              Privacy Policy
+            </A>{" "}
+            and{" "}
+            <A href="/terms" class="font-medium text-primary-700 hover:underline">
+              Terms &amp; Conditions
             </A>
-            .
+            . I consent to be contacted by ACL Education and its partner institutions by call,
+            WhatsApp, SMS, and email regarding my enquiry, even if I am registered under DND.
           </span>
         </label>
 

@@ -91,6 +91,11 @@ export const articlesQuery = query(async (params: import("./types").ArticleQuery
   return api.getArticles(params);
 }, "articles");
 
+export const pageQuery = query(async (slug: string) => {
+  "use server";
+  return api.getPage(slug);
+}, "page");
+
 export const articleQuery = query(async (slug: string) => {
   "use server";
   return api.getArticle(slug);

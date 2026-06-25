@@ -1,61 +1,57 @@
-import { Show, type JSX } from "solid-js";
+import { Show } from "solid-js";
 import { createAsync } from "@solidjs/router";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
-import SlotImage from "~/components/SlotImage";
-import { siteImagesQuery } from "~/lib/queries";
+import { LoadingBlock } from "~/components/states";
+import { pageQuery } from "~/lib/queries";
 import { breadcrumbLd } from "~/lib/jsonld";
+import { formatDate } from "~/lib/format";
 
 /**
- * Shared layout for content/legal pages. Provides a readable prose column,
- * breadcrumbs, canonical and a last-updated line. Sections that still need
- * legal sign-off are marked inline with <LegalTodo>.
+ * Content/legal page rendered from the admin-editable content API
+ * (GET /pages/{slug}/). The title, meta description, canonical and body are all
+ * server-rendered (deferStream) so crawlers and Google Ads review see the full
+ * legal text in the initial HTML.
  */
-export default function LegalPage(props: {
-  title: string;
-  description: string;
-  path: string;
-  updated: string;
-  /** Optional managed header-image slot; a banner shows only when uploaded. */
-  headerSlot?: string;
-  children: JSX.Element;
-}) {
-  const crumbs = [
-    { name: "Home", path: "/" },
-    { name: props.title, path: props.path },
-  ];
-  const images = createAsync(() => siteImagesQuery());
-  const hasBanner = () => !!(props.headerSlot && images()?.[props.headerSlot]?.image_url);
+export default function LegalPage(props: { slug: string; path: string }) {
+  const data = createAsync(() => pageQuery(props.slug), { deferStream: true });
   return (
-    <>
-      <Seo
-        title={props.title}
-        description={props.description}
-        canonical={props.path}
-        jsonLd={breadcrumbLd(crumbs)}
-      />
-      <div class="container-x py-8 md:py-12">
-        <Breadcrumbs crumbs={crumbs} />
-        <Show when={hasBanner()}>
-          <div class="relative mt-4 h-40 overflow-hidden rounded-[var(--radius-lg)] md:h-52">
-            <SlotImage slot={props.headerSlot!} />
-          </div>
-        </Show>
-        <article class="mt-4 max-w-3xl legal-prose">
-          <h1 class="text-3xl font-bold">{props.title}</h1>
-          <p class="mt-1 text-sm text-[var(--color-muted)]">Last updated {props.updated}</p>
-          {/* Visible status banner: this is working draft copy, not yet legally approved. */}
-          <p
-            role="note"
-            class="mt-4 rounded-[var(--radius-md)] border border-[var(--color-warning)] bg-[var(--color-warning)]/10 px-4 py-3 text-sm font-medium text-[var(--color-ink)]"
-          >
-            <span class="font-bold text-[var(--color-warning)]">DRAFT, pending legal sign-off.</span>{" "}
-            This is working draft copy prepared for review. It is not final legal advice and must
-            be approved by counsel before launch.
-          </p>
-          <div class="mt-6 space-y-5 text-[var(--color-ink)]/90">{props.children}</div>
-        </article>
-      </div>
-    </>
+    <Show when={data()} fallback={<LoadingBlock label="Loading" />}>
+      {(p) => {
+        const crumbs = [
+          { name: "Home", path: "/" },
+          { name: p().title, path: props.path },
+        ];
+        return (
+          <>
+            <Seo
+              title={p().title}
+              description={
+                p().meta_description ||
+                `${p().title} for ACL Education, operated by AAJneeti Connect Ltd.`
+              }
+              canonical={props.path}
+              jsonLd={breadcrumbLd(crumbs)}
+            />
+            <div class="container-x py-8 md:py-12">
+              <Breadcrumbs crumbs={crumbs} />
+              <article class="mt-4 max-w-3xl legal-prose">
+                <h1 class="text-3xl font-bold">{p().title}</h1>
+                <Show when={p().last_updated}>
+                  <p class="mt-1 text-sm text-[var(--color-muted)]">
+                    Last updated: {formatDate(p().last_updated)}
+                  </p>
+                </Show>
+                {/* Body is admin-authored HTML from the content API. */}
+                <div
+                  class="mt-6 space-y-5 text-[var(--color-ink)]/90"
+                  innerHTML={p().body}
+                />
+              </article>
+            </div>
+          </>
+        );
+      }}
+    </Show>
   );
 }
