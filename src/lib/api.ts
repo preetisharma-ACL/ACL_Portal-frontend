@@ -125,12 +125,17 @@ function mapCard(r: any): CollegeCard {
   };
 }
 
+// The listing API returns filter options in inconsistent shapes: types as
+// {key,label}, exams as {name,slug}, approvals as plain strings. Normalise all
+// to {value,label} (value is the slug/key/string the backend expects as the
+// query param; label is the human name).
 function mapFilterOpts(arr: any): { value: string; label: string; count?: number }[] {
-  return (arr ?? []).map((o: any) => ({
-    value: String(o.value ?? o.key ?? ""),
-    label: o.label,
-    count: o.count,
-  }));
+  return (arr ?? []).map((o: any) => {
+    if (typeof o === "string") return { value: o, label: o };
+    const value = String(o.value ?? o.key ?? o.slug ?? o.name ?? "");
+    const label = String(o.label ?? o.name ?? value);
+    return { value, label, count: o.count };
+  });
 }
 
 function mapListing(r: any): ListingResponse {
