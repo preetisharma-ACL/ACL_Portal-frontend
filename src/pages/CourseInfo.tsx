@@ -340,7 +340,7 @@ export default function CourseInfo(props: { slug: string }) {
                   <Show when={d().specializations.length}>
                   <section id="specialisations" class="scroll-mt-28">
                     <h2 class="text-2xl font-extrabold mb-4">Specialisations</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                       <For each={d().specializations}>
                         {(s) => (
                           <span class="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 py-2 text-sm font-medium">
