@@ -6,6 +6,7 @@ import CollegeCardItem from "~/components/CollegeCardItem";
 import FilterRail from "~/components/FilterRail";
 import Faq from "~/components/Faq";
 import LeadForm from "~/components/LeadForm";
+import LeadTrigger from "~/components/LeadTrigger";
 import HeroSlider from "~/components/HeroSlider";
 import SlotImage from "~/components/SlotImage";
 import StreamIcon from "~/components/StreamIcon";
@@ -183,12 +184,36 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                       />
                     </div>
                   </details>
-                  <div class="hidden lg:block lg:sticky lg:top-20">
-                    <FilterRail
-                      filters={d().filters}
-                      specializations={specializations()}
-                      specializationLabel={cityMode() ? "Course" : "Specialisation"}
-                    />
+                  <div class="hidden lg:block lg:sticky lg:top-20 space-y-4">
+                    <div class="rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-sm">
+                      <FilterRail
+                        filters={d().filters}
+                        specializations={specializations()}
+                        specializationLabel={cityMode() ? "Course" : "Specialisation"}
+                      />
+                    </div>
+                    {/* Sidebar guidance CTA (category-level guidance, compliance 2) */}
+                    <div class="overflow-hidden rounded-[var(--radius-lg)] border border-primary-100 bg-gradient-to-br from-primary-50 to-[var(--color-surface)] p-5">
+                      <span class="grid h-10 w-10 place-items-center rounded-full bg-primary-600 text-white">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
+                        </svg>
+                      </span>
+                      <h3 class="mt-3 font-bold text-[var(--color-ink)]">Get personalised guidance</h3>
+                      <p class="mt-1 text-sm text-[var(--color-muted)]">
+                        Free, independent help to shortlist {m().city} colleges by fees, cutoffs and
+                        placements.
+                      </p>
+                      <div class="mt-3">
+                        <LeadTrigger
+                          sourcePage={path()}
+                          citySlug={city()}
+                          label="Talk to an advisor"
+                          variant="primary"
+                          class="w-full justify-center"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -198,26 +223,32 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                       EVERY page (filters the full city list, not just this page). */}
                   <Show when={cityMode()}>
                     <label class="relative mb-4 block">
-                      <span
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
                         aria-hidden="true"
-                        class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
+                        class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]"
                       >
-                        ⌕
-                      </span>
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m21 21-4.3-4.3" />
+                      </svg>
                       <input
                         type="search"
                         value={collegeSearch()}
                         onInput={(e) => setCollegeSearch(e.currentTarget.value)}
                         placeholder={`Search colleges in ${m().city} by name`}
                         aria-label={`Search colleges in ${m().city} by name`}
-                        class="w-full rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] py-2.5 pl-9 pr-9 text-sm outline-none focus:border-primary-500"
+                        class="w-full rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] py-3 pl-11 pr-11 text-sm shadow-sm outline-none transition-colors hover:border-[var(--color-muted)]/50 focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
                       />
                       <Show when={collegeSearch()}>
                         <button
                           type="button"
                           aria-label="Clear search"
                           onClick={() => setCollegeSearch("")}
-                          class="absolute right-2.5 top-1/2 -translate-y-1/2 grid h-6 w-6 place-items-center rounded-full text-[var(--color-muted)] hover:bg-primary-50 hover:text-primary-700"
+                          class="absolute right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-[var(--color-muted)] hover:bg-primary-50 hover:text-primary-700"
                         >
                           ×
                         </button>
@@ -225,17 +256,20 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     </label>
                   </Show>
 
-                  <div class="flex items-center justify-between mb-4">
+                  <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--color-line)] pb-3">
                     <p class="text-sm text-[var(--color-muted)]">
                       <Show
                         when={searching()}
                         fallback={
                           <>
-                            Showing {d().results.length} of {total()} {cc()} in {m().city}
+                            Showing{" "}
+                            <span class="font-bold text-[var(--color-ink)]">{d().results.length}</span>{" "}
+                            of <span class="font-bold text-[var(--color-ink)]">{total()}</span> {cc()}{" "}
+                            in {m().city}
                           </>
                         }
                       >
-                        {collegeMatches().length}{" "}
+                        <span class="font-bold text-[var(--color-ink)]">{collegeMatches().length}</span>{" "}
                         {collegeMatches().length === 1 ? "college" : "colleges"} matching "
                         {collegeSearch().trim()}"
                       </Show>
