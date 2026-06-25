@@ -4,6 +4,7 @@ import SearchAutocomplete from "~/components/SearchAutocomplete";
 import CollegeLogo from "~/components/CollegeLogo";
 import SlotImage from "~/components/SlotImage";
 import { allCollegesQuery, searchQuery } from "~/lib/queries";
+import type { CollegeCard } from "~/lib/types";
 
 type Scope = "all" | "colleges" | "courses" | "exams";
 
@@ -42,20 +43,60 @@ export default function SearchPage(props: { query: string }) {
   const [sp, setSp] = useSearchParams();
   const scope = (): Scope => (sp.type as Scope) || "all";
   const results = createAsync(() => searchQuery(props.query));
-  // Search results only carry id/name/slug, so enrich each college with its
-  // logo, city and type from the cached all-colleges list (non-blocking).
+  // The /search API returns sparse colleges (id/name/slug) and misses many
+  // matches, so we also search the rich all-colleges list (from /university):
+  // name, city, type and courses. Keywords like "mba", "varanasi" or
+  // "mba colleges in varanasi" all match here.
   const allColleges = createAsync(() => allCollegesQuery());
   const cardById = () => {
-    const m = new Map<number, { logo: string; city: string; type: string }>();
-    for (const cc of allColleges() ?? []) m.set(cc.id, { logo: cc.logo, city: cc.city, type: cc.type });
+    const m = new Map<number, CollegeCard>();
+    for (const cc of allColleges() ?? []) m.set(cc.id, cc);
     return m;
+  };
+
+  const STOP = new Set([
+    "in", "the", "of", "for", "and", "a", "to", "with", "near", "at", "best",
+    "top", "list", "colleges", "college",
+  ]);
+  const queryTokens = () =>
+    props.query.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t && !STOP.has(t));
+
+  /** Colleges whose name/city/type/courses contain every query token. */
+  const localColleges = (): CollegeCard[] => {
+    const ts = queryTokens();
+    if (!ts.length) return [];
+    return (allColleges() ?? []).filter((c) => {
+      const hay = `${c.name} ${c.city} ${c.type} ${c.key_courses.join(" ")}`.toLowerCase();
+      return ts.every((t) => hay.includes(t));
+    });
+  };
+
+  type CollegeResult = {
+    id: number; slug: string; name: string; city: string; type: string;
+    logo: string; key_courses: string[];
+  };
+  /** Keyword matches merged with backend search colleges (dedup by id). */
+  const collegeResults = (): CollegeResult[] => {
+    const local = localColleges();
+    const seen = new Set(local.map((c) => c.id));
+    const extra: CollegeResult[] = (results()?.colleges ?? [])
+      .filter((c) => !seen.has(c.id))
+      .map((c) => {
+        const ec = cardById().get(c.id);
+        return {
+          id: c.id, slug: c.slug, name: c.name,
+          city: ec?.city ?? "", type: ec?.type ?? "",
+          logo: ec?.logo ?? "", key_courses: ec?.key_courses ?? [],
+        };
+      });
+    return [...local, ...extra];
   };
 
   const show = (s: Scope) => scope() === "all" || scope() === s;
   const counts = () => {
     const r = results();
     return {
-      colleges: r?.colleges.length ?? 0,
+      colleges: collegeResults().length,
       courses: r?.courses.length ?? 0,
       exams: r?.exams.length ?? 0,
     };
@@ -188,26 +229,24 @@ export default function SearchPage(props: { query: string }) {
             return (
               <div class="space-y-10">
                 {/* Colleges */}
-                <Show when={show("colleges") && r.colleges.length}>
+                <Show when={show("colleges") && collegeResults().length}>
                   <ResultGroup
                     label="Colleges"
-                    count={r.colleges.length}
+                    count={collegeResults().length}
                     accent="primary"
                     icon='<path d="m3 21 18 0"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-6h6v6"/>'
                   >
-                    <For each={r.colleges}>
+                    <For each={collegeResults()}>
                       {(c) => {
-                        const ec = () => cardById().get(c.id);
-                        const meta = () =>
-                          [c.city || ec()?.city, c.type || ec()?.type].filter(Boolean).join(" · ");
+                        const meta = [c.city, c.type].filter(Boolean).join(" · ");
                         return (
                           <A
                             href={`/college/${c.slug}-${c.id}`}
-                            class="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5"
+                            class="group flex items-start gap-3 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 transition-all hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5"
                           >
                             <CollegeLogo
                               name={c.name}
-                              logo={ec()?.logo}
+                              logo={c.logo}
                               id={c.id}
                               class="h-12 w-12 shrink-0 rounded-[var(--radius-md)] text-base"
                             />
@@ -216,8 +255,19 @@ export default function SearchPage(props: { query: string }) {
                                 {c.name}
                               </span>
                               <span class="mt-0.5 block text-xs text-[var(--color-muted)]">
-                                {meta() || "View college details"}
+                                {meta || "View college details"}
                               </span>
+                              <Show when={c.key_courses.length}>
+                                <span class="mt-1.5 flex flex-wrap gap-1">
+                                  <For each={c.key_courses.slice(0, 4)}>
+                                    {(k) => (
+                                      <span class="rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-medium text-primary-700">
+                                        {k}
+                                      </span>
+                                    )}
+                                  </For>
+                                </span>
+                              </Show>
                             </span>
                             <span
                               aria-hidden="true"
