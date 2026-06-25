@@ -2,12 +2,11 @@ import { A, createAsync, useParams, useSearchParams } from "@solidjs/router";
 import { For, Show, createSignal, onMount } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
-import CollegeCardItem from "~/components/CollegeCardItem";
+import CollegeListRow from "~/components/CollegeListRow";
 import FilterRail from "~/components/FilterRail";
 import Faq from "~/components/Faq";
 import LeadForm from "~/components/LeadForm";
-import HeroSlider from "~/components/HeroSlider";
-import SlotImage from "~/components/SlotImage";
+import LeadTrigger from "~/components/LeadTrigger";
 import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
@@ -65,6 +64,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
         .catch(() => {});
     }
   });
+  const [introOpen, setIntroOpen] = createSignal(false);
   const [collegeSearch, setCollegeSearch] = createSignal("");
   const searching = () => collegeSearch().trim().length >= 1;
   const collegeMatches = () => {
@@ -127,67 +127,72 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Hero banner with crossfading images */}
-            <section class="relative overflow-hidden bg-neutral-900 text-white">
-              <HeroSlider />
-              {/* Managed listing_header slot covers the slider when uploaded. */}
-              <SlotImage slot="listing_header" />
-              <div
-                aria-hidden="true"
-                class="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/60 to-black/35"
-              />
-              <div class="container-x py-8 md:py-12 relative z-10">
-                <Breadcrumbs crumbs={crumbs()} light />
-                <h1 class="mt-3 text-2xl md:text-4xl font-extrabold text-white leading-tight">
+            {/* Top info card */}
+            <div class="container-x pt-6">
+              <Breadcrumbs crumbs={crumbs()} />
+              <div class="mt-4 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-sm sm:p-6">
+                <h1 class="text-2xl font-extrabold leading-tight text-[var(--color-ink)] md:text-3xl">
                   {Cc()} in {m().city}
                 </h1>
-                <Show when={m().intro}>
-                  <p class="mt-3 max-w-3xl text-white/85">{m().intro}</p>
-                </Show>
-                <div class="mt-5 flex flex-wrap gap-2.5">
-                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-                    <span class="font-bold text-accent-400">{m().total_colleges}</span>
+                <p
+                  class="mt-2 max-w-3xl text-sm text-[var(--color-muted)]"
+                  classList={{ "line-clamp-2": !introOpen() }}
+                >
+                  {m().intro ||
+                    `There are ${m().total_colleges} ${cc()} in ${m().city}. Find details such as courses, fees, admissions, cutoffs, placements, rankings and student ratings, then shortlist by budget and the course you want to pursue.`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIntroOpen((v) => !v)}
+                  class="mt-2 text-sm font-semibold text-primary-700 hover:underline"
+                >
+                  {introOpen() ? "Show less" : "Read more"}
+                </button>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                    <span class="font-bold text-primary-700">{m().total_colleges}</span>
                     colleges
                   </span>
                   <Show when={m().fee_range}>
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-                      Fees
-                      <span class="font-semibold">{m().fee_range}</span>
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                      Fees <span class="font-semibold">{m().fee_range}</span>
                     </span>
                   </Show>
                   <For each={m().popular_courses.slice(0, 3)}>
                     {(pc) => (
-                      <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
+                      <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
                         {pc.name}
                       </span>
                     )}
                   </For>
                 </div>
               </div>
-            </section>
+            </div>
 
-            {/* Body: filter rail + results */}
-            <div class="container-x py-8">
-              <div class="grid gap-8 lg:grid-cols-[18rem_1fr]">
+            {/* Body: filter rail + results + guidance rail */}
+            <div class="container-x py-6">
+              <div class="grid gap-6 lg:grid-cols-[15rem_1fr] xl:grid-cols-[15rem_1fr_17rem]">
                 {/* Filters: collapsible on mobile, sticky sidebar on desktop */}
                 <div>
-                  <details class="lg:hidden mb-4 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]">
+                  <details class="lg:hidden mb-4 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)]">
                     <summary class="cursor-pointer px-4 py-3 font-semibold list-none">
-                      Filters and sort
+                      Filters
                     </summary>
                     <div class="px-4 pb-4">
                       <FilterRail
                         filters={d().filters}
                         specializations={specializations()}
                         specializationLabel={cityMode() ? "Course" : "Specialisation"}
+                        cityName={m().city}
                       />
                     </div>
                   </details>
-                  <div class="hidden lg:block lg:sticky lg:top-20">
+                  <div class="hidden lg:block lg:sticky lg:top-20 rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm">
                     <FilterRail
                       filters={d().filters}
                       specializations={specializations()}
                       specializationLabel={cityMode() ? "Course" : "Specialisation"}
+                      cityName={m().city}
                     />
                   </div>
                 </div>
@@ -225,21 +230,50 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     </label>
                   </Show>
 
-                  <div class="flex items-center justify-between mb-4">
+                  <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-line)] pb-3">
                     <p class="text-sm text-[var(--color-muted)]">
                       <Show
                         when={searching()}
                         fallback={
                           <>
-                            Showing {d().results.length} of {total()} {cc()} in {m().city}
+                            <span class="font-bold text-[var(--color-ink)]">{total()}</span> results
+                            {" · "}
+                            {cc()} in {m().city}
                           </>
                         }
                       >
-                        {collegeMatches().length}{" "}
+                        <span class="font-bold text-[var(--color-ink)]">{collegeMatches().length}</span>{" "}
                         {collegeMatches().length === 1 ? "college" : "colleges"} matching "
                         {collegeSearch().trim()}"
                       </Show>
                     </p>
+                    <Show when={!searching()}>
+                      <label class="flex items-center gap-2 text-sm">
+                        <span class="text-[var(--color-muted)]">Sort by</span>
+                        <div class="relative">
+                          <select
+                            value={(sp.sort as string) ?? "relevance"}
+                            onChange={(e) =>
+                              setSp({
+                                sort:
+                                  e.currentTarget.value === "relevance"
+                                    ? undefined
+                                    : e.currentTarget.value,
+                                page: undefined,
+                              })
+                            }
+                            class="appearance-none rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] py-1.5 pl-3 pr-8 text-sm font-medium outline-none focus:border-primary-500"
+                          >
+                            <option value="relevance">Popularity</option>
+                            <option value="fees">Fees: low to high</option>
+                            <option value="rating">Rating</option>
+                          </select>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" aria-hidden="true">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg>
+                        </div>
+                      </label>
+                    </Show>
                   </div>
 
                   {/* Search view (across all pages) vs the normal paginated view. */}
@@ -282,8 +316,8 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                           </EmptyState>
                         }
                       >
-                        <div class="grid gap-4 sm:grid-cols-2">
-                          <For each={d().results}>{(c) => <CollegeCardItem college={c} />}</For>
+                        <div class="space-y-3">
+                          <For each={d().results}>{(c) => <CollegeListRow college={c} />}</For>
                         </div>
                       </Show>
                     }
@@ -297,8 +331,8 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                         </EmptyState>
                       }
                     >
-                      <div class="grid gap-4 sm:grid-cols-2">
-                        <For each={collegeMatches()}>{(c) => <CollegeCardItem college={c} />}</For>
+                      <div class="space-y-3">
+                        <For each={collegeMatches()}>{(c) => <CollegeListRow college={c} />}</For>
                       </div>
                     </Show>
                   </Show>
@@ -389,6 +423,33 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     </section>
                   </Show>
                 </div>
+
+                {/* Right rail: guidance CTA (xl+). Category-level guidance (compliance 2). */}
+                <aside class="hidden xl:block">
+                  <div class="sticky top-20 overflow-hidden rounded-[var(--radius-lg)] border border-primary-100 bg-gradient-to-br from-primary-50 to-[var(--color-surface)] p-5">
+                    <span class="grid h-12 w-12 place-items-center rounded-full bg-primary-600 text-white">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" aria-hidden="true">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
+                      </svg>
+                    </span>
+                    <h3 class="mt-3 text-base font-bold text-[var(--color-ink)]">
+                      Get personalised guidance
+                    </h3>
+                    <p class="mt-1 text-sm text-[var(--color-muted)]">
+                      Tell us your preferences and our advisors help you shortlist {m().city}{" "}
+                      colleges by fees, cutoffs and placements. Free for students.
+                    </p>
+                    <div class="mt-4">
+                      <LeadTrigger
+                        sourcePage={path()}
+                        citySlug={city()}
+                        label="Talk to an advisor"
+                        variant="primary"
+                        class="w-full justify-center"
+                      />
+                    </div>
+                  </div>
+                </aside>
               </div>
             </div>
 
