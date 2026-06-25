@@ -144,12 +144,16 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               <div class="container-x relative z-10 py-10 md:py-16">
                 <div class="max-w-xl">
                   <Breadcrumbs crumbs={crumbs()} />
-                  <h1 class="mt-3 text-3xl font-extrabold leading-tight text-[var(--color-ink)] md:text-4xl">
+                  {/* Kicker */}
+                  <div class="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-600">
+                    <span aria-hidden="true" class="h-px w-7 bg-primary-500" />
+                    {courseName() ? `${courseName()} admissions` : "Explore colleges"}
+                  </div>
+                  <h1 class="mt-2 text-[1.9rem] font-extrabold leading-[1.1] tracking-tight text-[var(--color-ink)] md:text-[2.6rem]">
                     {Cc()} in {m().city}
                   </h1>
-                  <div aria-hidden="true" class="mt-3 h-1 w-14 rounded-full bg-primary-600" />
                   <p
-                    class="mt-3 max-w-lg text-sm leading-relaxed text-[var(--color-ink)]/75 md:text-[15px]"
+                    class="mt-3 max-w-lg text-sm leading-relaxed text-[var(--color-ink)]/70 md:text-[15px]"
                     classList={{ "line-clamp-2": !introOpen() }}
                   >
                     {m().intro ||
@@ -162,23 +166,34 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                   >
                     {introOpen() ? "Show less" : "Read more"}
                   </button>
-                  <div class="mt-4 flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-primary-100 bg-white/70 px-3 py-1.5 text-sm backdrop-blur-sm">
-                      <span class="font-bold text-primary-700">{m().total_colleges}</span>
-                      colleges
-                    </span>
-                    <Show when={m().fee_range}>
-                      <span class="inline-flex items-center gap-1.5 rounded-full border border-primary-100 bg-white/70 px-3 py-1.5 text-sm backdrop-blur-sm">
-                        Fees <span class="font-semibold">{m().fee_range}</span>
+
+                  {/* Inline stat strip: big count + fees + course pills, divided */}
+                  <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-3xl font-extrabold leading-none text-primary-700">
+                        {m().total_colleges}
                       </span>
+                      <span class="text-sm text-[var(--color-muted)]">colleges</span>
+                    </div>
+                    <Show when={m().fee_range}>
+                      <span aria-hidden="true" class="hidden h-8 w-px bg-[var(--color-ink)]/15 sm:block" />
+                      <div class="text-sm">
+                        <span class="text-[var(--color-muted)]">Fees </span>
+                        <span class="font-bold text-[var(--color-ink)]">{m().fee_range}</span>
+                      </div>
                     </Show>
-                    <For each={m().popular_courses.slice(0, 3)}>
-                      {(pc) => (
-                        <span class="inline-flex items-center rounded-full border border-primary-100 bg-white/60 px-3 py-1.5 text-sm backdrop-blur-sm">
-                          {pc.name}
-                        </span>
-                      )}
-                    </For>
+                    <Show when={m().popular_courses.length}>
+                      <span aria-hidden="true" class="hidden h-8 w-px bg-[var(--color-ink)]/15 sm:block" />
+                      <div class="flex flex-wrap gap-1.5">
+                        <For each={m().popular_courses.slice(0, 3)}>
+                          {(pc) => (
+                            <span class="inline-flex items-center rounded-full border border-primary-200/70 bg-white/60 px-2.5 py-1 text-xs font-medium text-[var(--color-ink)] backdrop-blur-sm">
+                              {pc.name}
+                            </span>
+                          )}
+                        </For>
+                      </div>
+                    </Show>
                   </div>
                 </div>
               </div>
