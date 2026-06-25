@@ -70,21 +70,59 @@ export default function AboutPage() {
         jsonLd={breadcrumbLd(crumbs)}
       />
 
-      {/* Intro */}
-      <section class="bg-[var(--color-surface)]">
-        <div class="container-x py-10 md:py-14">
+      {/* Intro hero */}
+      <section class="relative overflow-hidden bg-gradient-to-br from-accent-50 via-[var(--color-surface)] to-primary-50">
+        <div aria-hidden="true" class="pointer-events-none absolute -right-16 -top-24 h-80 w-80 rounded-full bg-primary-100/60 blur-3xl" />
+        <div aria-hidden="true" class="pointer-events-none absolute -bottom-28 -left-10 h-80 w-80 rounded-full bg-accent-100/50 blur-3xl" />
+        <div class="container-x relative z-10 py-12 md:py-20">
           <Breadcrumbs crumbs={crumbs} />
-          <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-accent-600 md:text-4xl">
-            About {SITE_NAME}
-          </h1>
-          <p class="mt-4 max-w-3xl text-[15px] leading-relaxed text-[var(--color-ink)]/80 md:text-base">
-            {SITE_NAME} is an independent education discovery and counselling platform operated by{" "}
-            <span class="font-semibold text-[var(--color-ink)]">AAJneeti Connect Ltd.</span>, built
-            for students, parents and the wider education community seeking clear, comparable
-            information on the higher education sector in India. You can rely on {SITE_NAME} for
-            honest, comparable data on colleges, universities, courses and entrance exams, with free
-            guidance through the admissions journey.
-          </p>
+          <div class="mt-6 grid items-center gap-10 lg:grid-cols-[1.15fr_1fr]">
+            <div>
+              <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-primary-600">
+                <span aria-hidden="true" class="h-px w-7 bg-primary-500" />
+                About Us
+              </span>
+              <h1 class="mt-3 text-4xl font-extrabold leading-[1.05] tracking-tight text-accent-600 md:text-5xl">
+                About{" "}
+                <span class="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                  {SITE_NAME}
+                </span>
+              </h1>
+              <p class="mt-5 max-w-xl text-base leading-relaxed text-[var(--color-ink)]/80 md:text-lg">
+                An independent education discovery and counselling platform by{" "}
+                <span class="font-semibold text-[var(--color-ink)]">AAJneeti Connect Ltd.</span> We
+                help students and parents cut through the noise with clear, comparable data on
+                colleges, universities, courses and entrance exams, and free guidance through the
+                admissions journey.
+              </p>
+              <div class="mt-6 flex flex-wrap gap-2.5">
+                <For
+                  each={[
+                    "Free for students",
+                    "Independent and unbiased",
+                    "DPDP-compliant",
+                  ]}
+                >
+                  {(t) => (
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-accent-100 bg-white/70 px-3.5 py-1.5 text-sm font-medium text-accent-700 backdrop-blur-sm">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 text-primary-600" aria-hidden="true">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                      {t}
+                    </span>
+                  )}
+                </For>
+              </div>
+            </div>
+            <div class="hidden justify-self-center lg:block">
+              <img
+                src="/vector.png"
+                alt=""
+                loading="eager"
+                class="h-64 w-auto object-contain xl:h-72"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
