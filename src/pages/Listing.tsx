@@ -125,20 +125,28 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Hero: minimal, centered title + chips over the banner artwork,
-                in the secondary (accent/navy) colour, with the soft scrim. */}
+            {/* Hero. Mobile: full banner image on top, title + chips stacked
+                below it. Desktop (sm+): image as a cover background with the soft
+                scrim and centered content overlaid. */}
             <section class="relative overflow-hidden bg-[#fbe9ee]">
+              {/* Mobile: full image, not cropped */}
+              <img
+                src="/college-banner.png"
+                alt=""
+                class="block w-full sm:hidden"
+              />
+              {/* Desktop: image as cover background */}
               <img
                 src="/college-banner.png"
                 alt=""
                 aria-hidden="true"
-                class="absolute inset-0 h-full w-full object-cover object-center"
+                class="absolute inset-0 hidden h-full w-full object-cover object-center sm:block"
               />
               <div
                 aria-hidden="true"
-                class="absolute inset-0 bg-gradient-to-r from-[#fbe9ee]/70 via-[#fbe9ee]/30 to-transparent"
+                class="absolute inset-0 hidden bg-gradient-to-r from-[#fbe9ee]/70 via-[#fbe9ee]/30 to-transparent sm:block"
               />
-              <div class="container-x relative z-10 py-16 text-center md:py-28">
+              <div class="container-x relative z-10 py-6 text-center sm:py-16 md:py-28">
                 <h1 class="text-2xl font-extrabold tracking-tight text-accent-600 md:text-3xl">
                   {Cc()} in {m().city}
                 </h1>
