@@ -11,7 +11,7 @@ const STREAMS = [
 
 const RESOURCES = [
   { label: "News & Guides", href: "/articles" },
-  { label: "MBA / PGDM Course", href: "/mba-pgdm-course" },
+  { label: "MBA Course", href: "/mba-course" },
   { label: "CAT Exam", href: "/mba/cat-exam" },
   { label: "Search", href: "/search" },
 ];
