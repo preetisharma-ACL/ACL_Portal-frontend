@@ -43,7 +43,7 @@ export default function Modal(props: {
           onClick={props.onClose}
           aria-hidden="true"
         />
-        <div class="relative flex max-h-[94vh] w-full flex-col overflow-hidden rounded-t-[var(--radius-xl)] bg-[var(--color-surface)] shadow-2xl ring-1 ring-black/5 animate-modal-in sm:max-w-lg sm:rounded-[var(--radius-xl)]">
+        <div class="relative flex max-h-[94vh] w-full flex-col overflow-hidden rounded-t-[var(--radius-md)] bg-[var(--color-surface)] shadow-2xl ring-1 ring-black/5 animate-modal-in sm:max-w-lg sm:rounded-[var(--radius-md)]">
           <Show
             when={!props.hideHeader}
             fallback={

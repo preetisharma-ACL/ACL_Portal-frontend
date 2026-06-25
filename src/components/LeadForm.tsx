@@ -223,7 +223,7 @@ export default function LeadForm(props: LeadFormProps) {
   // Floating-label outlined fields: the label lifts onto the border line when the
   // field is focused or filled (Material-style notched outline).
   const inputCtl =
-    "peer w-full rounded-[var(--radius-md)] border-2 border-[var(--color-line)] bg-[var(--color-surface)] py-3 pl-11 pr-4 text-[15px] text-[var(--color-ink)] outline-none transition-colors placeholder:text-transparent hover:border-[var(--color-muted)]/40 focus:border-primary-500";
+    "peer w-full rounded-[var(--radius-sm)] border-2 border-[var(--color-line)] bg-[var(--color-surface)] py-3 pl-11 pr-4 text-[15px] text-[var(--color-ink)] outline-none transition-colors placeholder:text-transparent hover:border-[var(--color-muted)]/40 focus:border-primary-500";
   const selectCtl = `${inputCtl} cursor-pointer appearance-none pr-10`;
   const iconCls =
     "pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-muted)] transition-colors peer-focus:text-primary-600";
@@ -502,7 +502,7 @@ export default function LeadForm(props: LeadFormProps) {
             type="submit"
             variant={props.submitVariant ?? "primary"}
             size="lg"
-            class="w-full bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-base font-bold uppercase tracking-wide text-white transition-all duration-150 hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 active:translate-y-0 active:scale-[0.99] active:from-accent-600 active:via-accent-500 active:to-accent-600"
+            class="w-full rounded-[var(--radius-sm)] bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-base font-bold uppercase tracking-wide text-white transition-all duration-150 hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 active:translate-y-0 active:scale-[0.99] active:from-accent-600 active:via-accent-500 active:to-accent-600"
             disabled={busy()}
           >
             <Show
