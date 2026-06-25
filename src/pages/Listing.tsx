@@ -445,7 +445,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                   <div class="sticky top-20 overflow-hidden rounded-[var(--radius-xl)] border border-white/60 bg-white/55 p-6 text-center shadow-2xl shadow-primary-900/10 ring-1 ring-black/5 backdrop-blur-2xl">
                     <div aria-hidden="true" class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary-200/40 blur-2xl" />
                     <img
-                      src="/guidance-illustration.png"
+                      src="/vector.png"
                       alt=""
                       loading="lazy"
                       decoding="async"
