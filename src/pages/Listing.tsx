@@ -127,54 +127,53 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Hero: college banner image + black left-to-right overlay */}
-            <section class="relative overflow-hidden bg-neutral-900 text-white">
+            {/* Hero: banner image (no overlay) with the content in a frosted
+                glass card so it stays crisp and readable over the artwork. */}
+            <section class="relative overflow-hidden bg-neutral-100">
               <img
                 src="/college-banner.png"
                 alt=""
                 aria-hidden="true"
                 class="absolute inset-0 h-full w-full object-cover object-center"
               />
-              <div
-                aria-hidden="true"
-                class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/30"
-              />
-              <div class="container-x relative z-10 py-8 md:py-10">
-                <Breadcrumbs crumbs={crumbs()} light />
-                <h1 class="mt-3 text-2xl font-extrabold leading-tight text-white [text-shadow:0_2px_10px_rgb(0_0_0_/_55%)] md:text-3xl">
-                  {Cc()} in {m().city}
-                </h1>
-                <p
-                  class="mt-2 max-w-3xl text-sm text-white/85"
-                  classList={{ "line-clamp-2": !introOpen() }}
-                >
-                  {m().intro ||
-                    `There are ${m().total_colleges} ${cc()} in ${m().city}. Find details such as courses, fees, admissions, cutoffs, placements, rankings and student ratings, then shortlist by budget and the course you want to pursue.`}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setIntroOpen((v) => !v)}
-                  class="mt-2 text-sm font-semibold text-white underline decoration-white/40 underline-offset-2 hover:decoration-white"
-                >
-                  {introOpen() ? "Show less" : "Read more"}
-                </button>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-                    <span class="font-bold text-accent-400">{m().total_colleges}</span>
-                    colleges
-                  </span>
-                  <Show when={m().fee_range}>
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-                      Fees <span class="font-semibold">{m().fee_range}</span>
+              <div class="container-x relative z-10 py-10 md:py-14">
+                <div class="max-w-2xl rounded-[var(--radius-xl)] bg-[var(--color-surface)]/80 p-6 shadow-lg ring-1 ring-black/5 backdrop-blur-md sm:p-8">
+                  <Breadcrumbs crumbs={crumbs()} />
+                  <h1 class="mt-3 text-2xl font-extrabold leading-tight text-[var(--color-ink)] md:text-3xl">
+                    {Cc()} in {m().city}
+                  </h1>
+                  <p
+                    class="mt-2 text-sm text-[var(--color-muted)]"
+                    classList={{ "line-clamp-2": !introOpen() }}
+                  >
+                    {m().intro ||
+                      `There are ${m().total_colleges} ${cc()} in ${m().city}. Find details such as courses, fees, admissions, cutoffs, placements, rankings and student ratings, then shortlist by budget and the course you want to pursue.`}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIntroOpen((v) => !v)}
+                    class="mt-2 text-sm font-semibold text-primary-700 hover:underline"
+                  >
+                    {introOpen() ? "Show less" : "Read more"}
+                  </button>
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                      <span class="font-bold text-primary-700">{m().total_colleges}</span>
+                      colleges
                     </span>
-                  </Show>
-                  <For each={m().popular_courses.slice(0, 3)}>
-                    {(pc) => (
-                      <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
-                        {pc.name}
+                    <Show when={m().fee_range}>
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                        Fees <span class="font-semibold">{m().fee_range}</span>
                       </span>
-                    )}
-                  </For>
+                    </Show>
+                    <For each={m().popular_courses.slice(0, 3)}>
+                      {(pc) => (
+                        <span class="inline-flex items-center rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                          {pc.name}
+                        </span>
+                      )}
+                    </For>
+                  </div>
                 </div>
               </div>
             </section>
