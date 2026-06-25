@@ -1,7 +1,6 @@
 import { A, createAsync, useParams, useSearchParams } from "@solidjs/router";
 import { For, Show, createSignal, onMount } from "solid-js";
 import Seo from "~/components/Seo";
-import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeListRow from "~/components/CollegeListRow";
 import FilterRail from "~/components/FilterRail";
 import Faq from "~/components/Faq";
@@ -64,7 +63,6 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
         .catch(() => {});
     }
   });
-  const [introOpen, setIntroOpen] = createSignal(false);
   const [collegeSearch, setCollegeSearch] = createSignal("");
   const searching = () => collegeSearch().trim().length >= 1;
   const collegeMatches = () => {
@@ -127,9 +125,8 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Hero: text composed INTO the banner artwork. A scrim colour-matched
-                to the banner's light pink blends left-to-right so the dark text
-                reads as part of the design, not a card pasted on top. */}
+            {/* Hero: minimal, centered title + chips over the banner artwork,
+                in the secondary (accent/navy) colour, with the soft scrim. */}
             <section class="relative overflow-hidden bg-[#fbe9ee]">
               <img
                 src="/college-banner.png"
@@ -141,60 +138,21 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 aria-hidden="true"
                 class="absolute inset-0 bg-gradient-to-r from-[#fbe9ee]/70 via-[#fbe9ee]/30 to-transparent"
               />
-              <div class="container-x relative z-10 py-10 md:py-16">
-                <div class="max-w-xl">
-                  <Breadcrumbs crumbs={crumbs()} />
-                  {/* Kicker */}
-                  <div class="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-primary-600">
-                    <span aria-hidden="true" class="h-px w-7 bg-primary-500" />
-                    {courseName() ? `${courseName()} admissions` : "Explore colleges"}
-                  </div>
-                  <h1 class="mt-2 text-[1.9rem] font-extrabold leading-[1.1] tracking-tight text-[var(--color-ink)] md:text-[2.6rem]">
-                    {Cc()} in {m().city}
-                  </h1>
-                  <p
-                    class="mt-3 max-w-lg text-sm leading-relaxed text-[var(--color-ink)]/70 md:text-[15px]"
-                    classList={{ "line-clamp-2": !introOpen() }}
-                  >
-                    {m().intro ||
-                      `There are ${m().total_colleges} ${cc()} in ${m().city}. Find details such as courses, fees, admissions, cutoffs, placements, rankings and student ratings, then shortlist by budget and the course you want to pursue.`}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setIntroOpen((v) => !v)}
-                    class="mt-2 text-sm font-semibold text-primary-700 hover:underline"
-                  >
-                    {introOpen() ? "Show less" : "Read more"}
-                  </button>
-
-                  {/* Inline stat strip: big count + fees + course pills, divided */}
-                  <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-                    <div class="flex items-baseline gap-1.5">
-                      <span class="text-3xl font-extrabold leading-none text-primary-700">
-                        {m().total_colleges}
+              <div class="container-x relative z-10 py-16 text-center md:py-28">
+                <h1 class="text-2xl font-extrabold tracking-tight text-accent-600 md:text-3xl">
+                  {Cc()} in {m().city}
+                </h1>
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  <span class="inline-flex items-center rounded-full bg-accent-500 px-3.5 py-1 text-[13px] font-semibold text-white shadow-sm">
+                    {m().total_colleges} colleges
+                  </span>
+                  <For each={m().popular_courses.slice(0, 3)}>
+                    {(pc) => (
+                      <span class="inline-flex items-center rounded-full border border-accent-100 bg-white/75 px-3.5 py-1 text-[13px] font-medium text-accent-700 backdrop-blur-sm">
+                        {pc.name}
                       </span>
-                      <span class="text-sm text-[var(--color-muted)]">colleges</span>
-                    </div>
-                    <Show when={m().fee_range}>
-                      <span aria-hidden="true" class="hidden h-8 w-px bg-[var(--color-ink)]/15 sm:block" />
-                      <div class="text-sm">
-                        <span class="text-[var(--color-muted)]">Fees </span>
-                        <span class="font-bold text-[var(--color-ink)]">{m().fee_range}</span>
-                      </div>
-                    </Show>
-                    <Show when={m().popular_courses.length}>
-                      <span aria-hidden="true" class="hidden h-8 w-px bg-[var(--color-ink)]/15 sm:block" />
-                      <div class="flex flex-wrap gap-1.5">
-                        <For each={m().popular_courses.slice(0, 3)}>
-                          {(pc) => (
-                            <span class="inline-flex items-center rounded-full border border-primary-200/70 bg-white/60 px-2.5 py-1 text-xs font-medium text-[var(--color-ink)] backdrop-blur-sm">
-                              {pc.name}
-                            </span>
-                          )}
-                        </For>
-                      </div>
-                    </Show>
-                  </div>
+                    )}
+                  </For>
                 </div>
               </div>
             </section>
