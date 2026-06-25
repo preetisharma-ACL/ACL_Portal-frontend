@@ -121,7 +121,7 @@ function ProgramCard(props: { college: CollegeCard; featured?: boolean }) {
       </p>
 
       <Show when={c.approvals.length}>
-        <div class="mt-3 flex flex-wrap gap-1.5">
+        <div class="mt-3 mb-5 flex flex-wrap gap-1.5">
           <For each={c.approvals.slice(0, 3)}>
             {(a) => (
               <span class="rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-2 py-0.5 text-[11px] font-medium text-[var(--color-muted)]">
