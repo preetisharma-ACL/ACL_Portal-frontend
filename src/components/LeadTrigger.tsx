@@ -12,7 +12,14 @@ type Variant = "primary" | "accent" | "outline" | "ghost";
  * always category-level guidance, never "apply to a specific college".
  */
 export default function LeadTrigger(
-  props: LeadFormProps & { label?: string; variant?: Variant; size?: "sm" | "md" | "lg"; class?: string },
+  props: LeadFormProps & {
+    label?: string;
+    variant?: Variant;
+    size?: "sm" | "md" | "lg";
+    class?: string;
+    /** Runs after a successful lead submit (e.g. reveal a gated brochure PDF). */
+    onLeadSuccess?: () => void;
+  },
 ) {
   const [open, setOpen] = createSignal(false);
 
@@ -53,7 +60,14 @@ export default function LeadTrigger(
           </p>
         </div>
         <div class="px-5 py-5 sm:px-6">
-          <LeadForm {...props} hideHeading onSuccess={() => setOpen(false)} />
+          <LeadForm
+          {...props}
+          hideHeading
+          onSuccess={() => {
+            setOpen(false);
+            props.onLeadSuccess?.();
+          }}
+        />
         </div>
       </Modal>
     </>

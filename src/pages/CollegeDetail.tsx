@@ -38,6 +38,8 @@ const SECTIONS: { id: string; label: string }[] = [
   { id: "placements", label: "Placements" },
   { id: "rankings", label: "Rankings" },
   { id: "cutoffs", label: "Cutoffs" },
+  { id: "scholarships", label: "Scholarships" },
+  { id: "facilities", label: "Facilities" },
   { id: "gallery", label: "Gallery" },
   { id: "reviews", label: "Reviews" },
   { id: "qa", label: "Q&A" },
@@ -53,6 +55,29 @@ const TAB_ANCHOR: Record<CollegeTab, string> = {
   admission: "admissions",
   reviews: "reviews",
 };
+
+const GENDER_LABEL: Record<string, string> = {
+  CO_ED: "Co-Ed",
+  GIRLS: "Girls",
+  BOYS: "Boys",
+};
+const SCHOLARSHIP_TYPE: Record<string, string> = {
+  MERIT: "Merit-based",
+  NEED: "Need-based",
+  OTHER: "Other",
+};
+const FACILITY_CAT: Record<string, string> = {
+  HOSTEL: "Hostel",
+  LIBRARY: "Library",
+  LABS: "Labs",
+  CAFETERIA: "Cafeteria",
+  SPORTS: "Sports",
+  WIFI: "Wi-Fi",
+  TRANSPORT: "Transport",
+  MEDICAL: "Medical",
+  OTHER: "Other",
+};
+const FACILITY_ORDER = Object.keys(FACILITY_CAT);
 
 function Block(props: { id: string; title: string; children: JSX.Element }) {
   return (
@@ -136,14 +161,42 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
           },
           rankings: () => d().rankings.length > 0,
           cutoffs: () => d().cutoffs.length > 0,
+          scholarships: () => d().scholarships.length > 0,
+          facilities: () => d().facilities.length > 0,
           gallery: () => d().media.some((m) => m.category !== "HERO"),
           // Always reachable so the empty-state prompts and submission forms show.
           reviews: () => true,
           qa: () => true,
           news: () => true,
-          contact: () => true,
+          contact: () => hasAnyContact(),
         };
         const navSections = () => SECTIONS.filter((s) => visible[s.id]?.());
+
+        const ct = () => d().contact;
+        const hasAnyContact = () =>
+          !!(
+            ct().address ||
+            ct().phone ||
+            ct().email ||
+            ct().website ||
+            (ct().latitude != null && ct().longitude != null)
+          );
+        const hasCoords = () => ct().latitude != null && ct().longitude != null;
+        const hostelHasInfo = () => {
+          const ho = d().hostel;
+          return ho.available != null || ho.boys != null || ho.girls != null || !!ho.fee;
+        };
+        const facilityGroups = () => {
+          const map = new Map<string, { category: string; name: string; description: string }[]>();
+          for (const f of d().facilities) {
+            if (!map.has(f.category)) map.set(f.category, []);
+            map.get(f.category)!.push(f);
+          }
+          return FACILITY_ORDER.filter((c) => map.has(c)).map((c) => ({
+            category: c,
+            items: map.get(c)!,
+          }));
+        };
 
         return (
           <>
@@ -189,7 +242,12 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       {h().name}
                     </h1>
                     <p class="mt-1.5 text-sm text-[var(--color-muted)]">
-                      {[h().city, h().type, h().established ? `Est. ${h().established}` : ""]
+                      {[
+                        h().city,
+                        h().type,
+                        GENDER_LABEL[d().gender_intake] ?? "",
+                        h().established ? `Est. ${h().established}` : "",
+                      ]
                         .filter(Boolean)
                         .join(" · ")}
                     </p>
@@ -233,14 +291,21 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       }}
                       variant="button"
                     />
-                    <LeadTrigger
-                      sourcePage={path()}
-                      courseInterest={d().courses_fees[0]?.course}
-                      defaultCity={h().city}
-                      heading={`Get the prospectus for ${h().name}`}
-                      label="Download brochure"
-                      variant="ghost"
-                    />
+                    {/* Brochure is a lead magnet: only when a PDF exists, gated
+                        behind the lead form; the PDF opens after a successful submit. */}
+                    <Show when={d().brochure_url}>
+                      <LeadTrigger
+                        sourcePage={path()}
+                        courseInterest={d().courses_fees[0]?.course}
+                        defaultCity={h().city}
+                        heading={`Download the ${h().name} brochure`}
+                        label="Download brochure"
+                        variant="ghost"
+                        onLeadSuccess={() => {
+                          if (!isServer) window.open(d().brochure_url, "_blank", "noopener");
+                        }}
+                      />
+                    </Show>
                   </div>
                 </div>
 
@@ -594,6 +659,93 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 </Block>
                 </Show>
 
+                {/* Scholarships */}
+                <Show when={visible.scholarships()}>
+                <Block id="scholarships" title="Scholarships">
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <For each={d().scholarships}>
+                      {(s) => (
+                        <div class="rounded-[var(--radius-md)] border border-[var(--color-line)] p-4">
+                          <div class="flex items-start justify-between gap-2">
+                            <h3 class="font-semibold text-[var(--color-ink)]">{s.name}</h3>
+                            <Show when={s.type}>
+                              <Badge tone="primary">{SCHOLARSHIP_TYPE[s.type] ?? s.type}</Badge>
+                            </Show>
+                          </div>
+                          <Show when={s.amount_or_benefit}>
+                            <p class="mt-1.5 text-sm font-semibold text-primary-700">
+                              {s.amount_or_benefit}
+                            </p>
+                          </Show>
+                          <Show when={s.eligibility}>
+                            <p class="mt-1 text-sm text-[var(--color-muted)]">{s.eligibility}</p>
+                          </Show>
+                        </div>
+                      )}
+                    </For>
+                  </div>
+                </Block>
+                </Show>
+
+                {/* Facilities (grouped by category) */}
+                <Show when={visible.facilities()}>
+                <Block id="facilities" title="Facilities">
+                  <div class="space-y-5">
+                    <For each={facilityGroups()}>
+                      {(g) => (
+                        <div>
+                          <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                            {FACILITY_CAT[g.category] ?? g.category}
+                          </h3>
+                          <div class="flex flex-wrap gap-2">
+                            <For each={g.items}>
+                              {(f) => (
+                                <span
+                                  title={f.description || undefined}
+                                  class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm"
+                                >
+                                  <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-primary-500" />
+                                  {f.name}
+                                </span>
+                              )}
+                            </For>
+                          </div>
+                        </div>
+                      )}
+                    </For>
+                  </div>
+                </Block>
+                </Show>
+
+                {/* Hostel (small block; not a separate nav tab) */}
+                <Show when={hostelHasInfo()}>
+                <section id="hostel" class="scroll-mt-28 border-b border-[var(--color-line)] py-8">
+                  <h2 class="mb-4 text-2xl font-bold">Hostel</h2>
+                  <div class="flex flex-wrap gap-2.5">
+                    <Show when={d().hostel.boys != null}>
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                        Boys hostel: <span class="font-semibold">{d().hostel.boys ? "Available" : "Not available"}</span>
+                      </span>
+                    </Show>
+                    <Show when={d().hostel.girls != null}>
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                        Girls hostel: <span class="font-semibold">{d().hostel.girls ? "Available" : "Not available"}</span>
+                      </span>
+                    </Show>
+                    <Show when={d().hostel.available != null && d().hostel.boys == null && d().hostel.girls == null}>
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                        Hostel: <span class="font-semibold">{d().hostel.available ? "Available" : "Not available"}</span>
+                      </span>
+                    </Show>
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm">
+                      <span class="font-semibold text-primary-700">
+                        {d().hostel.fee ? `Hostel fees ${d().hostel.fee}` : "Hostel fees on request"}
+                      </span>
+                    </span>
+                  </div>
+                </section>
+                </Show>
+
                 {/* Gallery */}
                 <Show when={visible.gallery()}>
                 <Block id="gallery" title="Gallery">
@@ -656,36 +808,65 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                   </p>
                 </Block>
 
-                {/* Contact & Location with per-page guidance form */}
+                {/* Contact & Location (hidden when there are no contact fields) */}
+                <Show when={visible.contact()}>
                 <Block id="contact" title="Contact & Location">
                   <div class="grid gap-6 md:grid-cols-2">
-                    <div class="text-sm space-y-1">
-                      <p>{d().contact.address}</p>
-                      <p>
-                        {d().contact.city}, {d().contact.state} {d().contact.pincode}
-                      </p>
-                      <Show when={d().contact.phone}>
-                        <p>
-                          <span class="text-[var(--color-muted)]">Phone: </span>
-                          {d().contact.phone}
+                    <div class="space-y-2.5 text-sm">
+                      <Show when={ct().address}>
+                        <p class="flex items-start gap-2">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-muted)]" aria-hidden="true">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="2.5" />
+                          </svg>
+                          <span>
+                            {[ct().address, ct().city, ct().state].filter(Boolean).join(", ")}
+                          </span>
                         </p>
                       </Show>
-                      <Show when={d().contact.email}>
-                        <p>
-                          <span class="text-[var(--color-muted)]">Email: </span>
-                          {d().contact.email}
+                      <Show when={ct().phone}>
+                        <p class="flex items-center gap-2">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4 shrink-0 text-[var(--color-muted)]" aria-hidden="true">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
+                          </svg>
+                          <a href={`tel:${ct().phone}`} class="font-medium text-primary-700 hover:underline">
+                            {ct().phone}
+                          </a>
                         </p>
                       </Show>
-                      <Show when={d().contact.map_embed}>
-                        <div
-                          class="mt-3 rounded-[var(--radius-md)] overflow-hidden border border-[var(--color-line)]"
-                          // eslint-disable-next-line solid/no-innerhtml
-                          innerHTML={d().contact.map_embed}
+                      <Show when={ct().email}>
+                        <p class="flex items-center gap-2">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4 shrink-0 text-[var(--color-muted)]" aria-hidden="true">
+                            <rect x="3" y="5" width="18" height="14" rx="2" />
+                            <path d="m3 7 9 6 9-6" />
+                          </svg>
+                          <a href={`mailto:${ct().email}`} class="font-medium text-primary-700 hover:underline">
+                            {ct().email}
+                          </a>
+                        </p>
+                      </Show>
+                      <Show when={ct().website}>
+                        <p class="flex items-center gap-2">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-4 w-4 shrink-0 text-[var(--color-muted)]" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+                          </svg>
+                          <a href={ct().website} target="_blank" rel="nofollow noopener" class="font-medium text-primary-700 hover:underline">
+                            Official website
+                          </a>
+                        </p>
+                      </Show>
+                      <Show when={hasCoords()}>
+                        <iframe
+                          title={`${h().name} location map`}
+                          src={`https://www.google.com/maps?q=${ct().latitude},${ct().longitude}&z=15&output=embed`}
+                          loading="lazy"
+                          referrerpolicy="no-referrer-when-downgrade"
+                          class="mt-1 h-56 w-full rounded-[var(--radius-md)] border border-[var(--color-line)]"
                         />
                       </Show>
                     </div>
-                    {/* Mobile/tablet: the guidance form lives inline here. On
-                        desktop it moves to the sticky side rail (below). */}
+                    {/* Mobile/tablet: guidance form inline; desktop uses the rail. */}
                     <Card class="p-5 bg-primary-50 border-primary-100 lg:hidden">
                       <LeadForm
                         sourcePage={path()}
@@ -696,6 +877,20 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </Card>
                   </div>
                 </Block>
+                </Show>
+
+                {/* Mobile guidance form when Contact is hidden (no contact data),
+                    so phones always have a form even on a sparse college. */}
+                <Show when={!hasAnyContact()}>
+                  <Card class="my-8 p-5 bg-primary-50 border-primary-100 lg:hidden">
+                    <LeadForm
+                      sourcePage={path()}
+                      courseInterest={d().courses_fees[0]?.course}
+                      defaultCity={d().header.city}
+                      heading="Get admission guidance for this institute"
+                    />
+                  </Card>
+                </Show>
 
                 <RelatedArticles college={parsed().slug} />
 

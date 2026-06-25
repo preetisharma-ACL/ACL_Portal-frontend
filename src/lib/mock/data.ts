@@ -1073,11 +1073,36 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
       city: found.city,
       state: cityState,
       pincode: "221005",
-      phone: "",
-      email: "",
+      phone: "+91 98765 43210",
+      email: "info@example.edu",
+      website: "https://example.edu",
       latitude: 25.3176,
       longitude: 82.9739,
     },
+    gender_intake: "CO_ED",
+    scholarships: [
+      {
+        name: "Merit Scholarship",
+        type: "MERIT",
+        amount_or_benefit: "Up to 50% tuition waiver",
+        eligibility: "Top entrance scores and academic record",
+      },
+      {
+        name: "Need-based Aid",
+        type: "NEED",
+        amount_or_benefit: "Fee concession",
+        eligibility: "Family income below the stated threshold",
+      },
+    ],
+    facilities: [
+      { category: "HOSTEL", name: "Boys & Girls hostels", description: "" },
+      { category: "LIBRARY", name: "Central Library", description: "" },
+      { category: "LABS", name: "Computer Labs", description: "" },
+      { category: "SPORTS", name: "Sports Ground", description: "" },
+      { category: "WIFI", name: "Campus Wi-Fi", description: "" },
+    ],
+    hostel: { available: true, boys: true, girls: true, fee: "₹60K - ₹90K" },
+    brochure_url: "https://example.edu/brochure.pdf",
     operator_disclosure:
       "This page is maintained by AAJneeti Connect Ltd. as part of an independent education discovery platform. We are not affiliated with this institution unless explicitly stated. Information is compiled for comparison and should be verified with the institute.",
   };
@@ -1105,6 +1130,22 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
     detail.rankings = [];
     detail.cutoffs = [];
     detail.media = [];
+    detail.gender_intake = "";
+    detail.scholarships = [];
+    detail.facilities = [];
+    detail.hostel = { available: null, boys: null, girls: null, fee: "" };
+    detail.brochure_url = "";
+    detail.contact = {
+      address: "",
+      city: found.city,
+      state: cityState,
+      pincode: "",
+      phone: "",
+      email: "",
+      website: "",
+      latitude: undefined,
+      longitude: undefined,
+    };
     detail.overview.description = `${name} is a newly listed institute. We are still compiling its courses, fees, placements and other details. Please confirm directly with the institute.`;
   }
 

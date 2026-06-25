@@ -234,9 +234,12 @@ function mapCollege(r: any): CollegeDetail {
     },
     courses_fees,
     admissions: {
-      process: "",
+      // New backend `admission` block: { process, dates: [{label,date}] }.
+      process: r.admission?.process ?? "",
       eligibility: "",
-      important_dates: [],
+      important_dates: (r.admission?.dates ?? [])
+        .map((x: any) => ({ label: x.label ?? "", date: x.date ?? "" }))
+        .filter((x: { date: string }) => x.date),
       accepted_exams,
     },
     // Placements block: { summary, recruiters, highlights }. Package figures
@@ -289,16 +292,46 @@ function mapCollege(r: any): CollegeDetail {
         order: x.order ?? 0,
       }))
       .filter((m: { url: string }) => m.url),
-    contact: {
-      address: campus.address ?? "",
-      city: h.primary_city ?? campus.city ?? "",
-      state: campus.state ?? "",
-      pincode: "",
-      phone: "",
-      email: "",
-      latitude: campus.latitude ?? undefined,
-      longitude: campus.longitude ?? undefined,
-    },
+    contact: (() => {
+      // New top-level `contact` block; fall back to the first campus for address.
+      const ct = r.contact ?? {};
+      return {
+        address: ct.address || campus.address || "",
+        city: h.primary_city ?? campus.city ?? "",
+        state: campus.state ?? "",
+        pincode: "",
+        phone: ct.phone || "",
+        email: ct.email || "",
+        website: ct.website || ov.website || "",
+        latitude: ct.latitude ?? campus.latitude ?? undefined,
+        longitude: ct.longitude ?? campus.longitude ?? undefined,
+      };
+    })(),
+    gender_intake: r.gender_intake ?? "",
+    scholarships: (r.scholarships ?? []).map((x: any) => ({
+      name: x.name ?? "",
+      type: x.type ?? "",
+      amount_or_benefit: x.amount_or_benefit ?? "",
+      eligibility: x.eligibility ?? "",
+    })).filter((x: { name: string }) => x.name),
+    facilities: (r.facilities ?? []).map((x: any) => ({
+      category: x.category ?? "OTHER",
+      name: x.name ?? "",
+      description: x.description ?? "",
+    })).filter((x: { name: string }) => x.name),
+    hostel: (() => {
+      const ho = r.hostel ?? {};
+      const min = ho.fee_min != null ? inrShort(Number(ho.fee_min)) : "";
+      const max = ho.fee_max != null ? inrShort(Number(ho.fee_max)) : "";
+      const fee = min && max ? (min === max ? min : `${min} - ${max}`) : min || max || "";
+      return {
+        available: ho.available ?? null,
+        boys: ho.boys ?? null,
+        girls: ho.girls ?? null,
+        fee,
+      };
+    })(),
+    brochure_url: r.brochure_url ?? "",
     operator_disclosure:
       r.operator_disclosure ??
       "This page is maintained by AAJneeti Connect Ltd. as part of an independent education discovery platform. We are not affiliated with this institution unless explicitly stated.",

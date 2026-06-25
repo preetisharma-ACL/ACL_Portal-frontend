@@ -259,10 +259,29 @@ export interface CollegeDetail {
     pincode: string;
     phone?: string;
     email?: string;
+    website?: string;
     map_embed?: string;
     latitude?: number;
     longitude?: number;
   };
+  /** "CO_ED" | "GIRLS" | "BOYS" | "" — shown in the header meta line. */
+  gender_intake: string;
+  scholarships: {
+    name: string;
+    type: string;
+    amount_or_benefit: string;
+    eligibility: string;
+  }[];
+  facilities: { category: string; name: string; description: string }[];
+  hostel: {
+    available: boolean | null;
+    boys: boolean | null;
+    girls: boolean | null;
+    /** Formatted fee range, "" when unknown ("Hostel fees on request"). */
+    fee: string;
+  };
+  /** Brochure PDF URL, "" when none (button hidden). */
+  brochure_url: string;
   operator_disclosure: string;
 }
 
