@@ -468,7 +468,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                     <p class="mt-2 text-[var(--color-muted)]">
                       Browse colleges for other streams in {m().city}.
                     </p>
-                    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       <For each={ss().filter((s) => s.slug !== params.stream)}>
                         {(s) => (
                           <A
