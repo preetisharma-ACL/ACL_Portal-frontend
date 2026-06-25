@@ -28,7 +28,9 @@ export const USE_MOCK = String(env.VITE_USE_MOCK).toLowerCase() === "true";
  */
 export const NOINDEX = String(env.VITE_NOINDEX ?? "true").toLowerCase() !== "false";
 
-export const GA4_ID = env.VITE_GA4_ID || "";
+// GA4 measurement ID. Defaults to the live property; an env override wins.
+// Tracking is independent of indexing — NOINDEX can stay on while GA records.
+export const GA4_ID = env.VITE_GA4_ID || "G-HDHF5C0ZKF";
 
 /** Operator disclosure shown in the footer and About page (compliance item 5). */
 export const OPERATOR_DISCLOSURE =
