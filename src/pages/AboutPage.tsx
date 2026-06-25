@@ -132,7 +132,7 @@ export default function AboutPage() {
         <div class="text-center">
           <Label>{SITE_NAME} for students</Label>
           <img
-            src="/vector.png"
+            src="/Online%20Exam.svg"
             alt=""
             loading="lazy"
             class="mx-auto mt-6 h-44 w-auto object-contain md:h-52"
