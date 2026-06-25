@@ -115,10 +115,10 @@ export default function AboutPage() {
             </div>
             <div class="hidden justify-self-center lg:block">
               <img
-                src="/vector.png"
+                src="/Online%20Exam.svg"
                 alt=""
                 loading="eager"
-                class="h-64 w-auto object-contain xl:h-72"
+                class="h-72 w-auto object-contain xl:h-80"
               />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function AboutPage() {
         <div class="text-center">
           <Label>{SITE_NAME} for students</Label>
           <img
-            src="/Online%20Exam.svg"
+            src="/vector.png"
             alt=""
             loading="lazy"
             class="mx-auto mt-6 h-44 w-auto object-contain md:h-52"
