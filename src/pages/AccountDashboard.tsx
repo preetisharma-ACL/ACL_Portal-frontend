@@ -35,7 +35,7 @@ function Dashboard(props: { user: AuthUser }) {
     <>
       <section class="bg-gradient-to-br from-primary-900 to-primary-700 text-white">
         <div class="container-x py-8">
-          <h1 class="text-2xl md:text-3xl font-extrabold">
+          <h1 class="text-2xl md:text-3xl font-extrabold text-white">
             {props.user.name ? `Hello, ${props.user.name}` : "My account"}
           </h1>
           <p class="mt-1 text-white/80">Manage your profile, saved colleges and application tracker.</p>

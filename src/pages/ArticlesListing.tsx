@@ -73,7 +73,7 @@ export default function ArticlesListing(props: { category?: string; author?: str
         <SlotImage slot="articles_header" overlay />
         <div class="container-x py-8 md:py-10 relative z-10">
           <Breadcrumbs crumbs={crumbs()} light />
-          <h1 class="mt-3 text-2xl md:text-3xl font-extrabold">{heading()}</h1>
+          <h1 class="mt-3 text-2xl md:text-3xl font-extrabold text-white">{heading()}</h1>
           <p class="mt-2 max-w-2xl text-white/80">
             Practical, neutral guidance on choosing colleges, preparing for exams and planning a
             career.

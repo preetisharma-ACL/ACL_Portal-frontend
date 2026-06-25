@@ -214,7 +214,7 @@ export default function ComparePage() {
       <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">
         <SlotImage slot="compare_header" overlay />
         <div class="container-x py-8 md:py-10 relative z-10">
-          <h1 class="text-2xl md:text-3xl font-extrabold">Compare colleges</h1>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-white">Compare colleges</h1>
           <p class="mt-2 text-white/80">
             Side by side on fees, placements, ranking and more. Best value in each row is marked.
           </p>
