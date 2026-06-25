@@ -139,7 +139,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               />
               <div
                 aria-hidden="true"
-                class="absolute inset-0 bg-gradient-to-r from-[#fbe9ee] from-20% via-[#fbe9ee]/70 to-transparent"
+                class="absolute inset-0 bg-gradient-to-r from-[#fbe9ee]/70 via-[#fbe9ee]/30 to-transparent"
               />
               <div class="container-x relative z-10 py-10 md:py-16">
                 <div class="max-w-xl">
