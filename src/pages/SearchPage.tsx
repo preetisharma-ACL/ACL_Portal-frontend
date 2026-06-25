@@ -118,7 +118,7 @@ export default function SearchPage(props: { query: string }) {
       {/* Premium search header. No overflow-hidden on the section itself, or it
           would clip the suggestions dropdown; the blur glows are clipped by their
           own inset wrapper instead. */}
-      <section class="relative z-30 overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
+      <section class="relative z-30 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
         <SlotImage slot="search_header" overlay />
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
           <div class="absolute -top-24 -right-10 h-96 w-96 rounded-full bg-accent-500/20 blur-3xl" />
