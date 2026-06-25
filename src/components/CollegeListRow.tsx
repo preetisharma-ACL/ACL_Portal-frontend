@@ -45,15 +45,17 @@ export default function CollegeListRow(props: {
               />
             </span>
             <div class="min-w-0 flex-1">
-              <div class="flex items-start gap-2">
-                <h3 class="min-w-0 flex-1 text-[15px] font-bold leading-snug text-[var(--color-ink)]">
+              {/* Badge stacks under the name on mobile (so a long ranking name
+                  never hides the title) and sits to the right on sm+. */}
+              <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-2">
+                <h3 class="min-w-0 text-[15px] font-bold leading-snug text-[var(--color-ink)] sm:flex-1">
                   <A href={href} onClick={onCardClick} class="hover:text-primary-700 hover:underline">
                     {c.name}
                   </A>
                 </h3>
                 <Show when={c.nirf_rank}>
                   {(r) => (
-                    <span class="shrink-0 rounded-full bg-accent-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-600">
+                    <span class="inline-flex w-fit shrink-0 rounded-full bg-accent-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-600">
                       {r().agency} #{r().rank}
                     </span>
                   )}
