@@ -127,25 +127,28 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
               }
             />
 
-            {/* Hero: college banner image + black left-to-right overlay */}
-            <section class="relative overflow-hidden bg-neutral-900 text-white">
-              <img
-                src="/college-banner.png"
-                alt=""
-                aria-hidden="true"
-                class="absolute inset-0 h-full w-full object-cover object-center"
-              />
+            {/* Hero: premium brand gradient with soft glow + subtle texture */}
+            <section class="relative overflow-hidden text-white">
+              {/* Layered maroon -> navy gradient base */}
+              <div aria-hidden="true" class="absolute inset-0 bg-[linear-gradient(120deg,#5e0512_0%,#2a0a1e_52%,#08101f_100%)]" />
+              {/* Soft brand glows for depth */}
+              <div aria-hidden="true" class="pointer-events-none absolute -right-12 -top-24 h-80 w-80 rounded-full bg-primary-500/25 blur-3xl" />
+              <div aria-hidden="true" class="pointer-events-none absolute -bottom-28 left-1/3 h-80 w-80 rounded-full bg-accent-500/30 blur-3xl" />
+              {/* Subtle dot texture */}
               <div
                 aria-hidden="true"
-                class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/30"
+                class="absolute inset-0 opacity-[0.06] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:22px_22px]"
               />
-              <div class="container-x relative z-10 py-8 md:py-10">
+              {/* Thin accent rule along the top */}
+              <div aria-hidden="true" class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-500 via-accent-400 to-primary-600" />
+
+              <div class="container-x relative z-10 py-10 md:py-14">
                 <Breadcrumbs crumbs={crumbs()} light />
-                <h1 class="mt-3 text-2xl font-extrabold leading-tight text-white [text-shadow:0_2px_10px_rgb(0_0_0_/_55%)] md:text-3xl">
+                <h1 class="mt-4 text-3xl font-extrabold leading-tight text-white md:text-4xl">
                   {Cc()} in {m().city}
                 </h1>
                 <p
-                  class="mt-2 max-w-3xl text-sm text-white/85"
+                  class="mt-3 max-w-3xl text-sm leading-relaxed text-white/80 md:text-base"
                   classList={{ "line-clamp-2": !introOpen() }}
                 >
                   {m().intro ||
@@ -154,23 +157,26 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 <button
                   type="button"
                   onClick={() => setIntroOpen((v) => !v)}
-                  class="mt-2 text-sm font-semibold text-white underline decoration-white/40 underline-offset-2 hover:decoration-white"
+                  class="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-white/90 transition-colors hover:text-white"
                 >
                   {introOpen() ? "Show less" : "Read more"}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 transition-transform" classList={{ "rotate-180": introOpen() }} aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
                 </button>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-                    <span class="font-bold text-accent-400">{m().total_colleges}</span>
+                <div class="mt-5 flex flex-wrap gap-2.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-sm backdrop-blur-sm">
+                    <span class="font-bold text-white">{m().total_colleges}</span>
                     colleges
                   </span>
                   <Show when={m().fee_range}>
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
+                    <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-sm backdrop-blur-sm">
                       Fees <span class="font-semibold">{m().fee_range}</span>
                     </span>
                   </Show>
                   <For each={m().popular_courses.slice(0, 3)}>
                     {(pc) => (
-                      <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-sm">
+                      <span class="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm backdrop-blur-sm">
                         {pc.name}
                       </span>
                     )}
