@@ -128,7 +128,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
             {/* Hero. Mobile: full banner image on top, title + chips stacked
                 below it. Desktop (sm+): image as a cover background with the soft
                 scrim and centered content overlaid. */}
-            <section class="relative overflow-hidden bg-[#fbe9ee]">
+            <section class="relative overflow-hidden sm:bg-[#fbe9ee]">
               {/* Mobile: full image, not cropped */}
               <img
                 src="/college-banner.png"
