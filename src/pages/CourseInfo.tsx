@@ -87,46 +87,66 @@ function ProgramCard(props: { college: CollegeCard; featured?: boolean }) {
   return (
     <A
       href={href}
-      class="group relative flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 transition-all hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5"
+      class="group relative flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary-200 hover:shadow-lg hover:shadow-primary-900/5"
     >
-      <Show when={props.featured}>
-        <span class="absolute right-4 top-4 rounded-full bg-accent-400/15 text-accent-600 text-[10px] font-bold px-2 py-0.5">
-          Top rated
-        </span>
-      </Show>
-      <div class="h-12 flex items-center">
-        <CollegeLogo name={c.name} logo={c.logo} id={c.id} class="max-h-12 w-auto max-w-[7rem] text-lg" />
+      {/* Badges */}
+      <div class="absolute right-4 top-4 flex items-center gap-1.5">
+        <Show when={props.featured}>
+          <span class="rounded-full bg-accent-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+            Top rated
+          </span>
+        </Show>
+        <Show when={c.rating > 0}>
+          <span class="inline-flex items-center gap-1 rounded-md bg-[var(--color-warning)]/10 px-1.5 py-0.5 text-xs font-bold text-[var(--color-ink)]">
+            <span aria-hidden="true" class="text-[var(--color-warning)]">★</span>
+            {c.rating.toFixed(1)}
+          </span>
+        </Show>
       </div>
-      <h3 class="mt-3 font-semibold leading-snug line-clamp-2 group-hover:text-primary-700">
+
+      {/* Logo tile */}
+      <span class="grid h-16 w-16 place-items-center rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-1.5">
+        <CollegeLogo name={c.name} logo={c.logo} id={c.id} class="max-h-full max-w-full w-auto text-lg" />
+      </span>
+
+      <h3 class="mt-4 text-base font-bold leading-snug line-clamp-2 group-hover:text-primary-700">
         {c.name}
       </h3>
-      <div class="mt-2 flex items-center gap-1.5 text-sm">
-        <span aria-hidden="true" class="text-[var(--color-warning)]">★</span>
-        <span class="font-semibold">{c.rating.toFixed(1)}</span>
-        <span class="text-[var(--color-muted)]">· {c.city}</span>
-      </div>
-      <div class="mt-1 flex flex-wrap gap-1.5">
-        <For each={c.approvals.slice(0, 3)}>
-          {(a) => (
-            <span class="rounded-full border border-[var(--color-line)] px-2 py-0.5 text-xs text-[var(--color-muted)]">
-              {a}
-            </span>
-          )}
-        </For>
-      </div>
-      <p class="mt-3 text-sm">
-        <Show
-          when={c.fee_range}
-          fallback={<span class="font-semibold text-[var(--color-muted)]">Fees on request</span>}
-        >
-          <span class="text-[var(--color-muted)]">Fees </span>
-          <span class="font-semibold">{c.fee_range}</span>
-        </Show>
+      <p class="mt-1 flex items-center gap-1 text-sm text-[var(--color-muted)]">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+        {c.city} · {c.type}
       </p>
-      <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-900">
-        View details
-        <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
-      </span>
+
+      <Show when={c.approvals.length}>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          <For each={c.approvals.slice(0, 3)}>
+            {(a) => (
+              <span class="rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-2 py-0.5 text-[11px] font-medium text-[var(--color-muted)]">
+                {a}
+              </span>
+            )}
+          </For>
+        </div>
+      </Show>
+
+      {/* Fees + CTA footer */}
+      <div class="mt-auto flex items-end justify-between gap-3 border-t border-[var(--color-line)] pt-3.5">
+        <div class="min-w-0">
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+            Total fees
+          </p>
+          <p class="mt-0.5 truncate text-sm font-bold text-primary-700">
+            {c.fee_range || "On request"}
+          </p>
+        </div>
+        <span class="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-900">
+          View details
+          <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+        </span>
+      </div>
     </A>
   );
 }
