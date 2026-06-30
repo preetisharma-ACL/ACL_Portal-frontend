@@ -18,6 +18,39 @@ const SCOPES: { value: Scope; label: string }[] = [
 /** A few popular searches shown on the empty state to get users started. */
 const POPULAR = ["MBA", "Engineering", "Law", "CAT", "Bengaluru", "BBA"];
 
+/**
+ * Editorially picked top-rated colleges, surfaced above search results: one
+ * government and one private pick, shown side by side.
+ */
+const RECOMMENDED: {
+  id: number;
+  slug: string;
+  name: string;
+  tag: string;
+  tone: "primary" | "accent";
+  fallbackCity: string;
+  desc: string;
+}[] = [
+  {
+    id: 144,
+    slug: "banaras-hindu-university-varanasi",
+    name: "Banaras Hindu University",
+    tag: "Government College",
+    tone: "primary",
+    fallbackCity: "Varanasi",
+    desc: "One of India's largest central universities, renowned for academics and research.",
+  },
+  {
+    id: 168,
+    slug: "school-of-management-sciences-varanasi-varanasi",
+    name: "School of Management Sciences, Varanasi",
+    tag: "Private College",
+    tone: "accent",
+    fallbackCity: "Varanasi",
+    desc: "A leading private institute for management, computer applications and commerce.",
+  },
+];
+
 function Icon(props: { d: string; class?: string }) {
   return (
     <svg
@@ -183,6 +216,111 @@ export default function SearchPage(props: { query: string }) {
             </For>
           </div>
         </div>
+      </Show>
+
+      {/* Top-rated picks, shown above the results on the search results page. */}
+      <Show when={props.query}>
+        <section class="container-x pt-8 md:pt-10">
+          <div class="mb-1 flex items-center gap-3">
+            <span class="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] bg-[var(--color-warning)]/15 text-[var(--color-warning)]">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
+                <path d="M12 2 9.2 8.6 2 9.2l5.5 4.7L5.8 21 12 17l6.2 4-1.7-7.1L22 9.2l-7.2-.6Z" />
+              </svg>
+            </span>
+            <div>
+              <h2 class="text-xl font-extrabold leading-tight">Top rated colleges</h2>
+              <p class="text-sm text-[var(--color-muted)]">Our hand-picked government and private recommendations.</p>
+            </div>
+          </div>
+          <div class="mt-4 grid gap-5 sm:grid-cols-2">
+            <For each={RECOMMENDED}>
+              {(rc) => {
+                const card = () => cardById().get(rc.id);
+                const meta = () =>
+                  [card()?.city || rc.fallbackCity, card()?.type].filter(Boolean).join(" · ");
+                const courses = () => (card()?.key_courses ?? []).slice(0, 4).join(", ");
+                return (
+                  <A
+                    href={`/college/${rc.slug}-${rc.id}`}
+                    class="group flex flex-col overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas)] shadow-sm ring-1 ring-black/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    {/* Ribbon header */}
+                    <div
+                      class="flex items-center gap-1.5 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white"
+                      classList={{
+                        "bg-gradient-to-r from-primary-600 to-primary-700": rc.tone === "primary",
+                        "bg-gradient-to-r from-accent-500 to-accent-600": rc.tone === "accent",
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+                        <path d="M5 3h14v2a5 5 0 0 1-3.5 4.78A4 4 0 0 1 13 12.9V15h2a3 3 0 0 1 3 3v1H6v-1a3 3 0 0 1 3-3h2v-2.1a4 4 0 0 1-2.5-3.12A5 5 0 0 1 5 5V3Z" />
+                      </svg>
+                      Recommended · {rc.tag}
+                    </div>
+
+                    {/* Body */}
+                    <div class="flex flex-1 flex-col p-4">
+                      <div class="flex items-center gap-3">
+                        <span class="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-1">
+                          <CollegeLogo
+                            name={rc.name}
+                            logo={card()?.logo ?? ""}
+                            id={rc.id}
+                            class="max-h-full max-w-full text-base"
+                          />
+                        </span>
+                        <span class="min-w-0 flex-1">
+                          <span class="block text-sm font-bold leading-snug line-clamp-2 group-hover:text-primary-700">
+                            {rc.name}
+                          </span>
+                          <span class="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-[var(--color-muted)]">
+                            {meta()}
+                            <Show when={(card()?.rating ?? 0) > 0}>
+                              <span class="inline-flex items-center gap-0.5 font-bold text-[var(--color-ink)]">
+                                <span aria-hidden="true" class="text-[var(--color-warning)]">★</span>
+                                {card()!.rating.toFixed(1)}
+                              </span>
+                            </Show>
+                          </span>
+                        </span>
+                      </div>
+
+                      {/* One-line description */}
+                      <p class="mt-2.5 text-xs leading-relaxed text-[var(--color-muted)] line-clamp-1">
+                        {rc.desc}
+                      </p>
+
+                      {/* Courses offered */}
+                      <Show when={courses()}>
+                        <p class="mt-2 text-xs leading-relaxed text-[var(--color-ink)]/80 line-clamp-1">
+                          <span class="font-semibold text-[var(--color-ink)]">Courses offered: </span>
+                          {courses()}
+                        </p>
+                      </Show>
+                    </div>
+
+                    {/* Footer CTA */}
+                    <div class="mt-auto flex items-center justify-between border-t border-[var(--color-line)] px-4 py-2.5">
+                      <span class="text-[11px] font-medium text-[var(--color-muted)]">
+                        Free guidance
+                      </span>
+                      <span
+                        class="inline-flex items-center gap-1 text-xs font-bold transition-colors"
+                        classList={{
+                          "text-primary-700 group-hover:text-primary-900": rc.tone === "primary",
+                          "text-accent-600 group-hover:text-accent-700": rc.tone === "accent",
+                        }}
+                      >
+                        View details
+                        <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+                      </span>
+                    </div>
+                  </A>
+                );
+              }}
+            </For>
+          </div>
+        </section>
       </Show>
 
       <div class="container-x py-10 md:py-12">
