@@ -36,6 +36,15 @@ export const GA4_ID = env.VITE_GA4_ID || "G-HDHF5C0ZKF";
 // gtag library; used for conversion tracking. An env override wins.
 export const GOOGLE_ADS_ID = env.VITE_GOOGLE_ADS_ID || "AW-16454201362";
 
+/**
+ * Site-wide contact details. Single source of truth so the footer, contact
+ * page and any CTA all show the same email/phone. CONTACT_PHONE_TEL is the
+ * E.164 form for tel:/wa.me links; CONTACT_PHONE is the human-readable form.
+ */
+export const CONTACT_EMAIL = env.VITE_CONTACT_EMAIL || "contact@aajneeti.social";
+export const CONTACT_PHONE = env.VITE_CONTACT_PHONE || "+91 76784 14826";
+export const CONTACT_PHONE_TEL = "+91" + CONTACT_PHONE.replace(/\D/g, "").replace(/^91/, "");
+
 /** Operator disclosure shown in the footer and About page (compliance item 5). */
 export const OPERATOR_DISCLOSURE =
   "This is an independent education discovery platform operated by AAJneeti Connect Ltd. We are not affiliated with the institutions listed unless explicitly stated.";

@@ -2,14 +2,14 @@ import { For, type JSX } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import { breadcrumbLd } from "~/lib/jsonld";
-import { SITE_NAME } from "~/lib/config";
+import { SITE_NAME, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "~/lib/config";
 
 const crumbs = [
   { name: "Home", path: "/" },
   { name: "Contact Us", path: "/contact" },
 ];
 
-function Icon(props: { name: "mail" | "building" | "clock" | "pin" }) {
+function Icon(props: { name: "mail" | "phone" | "building" | "clock" | "pin" }) {
   const cls = "h-6 w-6";
   switch (props.name) {
     case "mail":
@@ -17,6 +17,12 @@ function Icon(props: { name: "mail" | "building" | "clock" | "pin" }) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class={cls} aria-hidden="true">
           <rect x="3" y="5" width="18" height="14" rx="2" />
           <path d="m3 7 9 6 9-6" />
+        </svg>
+      );
+    case "phone":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class={cls} aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
         </svg>
       );
     case "building":
@@ -42,8 +48,9 @@ function Icon(props: { name: "mail" | "building" | "clock" | "pin" }) {
   }
 }
 
-const CONTACTS: { name: "mail" | "building" | "clock"; label: string; value: string; href?: string }[] = [
-  { name: "mail", label: "Email us", value: "contact@aajneeti.social", href: "mailto:contact@aajneeti.social" },
+const CONTACTS: { name: "mail" | "phone" | "building" | "clock"; label: string; value: string; href?: string }[] = [
+  { name: "mail", label: "Email us", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  { name: "phone", label: "Call us", value: CONTACT_PHONE, href: `tel:${CONTACT_PHONE_TEL}` },
   { name: "building", label: "Operated by", value: "AAJneeti Connect Ltd." },
   { name: "clock", label: "Response time", value: "Within 24 to 48 hours" },
 ];
