@@ -14,7 +14,7 @@ import TrackStatus from "~/components/TrackStatus";
 import CollegeCover from "~/components/CollegeCover";
 import Lightbox from "~/components/Lightbox";
 import CollegeLogo from "~/components/CollegeLogo";
-import { Badge, Card, LinkButton } from "~/components/ui";
+import { Badge, Card } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { collegeQuery } from "~/lib/queries";
 import { listingPath, parseSlugId } from "~/lib/slug";
@@ -926,20 +926,38 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       dense
                     />
                   </Card>
-                  <Card class="p-5 bg-primary-50 border-primary-100">
-                    <h2 class="font-semibold text-lg">Compare and decide</h2>
-                    <p class="mt-2 text-sm text-[var(--color-muted)]">
-                      Get free guidance on courses, fees and admission for {h().name} and
-                      similar institutes.
-                    </p>
-                    <div class="mt-4 grid gap-2">
-                      <LinkButton
-                        href={listingPath("mba", "mba", citySlug())}
-                        variant="outline"
-                        size="md"
-                      >
-                        See other colleges in {h().city}
-                      </LinkButton>
+                  {/* Guidance/support card, themed to the customer-support
+                      illustration's sky-blue / teal palette. */}
+                  <Card class="overflow-hidden border-[#bfe1ec] bg-gradient-to-b from-[#e6f4f9] to-[#f4fbfd] p-0">
+                    <div class="flex items-center justify-center bg-[#d7eef5] px-5 pt-5">
+                      <img
+                        src="/customer-support.png"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => (e.currentTarget.style.display = "none")}
+                        class="h-32 w-auto object-contain"
+                      />
+                    </div>
+                    <div class="p-5 text-center">
+                      <h2 class="text-lg font-bold text-[#0f4c61]">Get Free Guidance</h2>
+                      <p class="mt-2 text-sm text-[#28697e]">
+                        Get free guidance on courses, fees and admission for {h().name} and
+                        similar institutes.
+                      </p>
+                      <div class="mt-4">
+                        <LeadTrigger
+                          sourcePage={path()}
+                          courseInterest={d().courses_fees[0]?.course}
+                          courseOptions={courseOptions()}
+                          defaultCity={h().city}
+                          heading={`Get guidance for ${h().name}`}
+                          label="Talk to an Advisor"
+                          variant="primary"
+                          class="w-full justify-center !bg-gradient-to-r !from-[#1192c4] !to-[#0f6fa3] hover:!from-[#0f7fb0] hover:!to-[#0c5f8c]"
+                        />
+                      </div>
                     </div>
                   </Card>
                 </div>

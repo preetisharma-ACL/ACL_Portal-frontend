@@ -9,6 +9,7 @@ import Footer from "~/components/layout/Footer";
 import CompareTray from "~/components/CompareTray";
 import LoginModal from "~/components/LoginModal";
 import LeadPopup from "~/components/LeadPopup";
+import FloatingCall from "~/components/FloatingCall";
 import Analytics from "~/components/Analytics";
 import { ErrorState, LoadingBlock, NotFound } from "~/components/states";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
@@ -74,6 +75,7 @@ export default function App() {
           <CompareTray />
           <LoginModal />
           <LeadPopup />
+          <FloatingCall />
           <Analytics />
         </MetaProvider>
       )}
