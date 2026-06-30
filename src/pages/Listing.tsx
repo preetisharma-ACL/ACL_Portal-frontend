@@ -251,13 +251,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                               </span>
                             </span>
                             <span class="min-w-0">
-                              <span
-                                class="block text-[11px] font-bold uppercase tracking-wide"
-                                classList={{
-                                  "text-primary-700": p.tone === "gov",
-                                  "text-accent-600": p.tone === "private",
-                                }}
-                              >
+                              <span class="block text-[11px] font-bold uppercase tracking-wide text-primary-700">
                                 {p.label}
                               </span>
                               <span class="block text-[13px] font-bold leading-snug text-[var(--color-ink)] group-hover:text-primary-700 sm:text-base">
