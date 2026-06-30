@@ -8,11 +8,9 @@ import { track } from "~/lib/analytics";
 /**
  * Site-wide lead-capture popup.
  *
- * Timing (per the product spec):
- *  - first appearance: 5s after the page loads (first visit of the session),
- *  - thereafter: re-opens 10s after each time the visitor closes it,
- *  - the 10s cycle keeps running until the visitor submits a lead, after which
- *    it is suppressed for the rest of the browser session.
+ * Timing: appears once, 5s after the first page load of the session. It does
+ * NOT auto re-open after being dismissed. It is suppressed for the rest of the
+ * session once it has been shown once, or once a lead has been submitted.
  *
  * "Submitted this session" is read from the `acl_lead_ts` sessionStorage key,
  * which LeadForm sets on every successful submit — so submitting ANY form on the
@@ -20,7 +18,7 @@ import { track } from "~/lib/analytics";
  * the form redirects to /thank-you (the Google Ads conversion page).
  */
 const FIRST_DELAY_MS = 5_000;
-const CYCLE_DELAY_MS = 10_000;
+const SHOWN_KEY = "acl_popup_shown";
 
 export default function LeadPopup() {
   const location = useLocation();
@@ -36,6 +34,23 @@ export default function LeadPopup() {
     }
   }
 
+  /** The popup has already been shown once this session. */
+  function alreadyShown(): boolean {
+    try {
+      return !!sessionStorage.getItem(SHOWN_KEY);
+    } catch {
+      return false;
+    }
+  }
+
+  function markShown() {
+    try {
+      sessionStorage.setItem(SHOWN_KEY, "1");
+    } catch {
+      /* sessionStorage may be unavailable; non-fatal */
+    }
+  }
+
   /** Another dialog (login / brochure / lead modal) is currently open. */
   function anotherModalOpen(): boolean {
     return !open() && document.body.style.overflow === "hidden";
@@ -46,33 +61,29 @@ export default function LeadPopup() {
     timer = undefined;
   }
 
-  function schedule(delay: number) {
-    clear();
-    timer = setTimeout(tryOpen, delay);
-  }
-
   function tryOpen() {
-    // Stop the cycle for good once a lead has been captured this session.
-    if (submittedThisSession() || location.pathname === "/thank-you") return;
-    // Don't stack over another open dialog — try again next cycle.
+    // Show only once: skip if already shown, already submitted, or on /thank-you.
+    if (alreadyShown() || submittedThisSession() || location.pathname === "/thank-you") return;
+    // Don't stack over another open dialog — retry shortly without consuming the
+    // single show.
     if (anotherModalOpen()) {
-      schedule(CYCLE_DELAY_MS);
+      timer = setTimeout(tryOpen, 2_000);
       return;
     }
+    markShown();
     track("popup_view", { source_page: location.pathname });
     setOpen(true);
   }
 
-  // Visitor dismissed the popup → re-arm the 10s cycle.
+  // Dismissed → just close. It does not re-open.
   function handleClose() {
     setOpen(false);
-    schedule(CYCLE_DELAY_MS);
   }
 
   onMount(() => {
     if (isServer) return;
-    if (submittedThisSession()) return;
-    schedule(FIRST_DELAY_MS);
+    if (alreadyShown() || submittedThisSession()) return;
+    timer = setTimeout(tryOpen, FIRST_DELAY_MS);
   });
 
   onCleanup(clear);
@@ -95,8 +106,7 @@ export default function LeadPopup() {
           hideHeading
           dense
           onSuccess={() => {
-            // Lead captured: stop the cycle and close. LeadForm then navigates
-            // to /thank-you, and submittedThisSession() stays true all session.
+            // Lead captured: close. LeadForm then navigates to /thank-you.
             clear();
             setOpen(false);
           }}

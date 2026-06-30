@@ -41,7 +41,8 @@ export const GOOGLE_ADS_ID = env.VITE_GOOGLE_ADS_ID || "AW-16454201362";
 // fires gtag('event','conversion',{send_to:`${GOOGLE_ADS_ID}/${LABEL}`}). When
 // blank, the thank-you page URL can still be used as a page-load conversion in
 // Google Ads, since the global Ads tag is present site-wide.
-export const GOOGLE_ADS_CONVERSION_LABEL = env.VITE_GOOGLE_ADS_CONVERSION_LABEL || "";
+export const GOOGLE_ADS_CONVERSION_LABEL =
+  env.VITE_GOOGLE_ADS_CONVERSION_LABEL || "W7bQCJSVwokaEJLg_KU9";
 
 /**
  * Site-wide contact details. Single source of truth so the footer, contact

@@ -31,6 +31,12 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
   /** Course slug for canonical paths/links. Empty in city mode (no forced course). */
   const baseCourse = () => (cityMode() ? "" : parsed().course || stream());
 
+  // Hero banner: a city-specific image where we have one, else the default.
+  const CITY_BANNERS: Record<string, string> = {
+    varanasi: "/Varanasi-banner.jpg",
+  };
+  const bannerSrc = () => CITY_BANNERS[city().toLowerCase()] ?? "/college-banner.png";
+
   const q = (): ListingQuery => ({
     // City mode: only send a course when the user picks one in the filter.
     course: (sp.course as string) || baseCourse() || undefined,
@@ -131,13 +137,13 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
             <section class="relative overflow-hidden sm:bg-[#fbe9ee]">
               {/* Mobile: full image, not cropped */}
               <img
-                src="/college-banner.png"
+                src={bannerSrc()}
                 alt=""
                 class="block w-full sm:hidden"
               />
               {/* Desktop: image as cover background */}
               <img
-                src="/college-banner.png"
+                src={bannerSrc()}
                 alt=""
                 aria-hidden="true"
                 class="absolute inset-0 hidden h-full w-full object-cover object-center sm:block"
