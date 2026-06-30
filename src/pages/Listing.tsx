@@ -2,6 +2,7 @@ import { A, createAsync, useParams, useSearchParams } from "@solidjs/router";
 import { For, Show, createSignal, onMount } from "solid-js";
 import Seo from "~/components/Seo";
 import CollegeListRow from "~/components/CollegeListRow";
+import CollegeLogo from "~/components/CollegeLogo";
 import FilterRail from "~/components/FilterRail";
 import Faq from "~/components/Faq";
 import LeadForm from "~/components/LeadForm";
@@ -38,6 +39,33 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
   const bannerSrc = () => CITY_BANNERS[city().toLowerCase()] ?? "/college-banner.png";
   // City-specific banners are finished artwork — show them clean, with no scrim.
   const hasCityBanner = () => !!CITY_BANNERS[city().toLowerCase()];
+
+  // Editorial "best college" picks per city, surfaced as a highlight strip under
+  // the hero. tone: "gov" (government, red) / "private" (accent).
+  const CITY_TOP_PICKS: Record<
+    string,
+    { id: number; slug: string; name: string; label: string; tone: "gov" | "private"; logo: string }[]
+  > = {
+    varanasi: [
+      {
+        id: 144,
+        slug: "banaras-hindu-university-varanasi",
+        name: "Banaras Hindu University",
+        label: "Best Government College",
+        tone: "gov",
+        logo: "/bhu.png",
+      },
+      {
+        id: 168,
+        slug: "school-of-management-sciences-varanasi-varanasi",
+        name: "School of Management Sciences, Varanasi",
+        label: "Best Private College",
+        tone: "private",
+        logo: "/sms.webp",
+      },
+    ],
+  };
+  const topPicks = () => CITY_TOP_PICKS[city().toLowerCase()] ?? [];
 
   const q = (): ListingQuery => ({
     // City mode: only send a course when the user picks one in the filter.
@@ -181,6 +209,74 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 </div>
               </div>
             </section>
+
+            {/* Editorial "best college" picks for this city — a sparkly highlight
+                strip. */}
+            <Show when={topPicks().length}>
+              <div class="container-x pt-6 md:pt-8">
+                <div class="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-primary-50 via-[#fff7fb] to-accent-50 px-5 py-5 ring-1 ring-black/5 sm:px-7">
+                  {/* decorative sparkles */}
+                  <span aria-hidden="true" class="pointer-events-none absolute right-4 top-3 select-none text-lg opacity-70">✨</span>
+                  <span aria-hidden="true" class="pointer-events-none absolute bottom-3 right-10 select-none text-sm opacity-50">✨</span>
+
+                  <div class="flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-6">
+                    <For each={topPicks()}>
+                      {(p, i) => (
+                        <>
+                          <Show when={i() > 0}>
+                            <span aria-hidden="true" class="hidden w-px self-stretch bg-[var(--color-line)] sm:block" />
+                          </Show>
+                          <A
+                            href={`/college/${p.slug}-${p.id}`}
+                            class="group flex flex-1 items-center gap-3"
+                          >
+                            {/* College logo with a sparkling "best" indicator */}
+                            <span class="relative shrink-0">
+                              <span
+                                class="grid h-14 w-14 place-items-center rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2 shadow-sm ring-1 ring-black/5"
+                              >
+                                <CollegeLogo
+                                  name={p.name}
+                                  logo={p.logo}
+                                  id={p.id}
+                                  class="max-h-full max-w-full text-sm"
+                                />
+                              </span>
+                              {/* Twinkling sparkle marking the best pick */}
+                              <span
+                                aria-hidden="true"
+                                class="pointer-events-none absolute -right-2 -top-2 animate-pulse select-none text-base drop-shadow"
+                              >
+                                ✨
+                              </span>
+                            </span>
+                            <span class="min-w-0">
+                              <span
+                                class="block text-[11px] font-bold uppercase tracking-wide"
+                                classList={{
+                                  "text-primary-700": p.tone === "gov",
+                                  "text-accent-600": p.tone === "private",
+                                }}
+                              >
+                                {p.label}
+                              </span>
+                              <span class="block truncate font-bold text-[var(--color-ink)] group-hover:text-primary-700">
+                                {p.name}
+                              </span>
+                            </span>
+                            {/* Sparkling finger pointing back at the best college */}
+                            <span aria-hidden="true" class="ml-auto flex shrink-0 items-center gap-0.5">
+                              <span class="animate-pulse select-none text-sm">✨</span>
+                              <span class="select-none text-xl transition-transform group-hover:-translate-x-0.5">👈</span>
+                            </span>
+                          </A>
+                        </>
+                      )}
+                    </For>
+                  </div>
+                </div>
+              </div>
+            </Show>
 
             {/* Body: filter rail + results + guidance rail */}
             <div class="container-x py-6">
