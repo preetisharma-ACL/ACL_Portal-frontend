@@ -1,16 +1,21 @@
 import { Show, createEffect } from "solid-js";
 import { isServer } from "solid-js/web";
 import { useLocation } from "@solidjs/router";
-import { GA4_ID } from "~/lib/config";
+import { GA4_ID, GOOGLE_ADS_ID } from "~/lib/config";
 
 /**
- * GA4 loader. Renders nothing unless VITE_GA4_ID is set. The base config sends
- * the first page_view; this effect sends a page_view on each client-side route
- * change so SPA navigations are tracked. Other events (search, filter,
- * card_click, lead_form_view, lead_submit) are fired via ~/lib/analytics.
+ * gtag.js loader for GA4 and Google Ads. Renders nothing unless at least one of
+ * VITE_GA4_ID / VITE_GOOGLE_ADS_ID is set. The base config sends the first GA4
+ * page_view; this effect sends a page_view on each client-side route change so
+ * SPA navigations are tracked. Google Ads is configured on the same gtag
+ * library for conversion tracking. Other events (search, filter, card_click,
+ * lead_form_view, lead_submit) are fired via ~/lib/analytics.
  */
 export default function Analytics() {
   const location = useLocation();
+
+  // The gtag library only needs to load once; reuse whichever id is present.
+  const loaderId = () => GA4_ID || GOOGLE_ADS_ID;
 
   createEffect(() => {
     const path = location.pathname + location.search;
@@ -22,10 +27,14 @@ export default function Analytics() {
   });
 
   return (
-    <Show when={GA4_ID}>
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`} />
+    <Show when={loaderId()}>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${loaderId()}`} />
       <script
-        innerHTML={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_ID}',{anonymize_ip:true,send_page_view:false});`}
+        innerHTML={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());${
+          GA4_ID
+            ? `gtag('config','${GA4_ID}',{anonymize_ip:true,send_page_view:false});`
+            : ""
+        }${GOOGLE_ADS_ID ? `gtag('config','${GOOGLE_ADS_ID}');` : ""}`}
       />
     </Show>
   );

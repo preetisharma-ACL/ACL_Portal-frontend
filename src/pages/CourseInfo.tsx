@@ -483,8 +483,19 @@ export default function CourseInfo(props: { slug: string }) {
                       </For>
                     </dl>
                   </Card>
-                  <Card class="p-5 bg-primary-50 border-primary-100">
-                    <h3 class="font-bold">Need help deciding?</h3>
+                  <Card class="p-5 bg-primary-50 border-primary-100 text-center">
+                    <div class="flex h-48 w-full items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-b from-white/70 to-transparent">
+                      <img
+                        src="/Online%20Exam.svg"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => (e.currentTarget.style.display = "none")}
+                        class="h-44 w-auto object-contain"
+                      />
+                    </div>
+                    <h3 class="mt-3 font-bold">Need help deciding?</h3>
                     <p class="mt-1 text-sm text-[var(--color-muted)]">
                       Get free, no obligation guidance on the best colleges for {c().name}.
                     </p>

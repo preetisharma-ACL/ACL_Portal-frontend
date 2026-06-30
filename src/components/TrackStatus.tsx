@@ -39,11 +39,24 @@ export default function TrackStatus(props: { collegeId: number }) {
 
   return (
     <div>
-      <p class="text-sm font-semibold">Track your interest</p>
-      <p class="mt-0.5 text-xs text-[var(--color-muted)]">
-        A personal tracker to organise your shortlist. Not an application.
-      </p>
-      <div class="mt-2 flex flex-wrap gap-2">
+      <div class="flex flex-col items-center text-center">
+        <div class="flex h-32 w-full items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-b from-primary-50 to-transparent">
+          <img
+            src="/Study%20Abroad.svg"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+            onError={(e) => (e.currentTarget.style.display = "none")}
+            class="h-28 w-auto object-contain"
+          />
+        </div>
+        <p class="mt-3 text-base font-semibold">Track your interest</p>
+        <p class="mt-1 text-xs text-[var(--color-muted)]">
+          A personal tracker to organise your shortlist. Not an application.
+        </p>
+      </div>
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
         <For each={TRACKING_STATUSES}>
           {(s) => {
             const active = () => current()?.status === s;
@@ -67,7 +80,7 @@ export default function TrackStatus(props: { collegeId: number }) {
         </For>
       </div>
       <Show when={current()}>
-        <p class="mt-2 text-xs text-[var(--color-muted)]">
+        <p class="mt-3 text-center text-xs text-[var(--color-muted)]">
           Saved to your{" "}
           <a href="/account#tracker" class="text-primary-700 hover:underline">
             application tracker

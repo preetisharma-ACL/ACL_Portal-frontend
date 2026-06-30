@@ -32,6 +32,10 @@ export const NOINDEX = String(env.VITE_NOINDEX ?? "true").toLowerCase() !== "fal
 // Tracking is independent of indexing — NOINDEX can stay on while GA records.
 export const GA4_ID = env.VITE_GA4_ID || "G-HDHF5C0ZKF";
 
+// Google Ads (gtag.js) conversion ID. Loaded alongside GA4 through the same
+// gtag library; used for conversion tracking. An env override wins.
+export const GOOGLE_ADS_ID = env.VITE_GOOGLE_ADS_ID || "AW-16454201362";
+
 /** Operator disclosure shown in the footer and About page (compliance item 5). */
 export const OPERATOR_DISCLOSURE =
   "This is an independent education discovery platform operated by AAJneeti Connect Ltd. We are not affiliated with the institutions listed unless explicitly stated.";
