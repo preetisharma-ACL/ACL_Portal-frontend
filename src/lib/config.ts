@@ -36,6 +36,13 @@ export const GA4_ID = env.VITE_GA4_ID || "G-HDHF5C0ZKF";
 // gtag library; used for conversion tracking. An env override wins.
 export const GOOGLE_ADS_ID = env.VITE_GOOGLE_ADS_ID || "AW-16454201362";
 
+// Optional Google Ads conversion label (the part after the slash in a
+// conversion action's send_to, e.g. "abcDEF123"). When set, the thank-you page
+// fires gtag('event','conversion',{send_to:`${GOOGLE_ADS_ID}/${LABEL}`}). When
+// blank, the thank-you page URL can still be used as a page-load conversion in
+// Google Ads, since the global Ads tag is present site-wide.
+export const GOOGLE_ADS_CONVERSION_LABEL = env.VITE_GOOGLE_ADS_CONVERSION_LABEL || "";
+
 /**
  * Site-wide contact details. Single source of truth so the footer, contact
  * page and any CTA all show the same email/phone. CONTACT_PHONE_TEL is the

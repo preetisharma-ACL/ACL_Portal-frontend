@@ -10,7 +10,7 @@
  */
 import { For, Show, createEffect, createSignal, createUniqueId, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { submitLeadAction } from "~/lib/actions";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
 import { CONSENT_TEXT_VERSION } from "~/lib/config";
@@ -88,6 +88,7 @@ function captureUtm(): Record<string, string> {
 const MIN_SUBMIT_GAP_MS = 20_000;
 
 export default function LeadForm(props: LeadFormProps) {
+  const navigate = useNavigate();
   const [name, setName] = createSignal("");
   const [mobile, setMobile] = createSignal("");
   const [email, setEmail] = createSignal("");
@@ -203,7 +204,11 @@ export default function LeadForm(props: LeadFormProps) {
           course_interest: payload.course_interest,
         });
         setSuccess(true);
+        // Close any host modal first, then land on the conversion page. Every
+        // lead form (guidance, brochure, popup) routes here so /thank-you is the
+        // single Google Ads conversion trigger.
         props.onSuccess?.();
+        navigate("/thank-you");
       } else {
         setError("We could not submit your request. Please try again.");
       }
