@@ -260,7 +260,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                               >
                                 {p.label}
                               </span>
-                              <span class="block truncate font-bold text-[var(--color-ink)] group-hover:text-primary-700">
+                              <span class="block text-[13px] font-bold leading-snug text-[var(--color-ink)] group-hover:text-primary-700 sm:text-base">
                                 {p.name}
                               </span>
                             </span>
