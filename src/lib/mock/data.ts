@@ -112,6 +112,7 @@ const COMMON_TYPES = ["Private", "Government", "Deemed", "Private", "Autonomous"
 function feeRow(course: string, duration: string, total: string, exams: string[]): CourseFeeRow {
   return {
     course,
+    course_slug: slugify(course),
     duration,
     total_fee: total,
     eligibility: "Qualifying degree or exam score as specified by the institute",

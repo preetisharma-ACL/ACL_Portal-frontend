@@ -208,6 +208,7 @@ function mapCollege(r: any): CollegeDetail {
     p === "YEAR" ? " / year" : p === "SEMESTER" ? " / semester" : "";
   const courses_fees = (r.courses_fees ?? []).map((x: any) => ({
     course: x.specialization ? `${x.course} (${x.specialization})` : x.course,
+    course_slug: x.course_slug ?? "",
     duration: x.duration ?? "",
     total_fee: x.fees_amount
       ? `${inrShort(Number(x.fees_amount))}${feePeriodSuffix(x.fees_period)}`

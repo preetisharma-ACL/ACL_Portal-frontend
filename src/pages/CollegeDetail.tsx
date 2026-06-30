@@ -116,6 +116,12 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
     <Show when={data()} fallback={<LoadingBlock label="Loading college" />}>
       {(d) => {
         const h = () => d().header;
+        // Lead-form course dropdown options, restricted to THIS college's
+        // offerings (name + backend slug). LeadForm dedupes by slug.
+        const courseOptions = () =>
+          d()
+            .courses_fees.filter((c) => c.course_slug)
+            .map((c) => ({ name: c.course, slug: c.course_slug }));
         const basePath = () => `/college/${props.slugId}`;
         const path = () =>
           props.tab && props.tab !== "overview" ? `${basePath()}/${props.tab}` : basePath();
@@ -274,6 +280,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     <LeadTrigger
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
+                      courseOptions={courseOptions()}
                       defaultCity={h().city}
                       heading={`Get admission guidance for ${h().name}`}
                       label="Get admission guidance"
@@ -297,6 +304,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       <LeadTrigger
                         sourcePage={path()}
                         courseInterest={d().courses_fees[0]?.course}
+                      courseOptions={courseOptions()}
                         defaultCity={h().city}
                         heading={`Download the ${h().name} brochure`}
                         label="Download brochure"
@@ -871,6 +879,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       <LeadForm
                         sourcePage={path()}
                         courseInterest={d().courses_fees[0]?.course}
+                      courseOptions={courseOptions()}
                         defaultCity={d().header.city}
                         heading="Get admission guidance for this institute"
                       />
@@ -886,6 +895,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     <LeadForm
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
+                      courseOptions={courseOptions()}
                       defaultCity={d().header.city}
                       heading="Get admission guidance for this institute"
                     />
@@ -910,6 +920,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     <LeadForm
                       sourcePage={path()}
                       courseInterest={d().courses_fees[0]?.course}
+                      courseOptions={courseOptions()}
                       defaultCity={d().header.city}
                       heading="Get admission guidance for this institute"
                       dense

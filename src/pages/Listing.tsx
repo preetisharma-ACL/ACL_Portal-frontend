@@ -33,9 +33,11 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
 
   // Hero banner: a city-specific image where we have one, else the default.
   const CITY_BANNERS: Record<string, string> = {
-    varanasi: "/Varanasi-banner.jpg",
+    varanasi: "/varanasi-banner.png",
   };
   const bannerSrc = () => CITY_BANNERS[city().toLowerCase()] ?? "/college-banner.png";
+  // City-specific banners are finished artwork — show them clean, with no scrim.
+  const hasCityBanner = () => !!CITY_BANNERS[city().toLowerCase()];
 
   const q = (): ListingQuery => ({
     // City mode: only send a course when the user picks one in the filter.
@@ -148,12 +150,21 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 aria-hidden="true"
                 class="absolute inset-0 hidden h-full w-full object-cover object-center sm:block"
               />
-              <div
-                aria-hidden="true"
-                class="absolute inset-0 hidden bg-gradient-to-r from-[#fbe9ee]/70 via-[#fbe9ee]/30 to-transparent sm:block"
-              />
+              {/* Soft scrim for the default banner only; city artwork shows clean. */}
+              <Show when={!hasCityBanner()}>
+                <div
+                  aria-hidden="true"
+                  class="absolute inset-0 hidden bg-gradient-to-r from-[#fbe9ee]/70 via-[#fbe9ee]/30 to-transparent sm:block"
+                />
+              </Show>
               <div class="container-x relative z-10 py-6 text-center sm:py-16 md:py-28">
-                <h1 class="text-2xl font-extrabold tracking-tight text-accent-600 md:text-3xl">
+                <h1
+                  class="text-2xl font-extrabold tracking-tight md:text-3xl"
+                  classList={{
+                    "text-accent-600": !hasCityBanner(),
+                    "text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.7)]": hasCityBanner(),
+                  }}
+                >
                   {Cc()} in {m().city}
                 </h1>
                 <div class="mt-4 flex flex-wrap items-center justify-center gap-2">

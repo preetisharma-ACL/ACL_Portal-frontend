@@ -26,6 +26,12 @@ export interface LeadFormProps {
   courseInterest?: string;
   /** Backend course slug to submit as course_interest (must be a real course slug). */
   courseSlug?: string;
+  /**
+   * Restrict the "Course Interested In" dropdown to these options (e.g. only the
+   * courses a specific college offers). When provided and non-empty, these
+   * replace the site-wide course list. Each value must be a real backend slug.
+   */
+  courseOptions?: { name: string; slug: string }[];
   /** Pre-fill the city field by display name (matched to a city slug). */
   defaultCity?: string;
   /** Explicit city slug to pre-select (preferred over defaultCity). */
@@ -114,11 +120,29 @@ export default function LeadForm(props: LeadFormProps) {
   // slug on submit; an unmatched city is sent empty so submission never fails.
   const [cities, setCitiesData] = createSignal<{ name: string; slug: string }[]>([]);
 
-  // Best-effort: resolve a course display label to a slug once courses load.
+  // The dropdown options: a college-specific list when supplied, otherwise the
+  // site-wide course list. College offerings repeat a slug once per
+  // specialization (e.g. six "MBA" rows), so we dedupe by slug and keep the
+  // shortest label — typically the base course name without a specialisation.
+  const courseList = () => {
+    const opts = props.courseOptions;
+    if (!opts || !opts.length) return courses();
+    const bySlug = new Map<string, string>();
+    for (const o of opts) {
+      if (!o.slug) continue;
+      const existing = bySlug.get(o.slug);
+      if (existing === undefined || o.name.length < existing.length) {
+        bySlug.set(o.slug, o.name);
+      }
+    }
+    return [...bySlug].map(([slug, name]) => ({ slug, name }));
+  };
+
+  // Best-effort: resolve a course display label to a slug once options load.
   createEffect(() => {
     if (course() || !props.courseInterest) return;
     const label = props.courseInterest.toLowerCase();
-    const match = courses().find((c) => c.name.toLowerCase() === label);
+    const match = courseList().find((c) => c.name.toLowerCase() === label);
     if (match) setCourse(match.slug);
   });
 
@@ -173,7 +197,8 @@ export default function LeadForm(props: LeadFormProps) {
     const safeCity = matchedCity ? matchedCity.slug : "";
 
     // Course still sends a backend-known slug only (or empty) to avoid a 400.
-    const courseSlugs = new Set((courses() ?? []).map((c) => c.slug));
+    // Accept any slug from the active option list (college-specific or global).
+    const courseSlugs = new Set((courseList() ?? []).map((c) => c.slug));
     if (props.courseSlug) courseSlugs.add(props.courseSlug);
     const safeCourse = courseSlugs.has(course()) ? course() : "";
 
@@ -400,7 +425,7 @@ export default function LeadForm(props: LeadFormProps) {
               onChange={(e) => setCourse(e.currentTarget.value)}
             >
               <option value="">Select</option>
-              <For each={courses() ?? []}>
+              <For each={courseList() ?? []}>
                 {(c) => <option value={c.slug}>{c.name}</option>}
               </For>
             </select>

@@ -171,6 +171,9 @@ export interface ListingQuery {
 
 export interface CourseFeeRow {
   course: string;
+  /** Backend course slug for this offering. Used to filter the lead form's
+   *  course dropdown to this college's offerings (and submit a valid slug). */
+  course_slug: string;
   duration: string;
   total_fee: string;
   eligibility: string;
