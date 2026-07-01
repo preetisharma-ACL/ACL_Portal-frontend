@@ -41,7 +41,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
   const hasCityBanner = () => !!CITY_BANNERS[city().toLowerCase()];
 
   // IVR helpline dialled by the "Call Now" CTA on top picks.
-  const TOP_PICK_CALL_TEL = "+917518371100";
+  const TOP_PICK_CALL_TEL = "+919511050627";
 
   // Editorial "best college" picks per city, surfaced as a highlight strip under
   // the hero. tone: "gov" (government, red) / "private" (accent).
@@ -83,7 +83,7 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
         label: "Best Private College",
         tone: "private",
         logo: "/sms.webp",
-        phones: ["+91-7518371100"],
+        phones: ["+91-9511050627"],
         email: "info@smsvaranasi.com",
         callTel: TOP_PICK_CALL_TEL,
       },
