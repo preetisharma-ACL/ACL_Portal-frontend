@@ -40,11 +40,29 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
   // City-specific banners are finished artwork — show them clean, with no scrim.
   const hasCityBanner = () => !!CITY_BANNERS[city().toLowerCase()];
 
+  // IVR helpline dialled by the "Call Now" CTA on top picks.
+  const TOP_PICK_CALL_TEL = "+917518371100";
+
   // Editorial "best college" picks per city, surfaced as a highlight strip under
   // the hero. tone: "gov" (government, red) / "private" (accent).
+  //  - phone: admission-helpline contact shown under the college name.
+  //  - cta:   a labelled button linking to the college page (used for the gov pick).
+  //  - callTel: when set, renders a "Call Now" tel: button instead of the cta
+  //             link (used for the private pick; wired to the IVR later).
   const CITY_TOP_PICKS: Record<
     string,
-    { id: number; slug: string; name: string; label: string; tone: "gov" | "private"; logo: string }[]
+    {
+      id: number;
+      slug: string;
+      name: string;
+      label: string;
+      tone: "gov" | "private";
+      logo: string;
+      phones?: string[];
+      email?: string;
+      cta?: string;
+      callTel?: string;
+    }[]
   > = {
     varanasi: [
       {
@@ -54,6 +72,9 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
         label: "Best Government College",
         tone: "gov",
         logo: "/bhu.png",
+        phones: ["+91-0542-2307260"],
+        email: "registrar@bhu.ac.in",
+        cta: "Contact Us",
       },
       {
         id: 168,
@@ -62,6 +83,9 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
         label: "Best Private College",
         tone: "private",
         logo: "/sms.webp",
+        phones: ["+91-7518371100"],
+        email: "info@smsvaranasi.com",
+        callTel: TOP_PICK_CALL_TEL,
       },
     ],
   };
@@ -226,44 +250,101 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                           <Show when={i() > 0}>
                             <span aria-hidden="true" class="hidden w-px self-stretch bg-[var(--color-line)] sm:block" />
                           </Show>
-                          <A
-                            href={`/college/${p.slug}-${p.id}`}
-                            class="group flex flex-1 items-center gap-3"
-                          >
-                            {/* College logo with a sparkling "best" indicator */}
-                            <span class="relative shrink-0">
-                              <span
-                                class="grid h-14 w-14 place-items-center rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2 shadow-sm ring-1 ring-black/5"
+                          <div class="group flex flex-1 flex-col gap-3">
+                            <div class="flex items-center gap-3">
+                              {/* College logo with a sparkling "best" indicator */}
+                              <A href={`/college/${p.slug}-${p.id}`} class="relative shrink-0">
+                                <span
+                                  class="grid h-14 w-14 place-items-center rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2 shadow-sm ring-1 ring-black/5"
+                                >
+                                  <CollegeLogo
+                                    name={p.name}
+                                    logo={p.logo}
+                                    id={p.id}
+                                    class="max-h-full max-w-full text-sm"
+                                  />
+                                </span>
+                                {/* Twinkling sparkle marking the best pick */}
+                                <span
+                                  aria-hidden="true"
+                                  class="pointer-events-none absolute -right-2 -top-2 animate-pulse select-none text-base drop-shadow"
+                                >
+                                  ✨
+                                </span>
+                              </A>
+                              <div class="min-w-0">
+                                <span class="block text-[11px] font-bold uppercase tracking-wide text-primary-700">
+                                  {p.label}
+                                </span>
+                                <A
+                                  href={`/college/${p.slug}-${p.id}`}
+                                  class="block text-[13px] font-bold leading-snug text-[var(--color-ink)] hover:text-primary-700 sm:text-base"
+                                >
+                                  {p.name}
+                                </A>
+                                {/* College contact details */}
+                                <For each={p.phones}>
+                                  {(phone) => (
+                                    <a
+                                      href={`tel:+${phone.replace(/\D/g, "").replace(/^0+/, "")}`}
+                                      class="mt-0.5 flex items-center gap-1 text-[12px] font-medium text-[var(--color-muted)] hover:text-primary-700"
+                                    >
+                                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
+                                      </svg>
+                                      {phone}
+                                    </a>
+                                  )}
+                                </For>
+                                <Show when={p.email}>
+                                  <a
+                                    href={`mailto:${p.email}`}
+                                    class="mt-0.5 flex items-center gap-1 text-[12px] font-medium text-[var(--color-muted)] hover:text-primary-700"
+                                  >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+                                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                    </svg>
+                                    {p.email}
+                                  </a>
+                                </Show>
+                              </div>
+                              {/* Sparkling finger pointing back at the best college */}
+                              <span aria-hidden="true" class="ml-auto flex shrink-0 items-center gap-0.5">
+                                <span class="animate-pulse select-none text-sm">✨</span>
+                                <span class="select-none text-xl transition-transform group-hover:-translate-x-0.5">👈</span>
+                              </span>
+                            </div>
+
+                            {/* Per-card action: "Call Now" (tel/IVR) for the private
+                                pick, else a CTA link to the college page. */}
+                            <div class="pl-[68px]">
+                              <Show
+                                when={p.callTel}
+                                fallback={
+                                  <Show when={p.cta}>
+                                    <A
+                                      href={`/college/${p.slug}-${p.id}`}
+                                      class="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 px-4 py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800"
+                                    >
+                                      {p.cta}
+                                      <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+                                    </A>
+                                  </Show>
+                                }
                               >
-                                <CollegeLogo
-                                  name={p.name}
-                                  logo={p.logo}
-                                  id={p.id}
-                                  class="max-h-full max-w-full text-sm"
-                                />
-                              </span>
-                              {/* Twinkling sparkle marking the best pick */}
-                              <span
-                                aria-hidden="true"
-                                class="pointer-events-none absolute -right-2 -top-2 animate-pulse select-none text-base drop-shadow"
-                              >
-                                ✨
-                              </span>
-                            </span>
-                            <span class="min-w-0">
-                              <span class="block text-[11px] font-bold uppercase tracking-wide text-primary-700">
-                                {p.label}
-                              </span>
-                              <span class="block text-[13px] font-bold leading-snug text-[var(--color-ink)] group-hover:text-primary-700 sm:text-base">
-                                {p.name}
-                              </span>
-                            </span>
-                            {/* Sparkling finger pointing back at the best college */}
-                            <span aria-hidden="true" class="ml-auto flex shrink-0 items-center gap-0.5">
-                              <span class="animate-pulse select-none text-sm">✨</span>
-                              <span class="select-none text-xl transition-transform group-hover:-translate-x-0.5">👈</span>
-                            </span>
-                          </A>
+                                <a
+                                  href={`tel:${p.callTel}`}
+                                  class="inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 px-4 py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800"
+                                >
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
+                                  </svg>
+                                  Call Now
+                                </a>
+                              </Show>
+                            </div>
+                          </div>
                         </>
                       )}
                     </For>
