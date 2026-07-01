@@ -30,6 +30,14 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
     setAtEnd(track.scrollLeft + track.clientWidth >= track.scrollWidth - 4);
   };
 
+  // Always surface Varanasi first, keeping the rest of the order intact.
+  const orderedCities = () => {
+    const list = props.cities;
+    const idx = list.findIndex((c) => c.slug === "varanasi");
+    if (idx <= 0) return list;
+    return [list[idx], ...list.slice(0, idx), ...list.slice(idx + 1)];
+  };
+
   const scroll = (dir: number) => {
     if (!track) return;
     track.scrollBy({ left: dir * track.clientWidth * 0.85, behavior: "smooth" });
@@ -79,7 +87,7 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
           onScroll={update}
           class="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          <For each={props.cities}>
+          <For each={orderedCities()}>
             {(city) => (
               <A
                 href={cityCollegesPath(city.slug)}
