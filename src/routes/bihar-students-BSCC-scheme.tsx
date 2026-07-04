@@ -483,10 +483,9 @@ export default function Bihar() {
         {/* Masthead */}
         <div class="masthead">
           <div class="wrap">
-            <div class="logo">
-              <span class="sig" /> ACL Portal{" "}
-              <span style="font-weight:400;color:var(--ink-soft);font-size:.85rem">by AAJneeti</span>
-            </div>
+            <a href="/" class="logo" aria-label="ACL Portal home">
+              <img src="/acl-logo.png" alt="ACL Portal" style="height:36px;width:auto;display:block" />
+            </a>
             <div class="route mono">
               BIHAR → <b>VARANASI</b> → <b>LUCKNOW</b> → <b>DELHI NCR</b>
             </div>
@@ -502,7 +501,8 @@ export default function Bihar() {
                   <span class="deva hi">सिर्फ़ बिहार के छात्रों के लिए</span> ONLY FOR BIHAR
                 </span>
                 <h1>
-                  Your ticket to an MBA is the <span class="green">Bihar Student</span>{" "}
+                  Your ticket to an BBA, BCA, MCA, MBA is the{" "}
+                  <span class="green">Bihar Student</span>{" "}
                   <span class="mark">Credit Card</span>
                 </h1>
                 <p class="lede">
