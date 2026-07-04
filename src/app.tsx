@@ -36,8 +36,9 @@ export default function App() {
   return (
     <Router
       root={(props) => {
-        // The /bihar-students-BSCC-scheme landing page ships its own masthead +
-        // footer, so suppress the global site chrome there and render standalone.
+        // The /bihar-students-BSCC-scheme landing page uses the global Header but
+        // ships its own footer + CTAs, so only the global Footer and floating
+        // overlays are suppressed there (the Header still renders site-wide).
         const location = useLocation();
         const bare = () => location.pathname === "/bihar-students-BSCC-scheme";
         return (
@@ -59,9 +60,7 @@ export default function App() {
               Preview build with sample data, for review only. Not live and not indexed.
             </div>
           </Show> */}
-          <Show when={!bare()}>
-            <Header />
-          </Show>
+          <Header />
           <main id="main" class="min-h-[60vh]">
             <ErrorBoundary
               fallback={(err, reset) =>

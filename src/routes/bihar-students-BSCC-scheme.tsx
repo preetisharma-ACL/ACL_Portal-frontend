@@ -3,7 +3,7 @@ import { isServer } from "solid-js/web";
 import { Link } from "@solidjs/meta";
 import Seo from "~/components/Seo";
 import { submitLeadAction } from "~/lib/actions";
-import { citiesQuery, coursesQuery } from "~/lib/queries";
+import { citiesQuery } from "~/lib/queries";
 import { CONSENT_TEXT_VERSION } from "~/lib/config";
 import { slugify } from "~/lib/slug";
 import { track } from "~/lib/analytics";
@@ -23,29 +23,34 @@ const PAGE_CSS = `
 html{scroll-behavior:smooth}
 
 .bihar{
-  --paper:#F7F2E7; --paper-2:#EFE8D6; --white:#FFFDF7; --ink:#171814; --ink-soft:#53544A;
-  --rail:#0E5A43; --rail-dk:#0A4534; --signal:#F5B301; --signal-dk:#D99E00; --stamp:#C63B2B;
-  --line:#D9D1BC; --board:#111B16; --led:#FFCE3A; --ok:#0E5A43; --radius:12px;
-  font-family:'Public Sans',system-ui,sans-serif; color:var(--ink);
+  /* Remapped to the project brand tokens (crimson primary, navy accent, yellow
+     kept as an accent per request). Swaps here re-skin the whole page. */
+  --paper:var(--color-canvas); --paper-2:var(--color-accent-50); --white:var(--color-surface);
+  --ink:var(--color-ink); --ink-soft:var(--color-muted);
+  --rail:var(--color-accent-500); --rail-dk:var(--color-accent-700);
+  --signal:#f6b301; --signal-dk:#c98a00; --stamp:var(--color-primary-700);
+  --line:var(--color-line); --board:var(--color-accent-600); --led:#f7c948;
+  --ok:var(--color-success); --radius:var(--radius-lg);
+  font-family:var(--font-sans); color:var(--ink);
   background:
-    repeating-linear-gradient(0deg, rgba(23,24,20,.018) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(0deg, rgba(10,23,48,.02) 0 1px, transparent 1px 5px),
     var(--paper);
   line-height:1.55; -webkit-font-smoothing:antialiased;
 }
 .bihar *{box-sizing:border-box;margin:0;padding:0}
 .bihar .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
 .bihar a{color:inherit;text-decoration:none}
-.bihar .disp{font-family:'Bricolage Grotesque','Public Sans',sans-serif}
-.bihar .mono{font-family:'IBM Plex Mono',monospace}
-.bihar .deva{font-family:'Noto Sans Devanagari','Public Sans',sans-serif}
-.bihar h1,.bihar h2,.bihar h3{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.01em}
+.bihar .disp{font-family:var(--font-display)}
+.bihar .mono{font-family:var(--font-sans)}
+.bihar .deva{font-family:'Noto Sans Devanagari',var(--font-sans)}
+.bihar h1,.bihar h2,.bihar h3{font-family:var(--font-display);color:var(--ink);letter-spacing:-.01em}
 .bihar :focus-visible{outline:3px solid var(--stamp);outline-offset:2px;border-radius:4px}
 
 /* ============ Departure-board marquee ============ */
 .bihar .board{background:var(--board);border-bottom:3px solid var(--ink);overflow:hidden}
 .bihar .board .track{display:flex;width:max-content;animation:biharRoll 30s linear infinite}
 .bihar .board .set{display:flex;align-items:center;gap:34px;padding:11px 17px;white-space:nowrap;
-  font-family:'IBM Plex Mono',monospace;font-size:.8rem;font-weight:600;letter-spacing:.12em;color:var(--led)}
+  font-family:var(--font-sans);font-size:.8rem;font-weight:600;letter-spacing:.12em;color:var(--led)}
 .bihar .board .set .st{color:#5E6A5F}
 @keyframes biharRoll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){.bihar .board .track{animation:none}}
@@ -53,32 +58,32 @@ html{scroll-behavior:smooth}
 /* ============ Masthead ============ */
 .bihar .masthead{border-bottom:1.5px solid var(--ink);background:var(--paper)}
 .bihar .masthead .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
-.bihar .logo{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque';font-weight:700;font-size:1.05rem}
+.bihar .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:1.05rem}
 .bihar .logo .sig{width:14px;height:14px;border-radius:50%;background:var(--signal);border:2px solid var(--ink)}
-.bihar .masthead .route{font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.1em;color:var(--ink-soft)}
+.bihar .masthead .route{font-family:var(--font-sans);font-size:.72rem;letter-spacing:.1em;color:var(--ink-soft)}
 .bihar .masthead .route b{color:var(--rail);font-weight:600}
 
 /* ============ Hero ============ */
 .bihar .hero{padding:58px 0 54px;border-bottom:1.5px solid var(--ink);position:relative;overflow:hidden}
 .bihar .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:start}
 .bihar .kicker{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--signal);
-  font-family:'IBM Plex Mono';font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--font-sans);font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   padding:7px 13px;border-radius:4px;margin-bottom:20px}
 .bihar .kicker .hi{color:#fff}
 .bihar .hero h1{font-size:clamp(2.5rem,5.4vw,4.3rem);font-weight:800;line-height:.98;margin-bottom:18px}
 .bihar .hero h1 .mark{background:linear-gradient(180deg,transparent 58%,var(--signal) 58%);padding:0 2px}
-.bihar .hero h1 .green{color:var(--rail)}
+.bihar .hero h1 .green{color:var(--stamp)}
 .bihar .hero .lede{font-size:1.08rem;color:var(--ink-soft);max-width:44ch;margin-bottom:10px}
 .bihar .hero .lede b{color:var(--ink);font-weight:700}
 .bihar .hinglish{font-family:'Noto Sans Devanagari';font-size:1rem;font-weight:600;color:var(--rail);margin-bottom:22px}
 .bihar .fare-tags{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px}
-.bihar .tag{font-family:'IBM Plex Mono';font-size:.74rem;font-weight:600;letter-spacing:.04em;
+.bihar .tag{font-family:var(--font-sans);font-size:.74rem;font-weight:600;letter-spacing:.04em;
   border:1.5px solid var(--ink);background:var(--white);padding:7px 12px;border-radius:6px}
 .bihar .tag b{color:var(--stamp)}
 
 /* route strip */
 .bihar .route-strip{border:1.5px solid var(--ink);background:var(--white);border-radius:10px;padding:16px 18px 14px;max-width:520px}
-.bihar .route-strip .rl{font-family:'IBM Plex Mono';font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
+.bihar .route-strip .rl{font-family:var(--font-sans);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px}
 .bihar .stops{display:flex;align-items:flex-start}
 .bihar .stop{flex:1;position:relative;padding-right:10px}
 .bihar .stop:not(:last-child):after{content:"";position:absolute;top:7px;right:2px;left:calc(100% - 34px);height:0;
@@ -86,58 +91,58 @@ html{scroll-behavior:smooth}
 .bihar .stop .sd{width:14px;height:14px;border-radius:50%;background:var(--white);border:3px solid var(--rail);margin-bottom:7px}
 .bihar .stop.home .sd{background:var(--signal);border-color:var(--ink)}
 .bihar .stop .sc{font-weight:700;font-size:.86rem;line-height:1.2}
-.bihar .stop .sk{font-family:'IBM Plex Mono';font-size:.66rem;color:var(--ink-soft)}
+.bihar .stop .sk{font-family:var(--font-sans);font-size:.66rem;color:var(--ink-soft)}
 
 /* Education pass */
 .bihar .hero-side{display:flex;flex-direction:column;gap:18px}
 .bihar .pass{position:relative;border:2px solid var(--ink);border-radius:14px;overflow:hidden;
   background:linear-gradient(160deg,var(--rail) 0%,var(--rail-dk) 100%);color:#F3EFDF;
-  box-shadow:6px 6px 0 var(--ink)}
+  }
 .bihar .pass .band{background:var(--signal);color:var(--ink);display:flex;justify-content:space-between;align-items:center;
   padding:9px 16px;border-bottom:2px solid var(--ink)}
-.bihar .pass .band .bt{font-family:'Bricolage Grotesque';font-weight:800;font-size:.95rem;letter-spacing:.02em}
-.bihar .pass .band .bn{font-family:'IBM Plex Mono';font-size:.68rem;font-weight:600;letter-spacing:.12em}
+.bihar .pass .band .bt{font-family:var(--font-display);font-weight:800;font-size:.95rem;letter-spacing:.02em}
+.bihar .pass .band .bn{font-family:var(--font-sans);font-size:.68rem;font-weight:600;letter-spacing:.12em}
 .bihar .pass .body{padding:18px 18px 16px;position:relative}
 .bihar .pass .holes{position:absolute;left:0;top:0;bottom:0;width:16px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center}
 .bihar .pass .holes i{width:7px;height:7px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);display:block}
 .bihar .pass .rows{margin-left:16px;display:grid;grid-template-columns:1fr 1fr;gap:13px 18px}
-.bihar .pass .pr .k{font-family:'IBM Plex Mono';font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#BBD2C4}
-.bihar .pass .pr .v{font-family:'Bricolage Grotesque';font-weight:700;font-size:1.05rem;color:#fff}
+.bihar .pass .pr .k{font-family:var(--font-sans);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#BBD2C4}
+.bihar .pass .pr .v{font-family:var(--font-display);font-weight:700;font-size:1.05rem;color:#fff}
 .bihar .pass .pr .v.big{font-size:1.9rem;line-height:1.05}
 .bihar .pass .pr .v .zero{color:var(--signal)}
 .bihar .pass .foot{margin-left:16px;margin-top:15px;padding-top:11px;border-top:1.5px dashed rgba(243,239,223,.35);
   display:flex;justify-content:space-between;align-items:center}
-.bihar .pass .foot .yj{font-family:'IBM Plex Mono';font-size:.64rem;letter-spacing:.1em;color:#BBD2C4}
-.bihar .pass .foot .stamp-mini{font-family:'IBM Plex Mono';font-size:.62rem;font-weight:600;letter-spacing:.08em;
+.bihar .pass .foot .yj{font-family:var(--font-sans);font-size:.64rem;letter-spacing:.1em;color:#BBD2C4}
+.bihar .pass .foot .stamp-mini{font-family:var(--font-sans);font-size:.62rem;font-weight:600;letter-spacing:.08em;
   border:1.5px solid var(--signal);color:var(--signal);padding:3px 8px;border-radius:4px;transform:rotate(-3deg)}
-.bihar .passcap{font-family:'IBM Plex Mono';font-size:.66rem;color:var(--ink-soft);text-align:center}
+.bihar .passcap{font-family:var(--font-sans);font-size:.66rem;color:var(--ink-soft);text-align:center}
 
 /* Reservation (lead) form */
-.bihar .resform{border:2px solid var(--ink);border-radius:14px;background:var(--white);overflow:hidden;box-shadow:6px 6px 0 rgba(23,24,20,.12)}
+.bihar .resform{border:2px solid var(--ink);border-radius:14px;background:var(--white);overflow:hidden}
 .bihar .resform .fhead{background:var(--ink);color:var(--paper);display:flex;justify-content:space-between;align-items:center;padding:11px 16px}
-.bihar .resform .fhead .ft{font-family:'Bricolage Grotesque';font-weight:700;font-size:1.02rem}
-.bihar .resform .fhead .free{font-family:'IBM Plex Mono';font-size:.64rem;font-weight:600;letter-spacing:.14em;color:var(--signal);border:1px solid var(--signal);padding:3px 8px;border-radius:4px}
+.bihar .resform .fhead .ft{font-family:var(--font-display);font-weight:700;font-size:1.02rem}
+.bihar .resform .fhead .free{font-family:var(--font-sans);font-size:.64rem;font-weight:600;letter-spacing:.14em;color:var(--signal);border:1px solid var(--signal);padding:3px 8px;border-radius:4px}
 .bihar .resform .fbody{padding:16px}
 .bihar .resform p.sub{font-size:.84rem;color:var(--ink-soft);margin-bottom:13px}
 .bihar .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .bihar .field{margin-bottom:10px}
-.bihar .field label{display:block;font-family:'IBM Plex Mono';font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px}
-.bihar .field input,.bihar .field select{width:100%;font-family:'Public Sans';font-size:.9rem;color:var(--ink);background:var(--paper);
+.bihar .field label{display:block;font-family:var(--font-sans);font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px}
+.bihar .field input,.bihar .field select{width:100%;font-family:var(--font-sans);font-size:.9rem;color:var(--ink);background:var(--paper);
   border:1.5px solid var(--ink);border-radius:7px;padding:10px 11px;transition:box-shadow .15s}
 .bihar .field input:focus,.bihar .field select:focus{outline:none;box-shadow:3px 3px 0 var(--signal)}
-.bihar .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Bricolage Grotesque';
+.bihar .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-display);
   font-size:1rem;font-weight:700;border:2px solid var(--ink);cursor:pointer;border-radius:9px;padding:12px 20px;width:100%;
-  background:var(--stamp);color:#fff;box-shadow:4px 4px 0 var(--ink);transition:transform .08s,box-shadow .08s}
-.bihar .btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
-.bihar .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  background:var(--stamp);color:#fff;transition:transform .08s}
+.bihar .btn:hover{transform:translate(-1px,-1px)}
+.bihar .btn:active{transform:translate(1px,1px)}
 .bihar .btn.alt{background:var(--signal);color:var(--ink)}
-.bihar .fineprint{font-family:'IBM Plex Mono';font-size:.64rem;color:var(--ink-soft);text-align:center;margin-top:10px}
-.bihar .consent{display:flex;gap:9px;align-items:flex-start;font-family:'Public Sans';font-size:.72rem;line-height:1.45;color:var(--ink-soft);margin:2px 0 12px;cursor:pointer}
+.bihar .fineprint{font-family:var(--font-sans);font-size:.64rem;color:var(--ink-soft);text-align:center;margin-top:10px}
+.bihar .consent{display:flex;gap:9px;align-items:flex-start;font-family:var(--font-sans);font-size:.72rem;line-height:1.45;color:var(--ink-soft);margin:2px 0 12px;cursor:pointer}
 .bihar .consent input{margin-top:2px;width:15px;height:15px;flex-shrink:0;accent-color:var(--rail)}
 .bihar .consent a{color:var(--stamp);border-bottom:1px solid var(--stamp)}
-.bihar .formerr{font-family:'IBM Plex Mono';font-size:.68rem;line-height:1.4;color:var(--stamp);background:rgba(198,59,43,.08);border:1.5px solid var(--stamp);border-radius:7px;padding:8px 10px;margin-bottom:11px}
+.bihar .formerr{font-family:var(--font-sans);font-size:.68rem;line-height:1.4;color:var(--stamp);background:rgba(198,59,43,.08);border:1.5px solid var(--stamp);border-radius:7px;padding:8px 10px;margin-bottom:11px}
 .bihar .btn[disabled]{opacity:.6;cursor:not-allowed}
-.bihar .btn[disabled]:hover{transform:none;box-shadow:4px 4px 0 var(--ink)}
+.bihar .btn[disabled]:hover{transform:none}
 .bihar .thanks{text-align:center;padding:26px 12px}
 .bihar .thanks .tick{width:54px;height:54px;border-radius:50%;background:var(--rail);color:var(--signal);border:2px solid var(--ink);
   display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 12px}
@@ -147,16 +152,16 @@ html{scroll-behavior:smooth}
 /* ============ Scheme section ============ */
 .bihar .scheme{padding:58px 0;border-bottom:1.5px solid var(--ink);background:var(--paper-2)}
 .bihar .shead{max-width:700px;margin:0 auto 32px;text-align:center}
-.bihar .shead .eyeline{font-family:'IBM Plex Mono';font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--stamp);margin-bottom:10px}
+.bihar .shead .eyeline{font-family:var(--font-sans);font-size:.68rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--stamp);margin-bottom:10px}
 .bihar .shead h2{font-size:clamp(1.9rem,3.8vw,2.8rem);font-weight:800;line-height:1.04}
 .bihar .shead p{font-size:1rem;color:var(--ink-soft);margin-top:12px}
 
 .bihar .farechart{display:grid;grid-template-columns:repeat(4,1fr);border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--white);margin-bottom:34px}
 .bihar .fc{padding:22px 18px;text-align:center;border-right:1.5px dashed var(--line)}
 .bihar .fc:last-child{border-right:none}
-.bihar .fc .v{font-family:'Bricolage Grotesque';font-size:2.2rem;font-weight:800;color:var(--rail);line-height:1}
+.bihar .fc .v{font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:var(--rail);line-height:1}
 .bihar .fc .v small{font-size:.95rem;font-weight:700;color:var(--ink-soft)}
-.bihar .fc .k{font-family:'IBM Plex Mono';font-size:.68rem;letter-spacing:.04em;color:var(--ink-soft);margin-top:7px}
+.bihar .fc .k{font-family:var(--font-sans);font-size:.68rem;letter-spacing:.04em;color:var(--ink-soft);margin-top:7px}
 
 .bihar .how{display:grid;grid-template-columns:1.08fr .92fr;gap:36px;align-items:start}
 .bihar .how h3{font-size:1.65rem;font-weight:700;margin-bottom:6px}
@@ -164,17 +169,17 @@ html{scroll-behavior:smooth}
 .bihar .halts{counter-reset:halt;list-style:none}
 .bihar .halts li{position:relative;padding:0 0 18px 48px;counter-increment:halt}
 .bihar .halts li:before{content:counter(halt,decimal-leading-zero);position:absolute;left:0;top:1px;width:34px;height:34px;border-radius:8px;
-  background:var(--signal);border:2px solid var(--ink);color:var(--ink);font-family:'IBM Plex Mono';font-size:.8rem;font-weight:600;
+  background:var(--signal);border:2px solid var(--ink);color:var(--ink);font-family:var(--font-sans);font-size:.8rem;font-weight:600;
   display:flex;align-items:center;justify-content:center}
 .bihar .halts li:not(:last-child):after{content:"";position:absolute;left:16px;top:40px;bottom:2px;border-left:2px dashed var(--ink);opacity:.35}
-.bihar .halts li b{display:block;font-family:'Bricolage Grotesque';font-weight:700;font-size:1rem}
+.bihar .halts li b{display:block;font-family:var(--font-display);font-weight:700;font-size:1rem}
 .bihar .halts li span{font-size:.88rem;color:var(--ink-soft)}
 .bihar .halts li a{color:var(--stamp);font-weight:700;border-bottom:1.5px solid var(--stamp)}
-.bihar .helpline{margin-top:8px;font-family:'IBM Plex Mono';font-size:.78rem;color:var(--ink-soft)}
+.bihar .helpline{margin-top:8px;font-family:var(--font-sans);font-size:.78rem;color:var(--ink-soft)}
 .bihar .helpline b{color:var(--ink)}
 
-.bihar .elig{border:2px solid var(--ink);border-radius:12px;background:var(--rail);color:#EAF1E7;padding:24px;box-shadow:6px 6px 0 var(--ink)}
-.bihar .elig .et{font-family:'Bricolage Grotesque';font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:14px}
+.bihar .elig{border:2px solid var(--ink);border-radius:12px;background:var(--rail);color:#EAF1E7;padding:24px;}
+.bihar .elig .et{font-family:var(--font-display);font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:14px}
 .bihar .elig ul{list-style:none;display:flex;flex-direction:column;gap:11px}
 .bihar .elig li{font-size:.9rem;display:flex;gap:11px;align-items:flex-start;color:#DCE8DB}
 .bihar .elig li .ok{color:var(--signal);font-weight:700;flex-shrink:0}
@@ -186,69 +191,69 @@ html{scroll-behavior:smooth}
 .bihar .listing .shead .eyeline{color:var(--rail)}
 
 /* Station signboard region divider */
-.bihar .signboard{max-width:640px;margin:46px auto 26px;background:var(--signal);border:2.5px solid var(--ink);border-radius:8px;
-  padding:13px 20px 12px;text-align:center;box-shadow:4px 4px 0 var(--ink);position:relative}
+.bihar .signboard{max-width:640px;margin:46px auto 26px;background:var(--stamp);color:#fff;border:2.5px solid var(--ink);border-radius:8px;
+  padding:13px 20px 12px;text-align:center;position:relative}
 .bihar .signboard:before,.bihar .signboard:after{content:"";position:absolute;top:-14px;width:3px;height:14px;background:var(--ink)}
 .bihar .signboard:before{left:26%}
 .bihar .signboard:after{right:26%}
-.bihar .signboard .en{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.45rem;letter-spacing:.06em;text-transform:uppercase;line-height:1.05}
+.bihar .signboard .en{font-family:var(--font-display);font-weight:800;font-size:1.45rem;letter-spacing:.06em;text-transform:uppercase;line-height:1.05}
 .bihar .signboard .hi{font-family:'Noto Sans Devanagari';font-weight:700;font-size:.98rem}
-.bihar .signboard .dist{font-family:'IBM Plex Mono';font-size:.68rem;font-weight:600;letter-spacing:.1em;margin-top:3px;color:#4A3B04}
+.bihar .signboard .dist{font-family:var(--font-sans);font-size:.68rem;font-weight:600;letter-spacing:.1em;margin-top:3px;color:rgba(255,255,255,.82)}
 
 /* Boarding-pass college cards */
 .bihar .ticket{position:relative;display:grid;grid-template-columns:76px 1fr 250px;background:var(--white);
   border:2px solid var(--ink);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;
-  transition:transform .18s,box-shadow .18s;box-shadow:0 1px 0 rgba(23,24,20,.15)}
-.bihar .ticket:hover{transform:translateY(-3px);box-shadow:6px 8px 0 rgba(23,24,20,.14)}
+  transition:transform .18s}
+.bihar .ticket:hover{transform:translateY(-3px)}
 .bihar .stub{background:var(--rail);color:#EAF1E7;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
   padding:14px 6px;border-right:2px dashed var(--paper)}
-.bihar .stub .sk{font-family:'IBM Plex Mono';font-size:.56rem;letter-spacing:.2em;writing-mode:vertical-rl;transform:rotate(180deg);color:#BBD2C4}
-.bihar .stub .num{font-family:'Bricolage Grotesque';font-size:1.8rem;font-weight:800;color:#fff;line-height:1}
+.bihar .stub .sk{font-family:var(--font-sans);font-size:.56rem;letter-spacing:.2em;writing-mode:vertical-rl;transform:rotate(180deg);color:#BBD2C4}
+.bihar .stub .num{font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:#fff;line-height:1}
 .bihar .stub .punch{width:10px;height:10px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink)}
 
 .bihar .tbody{padding:20px 24px 18px;min-width:0}
 .bihar .toprow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.bihar .naac{font-family:'IBM Plex Mono';font-size:.62rem;font-weight:600;letter-spacing:.1em;background:var(--ink);color:var(--paper);padding:4px 9px;border-radius:5px}
+.bihar .naac{font-family:var(--font-sans);font-size:.62rem;font-weight:600;letter-spacing:.1em;background:var(--ink);color:var(--paper);padding:4px 9px;border-radius:5px}
 .bihar .naac.aplus{background:var(--rail)}
 .bihar .naac.appp{background:var(--stamp)}
-.bihar .badge{font-family:'IBM Plex Mono';font-size:.64rem;font-weight:600;letter-spacing:.04em;color:var(--ink-soft);border:1.5px solid var(--line);background:var(--paper);padding:4px 9px;border-radius:100px}
+.bihar .badge{font-family:var(--font-sans);font-size:.64rem;font-weight:600;letter-spacing:.04em;color:var(--ink-soft);border:1.5px solid var(--line);background:var(--paper);padding:4px 9px;border-radius:100px}
 .bihar .tbody h3{font-size:1.5rem;font-weight:700;line-height:1.1;margin:2px 0 3px}
-.bihar .loc{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--ink-soft);margin-bottom:12px}
+.bihar .loc{font-family:var(--font-sans);font-size:.72rem;color:var(--ink-soft);margin-bottom:12px}
 .bihar .loc b{color:var(--stamp)}
 .bihar .why{font-size:.92rem;color:var(--ink);margin-bottom:14px;max-width:58ch}
 .bihar .datastrip{display:flex;flex-wrap:wrap;gap:0;border:1.5px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
 .bihar .ds{flex:1;min-width:130px;padding:10px 13px;border-right:1.5px dashed var(--line)}
 .bihar .ds:last-child{border-right:none}
-.bihar .ds .k{font-family:'IBM Plex Mono';font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
-.bihar .ds .v{font-family:'IBM Plex Mono';font-size:.84rem;font-weight:600;color:var(--ink);margin-top:1px}
+.bihar .ds .k{font-family:var(--font-sans);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.bihar .ds .v{font-family:var(--font-sans);font-size:.84rem;font-weight:600;color:var(--ink);margin-top:1px}
 .bihar .recruit{font-size:.74rem;color:var(--ink-soft);margin-top:11px}
-.bihar .recruit b{font-family:'IBM Plex Mono';font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin-right:6px}
+.bihar .recruit b{font-family:var(--font-sans);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin-right:6px}
 
 .bihar .fare{border-left:2px dashed var(--ink);position:relative;background:var(--paper);padding:20px 20px 18px;
   display:flex;flex-direction:column;justify-content:space-between;gap:14px}
 .bihar .fare:before,.bihar .fare:after{content:"";position:absolute;left:-9px;width:16px;height:16px;border-radius:50%;background:var(--white);border:2px solid var(--ink)}
 .bihar .fare:before{top:-9px;background:var(--paper)}
 .bihar .fare:after{bottom:-9px;background:var(--paper)}
-.bihar .fare .fk{font-family:'IBM Plex Mono';font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
-.bihar .fare .fv{font-family:'Bricolage Grotesque';font-size:1.85rem;font-weight:800;color:var(--ink);line-height:1.05}
+.bihar .fare .fk{font-family:var(--font-sans);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.bihar .fare .fv{font-family:var(--font-display);font-size:1.85rem;font-weight:800;color:var(--ink);line-height:1.05}
 .bihar .fare .fv small{font-size:.85rem;font-weight:700;color:var(--ink-soft)}
-.bihar .fare .fh{font-family:'IBM Plex Mono';font-size:.68rem;color:var(--ink-soft)}
+.bihar .fare .fh{font-family:var(--font-sans);font-size:.68rem;color:var(--ink-soft)}
 .bihar .fare .fh b{color:var(--stamp)}
-.bihar .stampmark{align-self:flex-start;font-family:'IBM Plex Mono';font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+.bihar .stampmark{align-self:flex-start;font-family:var(--font-sans);font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
   padding:6px 10px;border:2px solid currentColor;border-radius:6px;transform:rotate(-4deg);line-height:1.25}
 .bihar .stampmark.full{color:var(--ok)}
 .bihar .stampmark.part{color:var(--signal-dk)}
-.bihar .fare .cta{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:'Bricolage Grotesque';font-size:.9rem;font-weight:700;
+.bihar .fare .cta{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--font-display);font-size:.9rem;font-weight:700;
   background:var(--ink);color:var(--paper);padding:11px 14px;border-radius:8px;border:2px solid var(--ink);cursor:pointer;transition:background .15s,color .15s}
 .bihar .fare .cta:hover{background:var(--stamp);border-color:var(--stamp);color:#fff}
 
 /* Featured ticket */
-.bihar .ticket.featured{box-shadow:7px 8px 0 rgba(198,59,43,.25);border-width:2.5px}
+.bihar .ticket.featured{border-width:2.5px}
 .bihar .ticket.featured .stub{background:var(--stamp)}
 .bihar .ticket.featured .stub .sk{color:#F2C9C2}
 .bihar .fribbon{grid-column:1 / -1;background:var(--signal);border-bottom:2px solid var(--ink);
   display:flex;align-items:center;gap:10px;padding:8px 22px;
-  font-family:'IBM Plex Mono';font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  font-family:var(--font-sans);font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .bihar .fribbon .note{margin-left:auto;text-transform:none;letter-spacing:.02em;font-weight:500;color:#4A3B04}
 .bihar .ticket.featured .fare{background:#FBF3DD}
 .bihar .ticket.featured .fare .cta{background:var(--stamp);border-color:var(--stamp);color:#fff}
@@ -261,14 +266,14 @@ html{scroll-behavior:smooth}
 .bihar .bottomcta h2 .y{color:var(--signal)}
 .bihar .bottomcta p{color:#A9B3A6;font-size:1rem;margin-top:12px;max-width:50ch}
 .bihar .cta-actions{display:flex;flex-direction:column;gap:12px;min-width:240px}
-.bihar .bottomcta .btn.alt{box-shadow:4px 4px 0 rgba(245,179,1,.35)}
+.bihar .bottomcta .btn.alt{box-shadow:none}
 .bihar .bottomcta .btn.ghost{background:transparent;color:#fff;border-color:#fff;box-shadow:none}
 .bihar .bottomcta .btn.ghost:hover{background:rgba(255,255,255,.08)}
 
 /* ============ Footer ============ */
-.bihar .site-foot{background:#0C120E;color:#8D978B;font-size:.83rem;padding:42px 0 46px}
+.bihar .site-foot{background:var(--color-accent-700);color:#9fb0cc;font-size:.83rem;padding:42px 0 46px}
 .bihar .site-foot .fgrid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
-.bihar .site-foot .fbrand{color:#EDEADF;font-family:'Bricolage Grotesque';font-weight:700;font-size:1rem;display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.bihar .site-foot .fbrand{color:#EDEADF;font-family:var(--font-display);font-weight:700;font-size:1rem;display:flex;align-items:center;gap:9px;margin-bottom:10px}
 .bihar .site-foot .fbrand .sig{width:12px;height:12px;border-radius:50%;background:var(--signal);border:2px solid #EDEADF}
 .bihar .site-foot .disc{max-width:660px;line-height:1.6}
 .bihar .site-foot .disc b{color:#C9D2C6}
@@ -276,7 +281,7 @@ html{scroll-behavior:smooth}
 .bihar .site-foot .fcol a{display:block;color:#8D978B;margin-bottom:6px}
 .bihar .site-foot .fcol a:hover{color:#fff}
 .bihar .site-foot .fcol .h{color:#EDEADF;font-weight:700;margin-bottom:10px;font-size:.9rem}
-.bihar .copyright{border-top:1px solid rgba(255,255,255,.1);margin-top:28px;padding-top:18px;font-family:'IBM Plex Mono';font-size:.7rem;color:#5C665B}
+.bihar .copyright{border-top:1px solid rgba(255,255,255,.1);margin-top:28px;padding-top:18px;font-family:var(--font-sans);font-size:.7rem;color:#5C665B}
 
 /* ============ Responsive ============ */
 @media (max-width:960px){
@@ -316,9 +321,8 @@ const UTM_KEYS = [
   "fbclid",
 ];
 
-// Mirror the project lead form's option sets so this page collects the same fields.
-const QUALIFICATIONS = ["Class 12", "Diploma", "Graduate", "Postgraduate", "Other"];
-const INTAKE_YEARS = ["2026", "2027", "2028"];
+// Course options offered on this BSCC scheme page.
+const COURSE_OPTIONS = ["BBA", "MBA", "B.Com", "M.Com", "B.A", "BCA"];
 
 export default function Bihar() {
   // Form state, wired to the project's real lead pipeline (submitLeadAction ->
@@ -329,15 +333,12 @@ export default function Bihar() {
   const [mobile, setMobile] = createSignal("");
   const [city, setCity] = createSignal("");
   const [course, setCourse] = createSignal("");
-  const [qualification, setQualification] = createSignal("");
-  const [intakeYear, setIntakeYear] = createSignal("");
   const [consent, setConsent] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
   const [error, setError] = createSignal("");
   const [sent, setSent] = createSignal(false);
-  // Option/lookup lists: course dropdown, and the city list used to map a typed
-  // city to a backend slug (the API rejects unknown city strings -> sent empty).
-  const [courses, setCourses] = createSignal<{ name: string; slug: string }[]>([]);
+  // City list used to map a typed city to a backend slug (the API rejects
+  // unknown city strings, so an unmatched city is sent empty).
   const [cities, setCities] = createSignal<{ name: string; slug: string }[]>([]);
 
   let utm: Record<string, string> = {};
@@ -356,9 +357,6 @@ export default function Bihar() {
     } catch {
       /* sessionStorage/JSON may be unavailable; non-fatal */
     }
-    void coursesQuery()
-      .then((c) => setCourses(c ?? []))
-      .catch(() => {});
     void citiesQuery()
       .then((c) => setCities(c ?? []))
       .catch(() => {});
@@ -399,19 +397,21 @@ export default function Bihar() {
     );
     const safeCity = matchedCity ? matchedCity.slug : "";
 
-    // Course must be a backend-known slug (or empty) to avoid a 400.
-    const safeCourse = new Set(courses().map((c) => c.slug)).has(course()) ? course() : "";
+    // This page's course list (BBA/MBA/B.Com …) is BSCC-specific and does not map
+    // to backend course slugs, so course_interest is left empty and the chosen
+    // course is recorded on source_page (stored verbatim) so it is never lost.
+    const src = course()
+      ? `/bihar-students-BSCC-scheme — course: ${course()}`
+      : "/bihar-students-BSCC-scheme";
 
     const payload: LeadPayload = {
       name: name().trim(),
       mobile: mobile().trim(),
       email: email().trim(),
       city: safeCity,
-      course_interest: safeCourse,
-      qualification: qualification(),
-      // Integer when chosen; key omitted when blank (backend rejects "" and null).
-      ...(intakeYear() ? { intake_year: Number(intakeYear()) } : {}),
-      source_page: "/bihar-students-BSCC-scheme",
+      course_interest: "",
+      qualification: "",
+      source_page: src,
       utm,
       consent: { checked: true, text_version: CONSENT_TEXT_VERSION },
       hp_field: "",
@@ -428,7 +428,7 @@ export default function Bihar() {
             /* non-fatal */
           }
         }
-        track("lead_submit", { source_page: payload.source_page, course_interest: "" });
+        track("lead_submit", { source_page: payload.source_page, course: course() });
         setSent(true);
       } else {
         setError("We could not submit your request. Please try again.");
@@ -452,7 +452,7 @@ export default function Bihar() {
       <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
       <Link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@600;700&display=swap"
       />
       {/* eslint-disable-next-line solid/no-innerhtml */}
       <style innerHTML={PAGE_CSS} />
@@ -480,19 +480,7 @@ export default function Bihar() {
           </div>
         </div>
 
-        {/* Masthead */}
-        <div class="masthead">
-          <div class="wrap">
-            <a href="/" class="logo" aria-label="ACL Portal home">
-              <img src="/acl-logo.png" alt="ACL Portal" style="height:36px;width:auto;display:block" />
-            </a>
-            <div class="route mono">
-              BIHAR → <b>VARANASI</b> → <b>LUCKNOW</b> → <b>DELHI NCR</b>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero */}
+        {/* Hero (site Header renders above via app.tsx) */}
         <header class="hero">
           <div class="wrap">
             <div class="hero-grid">
@@ -501,7 +489,7 @@ export default function Bihar() {
                   <span class="deva hi">सिर्फ़ बिहार के छात्रों के लिए</span> ONLY FOR BIHAR
                 </span>
                 <h1>
-                  Your ticket to an BBA, BCA, MCA, MBA is the{" "}
+                  Your ticket to the BBA, BCA, MCA, MBA is the{" "}
                   <span class="green">Bihar Student</span>{" "}
                   <span class="mark">Credit Card</span>
                 </h1>
@@ -662,44 +650,16 @@ export default function Bihar() {
                             />
                           </div>
                         </div>
-                        <div class="frow">
-                          <div class="field">
-                            <label for="course">Course interested in</label>
-                            <select
-                              id="course"
-                              name="course"
-                              value={course()}
-                              onChange={(e) => setCourse(e.currentTarget.value)}
-                            >
-                              <option value="">Select</option>
-                              <For each={courses()}>
-                                {(c) => <option value={c.slug}>{c.name}</option>}
-                              </For>
-                            </select>
-                          </div>
-                          <div class="field">
-                            <label for="qual">Qualification</label>
-                            <select
-                              id="qual"
-                              name="qualification"
-                              value={qualification()}
-                              onChange={(e) => setQualification(e.currentTarget.value)}
-                            >
-                              <option value="">Select</option>
-                              <For each={QUALIFICATIONS}>{(q) => <option value={q}>{q}</option>}</For>
-                            </select>
-                          </div>
-                        </div>
                         <div class="field">
-                          <label for="intake">Intended intake year</label>
+                          <label for="course">Course interested in</label>
                           <select
-                            id="intake"
-                            name="intake_year"
-                            value={intakeYear()}
-                            onChange={(e) => setIntakeYear(e.currentTarget.value)}
+                            id="course"
+                            name="course"
+                            value={course()}
+                            onChange={(e) => setCourse(e.currentTarget.value)}
                           >
                             <option value="">Select</option>
-                            <For each={INTAKE_YEARS}>{(y) => <option value={y}>{y}</option>}</For>
+                            <For each={COURSE_OPTIONS}>{(c) => <option value={c}>{c}</option>}</For>
                           </select>
                         </div>
                         <label class="consent">
@@ -726,92 +686,6 @@ export default function Bihar() {
             </div>
           </div>
         </header>
-
-        {/* Scheme */}
-        <section class="scheme">
-          <div class="wrap">
-            <div class="shead">
-              <div class="eyeline">The scheme</div>
-              <h2>What is the Bihar Student Credit Card?</h2>
-              <p>
-                A scheme of the Government of Bihar under Saat Nishchay. It gives students of Bihar
-                an education loan to study after Class 12, so fees never stop a good student from
-                studying.
-              </p>
-            </div>
-
-            <div class="farechart">
-              <div class="fc"><div class="v">₹4<small> lakh</small></div><div class="k">LOAN AMOUNT, UP TO</div></div>
-              <div class="fc"><div class="v">0<small>%</small></div><div class="k">INTEREST FOR ALL, PER THE 2025 UPDATE</div></div>
-              <div class="fc"><div class="v">NIL</div><div class="k">COLLATERAL. THE STATE STANDS GUARANTOR</div></div>
-              <div class="fc"><div class="v">ALL<small> INDIA</small></div><div class="k">VALID AT RECOGNISED COLLEGES ACROSS STATES</div></div>
-            </div>
-
-            <div class="how">
-              <div>
-                <h3>How to use it for these colleges</h3>
-                <p class="lead">
-                  Get your admission letter, then apply for the card. Our counsellors run both steps
-                  together so you do not lose time.
-                </p>
-                <ol class="halts">
-                  <li>
-                    <b>Confirm your seat</b>
-                    <span>Get an admission or selection letter from a recognised college on this list.</span>
-                  </li>
-                  <li>
-                    <b>Register on the official portal</b>
-                    <span>
-                      Apply for the Bihar Student Credit Card on the MNSSBY Saat Nishchay portal,{" "}
-                      <a
-                        href="https://www.7nishchay-yuvaupmission.bihar.gov.in/"
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        7nishchay-yuvaupmission.bihar.gov.in
-                      </a>
-                      .
-                    </span>
-                  </li>
-                  <li>
-                    <b>Verify at your DRCC</b>
-                    <span>
-                      Visit your District Registration and Counselling Centre with original
-                      documents. The DRCC confirms your college and course.
-                    </span>
-                  </li>
-                  <li>
-                    <b>Collect the sanction, complete at the bank</b>
-                    <span>
-                      Take your sanction letter to the bank to finish disbursal. Fees can be paid
-                      directly to the college.
-                    </span>
-                  </li>
-                </ol>
-                <p class="helpline">
-                  OFFICIAL HELPLINE: <b>1800 3456 444</b> · OR LET AN AAJNEETI COUNSELLOR GUIDE YOU
-                  FREE
-                </p>
-              </div>
-
-              <div class="elig">
-                <div class="et">Who can apply</div>
-                <ul>
-                  <li><span class="ok">✓</span> Permanent resident of Bihar, with domicile or a Bihar address on Aadhaar</li>
-                  <li><span class="ok">✓</span> Passed Class 12 (Intermediate) from a recognised board, BSEB, CBSE, ICSE and others</li>
-                  <li><span class="ok">✓</span> Confirmed admission to a UGC or AICTE recognised institution and an approved course</li>
-                  <li><span class="ok">✓</span> Typically up to 25 years of age</li>
-                  <li><span class="ok">✓</span> No family income limit</li>
-                </ul>
-                <div class="verify">
-                  <b>Important.</b> Before you count on the card, check that your exact college and
-                  course are on the approved list at your DRCC or on the MNSSBY portal. If a college
-                  is not approved, the loan can be declined.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Listing */}
         <main class="listing">
@@ -897,7 +771,95 @@ export default function Bihar() {
                 <a class="cta" href="#lead" onClick={jump}>Talk to a counsellor →</a>
               </div>
             </article>
+          </div>
 
+          {/* Scheme: what the BSCC is — placed after the Varanasi college block */}
+          <section class="scheme">
+            <div class="wrap">
+              <div class="shead">
+                <div class="eyeline">The scheme</div>
+                <h2>What is the Bihar Student Credit Card?</h2>
+                <p>
+                  A scheme of the Government of Bihar under Saat Nishchay. It gives students of Bihar
+                  an education loan to study after Class 12, so fees never stop a good student from
+                  studying.
+                </p>
+              </div>
+
+              <div class="farechart">
+                <div class="fc"><div class="v">₹4<small> lakh</small></div><div class="k">LOAN AMOUNT, UP TO</div></div>
+                <div class="fc"><div class="v">0<small>%</small></div><div class="k">INTEREST FOR ALL, PER THE 2025 UPDATE</div></div>
+                <div class="fc"><div class="v">NIL</div><div class="k">COLLATERAL. THE STATE STANDS GUARANTOR</div></div>
+                <div class="fc"><div class="v">ALL<small> INDIA</small></div><div class="k">VALID AT RECOGNISED COLLEGES ACROSS STATES</div></div>
+              </div>
+
+              <div class="how">
+                <div>
+                  <h3>How to use it for these colleges</h3>
+                  <p class="lead">
+                    Get your admission letter, then apply for the card. Our counsellors run both
+                    steps together so you do not lose time.
+                  </p>
+                  <ol class="halts">
+                    <li>
+                      <b>Confirm your seat</b>
+                      <span>Get an admission or selection letter from a recognised college on this list.</span>
+                    </li>
+                    <li>
+                      <b>Register on the official portal</b>
+                      <span>
+                        Apply for the Bihar Student Credit Card on the MNSSBY Saat Nishchay portal,{" "}
+                        <a
+                          href="https://www.7nishchay-yuvaupmission.bihar.gov.in/"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          7nishchay-yuvaupmission.bihar.gov.in
+                        </a>
+                        .
+                      </span>
+                    </li>
+                    <li>
+                      <b>Verify at your DRCC</b>
+                      <span>
+                        Visit your District Registration and Counselling Centre with original
+                        documents. The DRCC confirms your college and course.
+                      </span>
+                    </li>
+                    <li>
+                      <b>Collect the sanction, complete at the bank</b>
+                      <span>
+                        Take your sanction letter to the bank to finish disbursal. Fees can be paid
+                        directly to the college.
+                      </span>
+                    </li>
+                  </ol>
+                  <p class="helpline">
+                    OFFICIAL HELPLINE: <b>1800 3456 444</b> · OR LET AN AAJNEETI COUNSELLOR GUIDE YOU
+                    FREE
+                  </p>
+                </div>
+
+                <div class="elig">
+                  <div class="et">Who can apply</div>
+                  <ul>
+                    <li><span class="ok">✓</span> Permanent resident of Bihar, with domicile or a Bihar address on Aadhaar</li>
+                    <li><span class="ok">✓</span> Passed Class 12 (Intermediate) from a recognised board, BSEB, CBSE, ICSE and others</li>
+                    <li><span class="ok">✓</span> Confirmed admission to a UGC or AICTE recognised institution and an approved course</li>
+                    <li><span class="ok">✓</span> Typically up to 25 years of age</li>
+                    <li><span class="ok">✓</span> No family income limit</li>
+                  </ul>
+                  <div class="verify">
+                    <b>Important.</b> Before you count on the card, check that your exact college and
+                    course are on the approved list at your DRCC or on the MNSSBY portal. If a college
+                    is not approved, the loan can be declined.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="wrap">
             {/* STATION: LUCKNOW */}
             <div class="signboard">
               <div class="en">Lucknow</div>
