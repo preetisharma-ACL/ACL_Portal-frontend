@@ -36,10 +36,10 @@ export default function App() {
   return (
     <Router
       root={(props) => {
-        // The /bihar landing page ships its own masthead + footer, so suppress
-        // the global site chrome there and let it render standalone.
+        // The /credit-card-scheme landing page ships its own masthead + footer,
+        // so suppress the global site chrome there and let it render standalone.
         const location = useLocation();
-        const bare = () => location.pathname === "/bihar";
+        const bare = () => location.pathname === "/credit-card-scheme";
         return (
         <MetaProvider>
           {/* Keep the build out of search indexes site-wide while NOINDEX is on.
@@ -81,7 +81,7 @@ export default function App() {
           <Show when={!bare()}>
             <Footer />
           </Show>
-          {/* Floating site overlays are hidden on the standalone /bihar landing
+          {/* Floating site overlays are hidden on the standalone landing page
               so it renders exactly as its uploaded design. */}
           <Show when={!bare()}>
             <CompareTray />
