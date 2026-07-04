@@ -33,6 +33,15 @@ function NewsIcon(props: { class?: string }) {
   );
 }
 
+function CreditCardIcon(props: { class?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class={props.class ?? "w-5 h-5"} aria-hidden="true">
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20M6 15h4" />
+    </svg>
+  );
+}
+
 const ChevronRight = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-[var(--color-muted)]" aria-hidden="true">
     <path d="m9 18 6-6-6-6" />
@@ -106,6 +115,12 @@ export default function Header() {
             class="px-3 py-2 rounded-[var(--radius-md)] font-medium hover:bg-primary-50 hover:text-primary-700"
           >
             News &amp; Guides
+          </A>
+          <A
+            href="/bihar"
+            class="px-3 py-2 rounded-[var(--radius-md)] font-semibold text-accent-700 hover:bg-accent-50 hover:text-accent-800"
+          >
+            Credit Card Scheme
           </A>
           <A
             href="/search"
@@ -186,6 +201,11 @@ export default function Header() {
                 <A href="/articles" class={drawerLink} onClick={close}>
                   <span class={drawerChip}><NewsIcon /></span>
                   <span class="flex-1">News &amp; Guides</span>
+                  <ChevronRight />
+                </A>
+                <A href="/bihar" class={drawerLink} onClick={close}>
+                  <span class={drawerChip}><CreditCardIcon /></span>
+                  <span class="flex-1">Credit Card Scheme</span>
                   <ChevronRight />
                 </A>
                 <A href="/search" class={drawerLink} onClick={close}>

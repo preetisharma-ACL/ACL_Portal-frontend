@@ -1,5 +1,5 @@
 import { Meta, MetaProvider } from "@solidjs/meta";
-import { Router } from "@solidjs/router";
+import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { ErrorBoundary, Show, Suspense, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
@@ -35,7 +35,12 @@ export default function App() {
 
   return (
     <Router
-      root={(props) => (
+      root={(props) => {
+        // The /bihar landing page ships its own masthead + footer, so suppress
+        // the global site chrome there and let it render standalone.
+        const location = useLocation();
+        const bare = () => location.pathname === "/bihar";
+        return (
         <MetaProvider>
           {/* Keep the build out of search indexes site-wide while NOINDEX is on.
               Decoupled from USE_MOCK so the site can run on real data and stay
@@ -54,7 +59,9 @@ export default function App() {
               Preview build with sample data, for review only. Not live and not indexed.
             </div>
           </Show> */}
-          <Header />
+          <Show when={!bare()}>
+            <Header />
+          </Show>
           <main id="main" class="min-h-[60vh]">
             <ErrorBoundary
               fallback={(err, reset) =>
@@ -71,14 +78,21 @@ export default function App() {
               </Suspense>
             </ErrorBoundary>
           </main>
-          <Footer />
-          <CompareTray />
-          <LoginModal />
-          <LeadPopup />
-          <FloatingCall />
+          <Show when={!bare()}>
+            <Footer />
+          </Show>
+          {/* Floating site overlays are hidden on the standalone /bihar landing
+              so it renders exactly as its uploaded design. */}
+          <Show when={!bare()}>
+            <CompareTray />
+            <LoginModal />
+            <LeadPopup />
+            <FloatingCall />
+          </Show>
           <Analytics />
         </MetaProvider>
-      )}
+        );
+      }}
     >
       <FileRoutes />
     </Router>

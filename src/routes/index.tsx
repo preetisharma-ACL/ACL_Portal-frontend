@@ -3,6 +3,7 @@ import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import HeroSearch from "~/components/HeroSearch";
 import HeroSlider from "~/components/HeroSlider";
+import CreditCardPromo from "~/components/CreditCardPromo";
 import SlotImage from "~/components/SlotImage";
 import StreamIcon from "~/components/StreamIcon";
 import StreamExplorer from "~/components/StreamExplorer";
@@ -90,6 +91,8 @@ export default function Home() {
             </p>
             <div class="mt-8">
               <HeroSearch />
+              {/* Animated promo linking to the Bihar Student Credit Card page */}
+              <CreditCardPromo />
             </div>
           </div>  
 
