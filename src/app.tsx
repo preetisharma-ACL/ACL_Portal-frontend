@@ -77,9 +77,7 @@ export default function App() {
               </Suspense>
             </ErrorBoundary>
           </main>
-          <Show when={!bare()}>
-            <Footer />
-          </Show>
+          <Footer />
           {/* Floating site overlays are hidden on the standalone landing page
               so it renders exactly as its uploaded design. */}
           <Show when={!bare()}>

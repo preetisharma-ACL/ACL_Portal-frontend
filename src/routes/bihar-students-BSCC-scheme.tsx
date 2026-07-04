@@ -136,6 +136,19 @@ html{scroll-behavior:smooth}
 .bihar .btn:hover{transform:translate(-1px,-1px)}
 .bihar .btn:active{transform:translate(1px,1px)}
 .bihar .btn.alt{background:var(--signal);color:var(--ink)}
+.bihar .callbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-display);
+  font-size:.95rem;font-weight:700;border:2px solid var(--stamp);background:var(--stamp);color:#fff;
+  border-radius:9px;padding:11px 18px;cursor:pointer;transition:transform .08s,background .15s}
+.bihar .callbtn:hover{background:var(--color-primary-600);border-color:var(--color-primary-600);transform:translateY(-1px)}
+.bihar .callbtn svg{flex-shrink:0}
+.bihar .fbody .callbtn{width:100%}
+.bihar .cta-actions .callbtn{width:100%}
+.bihar .callbtn.ghost{background:transparent;border-color:#fff;color:#fff}
+.bihar .callbtn.ghost:hover{background:rgba(255,255,255,.12);border-color:#fff}
+.bihar .callrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+.bihar .callnote{font-family:var(--font-sans);font-size:.82rem;color:var(--ink-soft)}
+.bihar .callsplit{display:flex;align-items:center;gap:10px;margin-top:12px;font-family:var(--font-sans);font-size:.72rem;color:var(--ink-soft)}
+.bihar .callsplit:before,.bihar .callsplit:after{content:"";flex:1;height:1px;background:var(--line)}
 .bihar .fineprint{font-family:var(--font-sans);font-size:.64rem;color:var(--ink-soft);text-align:center;margin-top:10px}
 .bihar .consent{display:flex;gap:9px;align-items:flex-start;font-family:var(--font-sans);font-size:.72rem;line-height:1.45;color:var(--ink-soft);margin:2px 0 12px;cursor:pointer}
 .bihar .consent input{margin-top:2px;width:15px;height:15px;flex-shrink:0;accent-color:var(--rail)}
@@ -271,17 +284,6 @@ html{scroll-behavior:smooth}
 .bihar .bottomcta .btn.ghost:hover{background:rgba(255,255,255,.08)}
 
 /* ============ Footer ============ */
-.bihar .site-foot{background:var(--color-accent-700);color:#9fb0cc;font-size:.83rem;padding:42px 0 46px}
-.bihar .site-foot .fgrid{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
-.bihar .site-foot .fbrand{color:#EDEADF;font-family:var(--font-display);font-weight:700;font-size:1rem;display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.bihar .site-foot .fbrand .sig{width:12px;height:12px;border-radius:50%;background:var(--signal);border:2px solid #EDEADF}
-.bihar .site-foot .disc{max-width:660px;line-height:1.6}
-.bihar .site-foot .disc b{color:#C9D2C6}
-.bihar .site-foot .disc + .disc{margin-top:12px}
-.bihar .site-foot .fcol a{display:block;color:#8D978B;margin-bottom:6px}
-.bihar .site-foot .fcol a:hover{color:#fff}
-.bihar .site-foot .fcol .h{color:#EDEADF;font-weight:700;margin-bottom:10px;font-size:.9rem}
-.bihar .copyright{border-top:1px solid rgba(255,255,255,.1);margin-top:28px;padding-top:18px;font-family:var(--font-sans);font-size:.7rem;color:#5C665B}
 
 /* ============ Responsive ============ */
 @media (max-width:960px){
@@ -323,6 +325,21 @@ const UTM_KEYS = [
 
 // Course options offered on this BSCC scheme page.
 const COURSE_OPTIONS = ["BBA", "MBA", "B.Com", "M.Com", "B.A", "BCA"];
+
+// Counsellor phone number for the "Call Now" buttons on this page.
+const CALL_NUMBER = "9511050627";
+
+/** Reusable "Call Now" button linking to the counsellor number. */
+function CallNow(props: { ghost?: boolean; label?: string }) {
+  return (
+    <a class={`callbtn${props.ghost ? " ghost" : ""}`} href={`tel:+91${CALL_NUMBER}`}>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+      </svg>
+      {props.label ?? "Call Now"}
+    </a>
+  );
+}
 
 export default function Bihar() {
   // Form state, wired to the project's real lead pipeline (submitLeadAction ->
@@ -508,6 +525,11 @@ export default function Bihar() {
                   <span class="tag">GRADE <b>NAAC A+</b></span>
                 </div>
 
+                <div class="callrow">
+                  <CallNow />
+                  <span class="callnote">Prefer to talk? Speak to a counsellor now, free.</span>
+                </div>
+
                 <div class="route-strip">
                   <div class="rl">Route map — distance is part of the decision</div>
                   <div class="stops">
@@ -680,6 +702,8 @@ export default function Bihar() {
                         <p class="fineprint">NO SPAM. DETAILS USED ONLY FOR ADMISSIONS AND THE CARD.</p>
                       </form>
                     </Show>
+                    <div class="callsplit">or call us directly</div>
+                    <CallNow />
                   </div>
                 </div>
               </div>
@@ -838,6 +862,9 @@ export default function Bihar() {
                     OFFICIAL HELPLINE: <b>1800 3456 444</b> · OR LET AN AAJNEETI COUNSELLOR GUIDE YOU
                     FREE
                   </p>
+                  <div class="callrow" style="margin-top:14px">
+                    <CallNow label="Call a counsellor" />
+                  </div>
                 </div>
 
                 <div class="elig">
@@ -1137,55 +1164,12 @@ export default function Bihar() {
               </div>
               <div class="cta-actions">
                 <a class="btn alt" href="#lead" onClick={jump}>Get free counselling →</a>
-                <a class="btn ghost" href="tel:18003456444">Call 1800 3456 444</a>
+                <CallNow ghost />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer class="site-foot">
-          <div class="wrap">
-            <div class="fgrid">
-              <div>
-                <div class="fbrand"><span class="sig" /> ACL Portal by AAJneeti</div>
-                <p class="disc">
-                  ACL Portal is an independent education discovery and counselling platform operated
-                  by <b>AAJneeti Connect Ltd.</b> We are not affiliated with, endorsed by, or an
-                  agent of the Government of Bihar or any college listed here.
-                </p>
-                <p class="disc">
-                  The <b>Bihar Student Credit Card</b> is an official scheme of the Government of
-                  Bihar. Loan amount, interest, eligibility and the approved list of colleges and
-                  courses are set by the scheme and may change. Always verify the current details on
-                  the MNSSBY Saat Nishchay portal or at your DRCC before you rely on them.
-                </p>
-              </div>
-              <div class="fcol">
-                <div class="h">The scheme</div>
-                <a href="https://www.7nishchay-yuvaupmission.bihar.gov.in/" target="_blank" rel="noopener">MNSSBY portal</a>
-                <a href="#lead" onClick={jump}>Free counselling</a>
-                <a href="tel:18003456444">Helpline 1800 3456 444</a>
-              </div>
-              <div class="fcol">
-                <div class="h">Cities</div>
-                <a href="#lead" onClick={jump}>Varanasi</a>
-                <a href="#lead" onClick={jump}>Lucknow</a>
-                <a href="#lead" onClick={jump}>Delhi NCR</a>
-              </div>
-              <div class="fcol">
-                <div class="h">Company</div>
-                <a href="/about">About ACL Portal</a>
-                <a href="/contact">Contact</a>
-                <a href="/privacy-policy">Privacy policy</a>
-              </div>
-            </div>
-            <div class="copyright">
-              © 2025 AAJneeti Connect Ltd. · ACL Portal · For students of Bihar · Details indicative,
-              verify on the official MNSSBY portal.
-            </div>
-          </div>
-        </footer>
       </div>
     </>
   );
