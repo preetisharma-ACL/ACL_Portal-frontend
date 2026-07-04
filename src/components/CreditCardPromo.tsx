@@ -2,7 +2,7 @@ import { A } from "@solidjs/router";
 
 /**
  * Animated hero promo for the Bihar Student Credit Card landing page
- * (/credit-card-scheme).
+ * (/bihar-students-BSCC-scheme).
  * A moving light "shine" sweeps across the banner and small stars twinkle, to
  * draw the eye just under the hero search bar. Motion is disabled for users who
  * prefer reduced motion. Scoped under `.ccp` so the keyframes never leak.
@@ -42,8 +42,8 @@ export default function CreditCardPromo() {
       {/* eslint-disable-next-line solid/no-innerhtml */}
       <style innerHTML={CSS} />
       <A
-        href="/credit-card-scheme"
-        aria-label="Bihar Student Credit Card: study an MBA at 0% interest, up to ₹4 lakh"
+        href="/bihar-students-BSCC-scheme"
+        aria-label="Bihar Students BSCC Scheme: study an MBA at 0% interest, up to ₹4 lakh"
         class="ccp group relative mt-4 flex items-center gap-3 overflow-hidden rounded-2xl border border-yellow-300/40 bg-gradient-to-r from-[#0E5A43] via-[#0A4534] to-[#0E5A43] px-4 py-3 shadow-lg ring-1 ring-black/25 transition-transform duration-150 hover:-translate-y-0.5 sm:gap-4 sm:px-5"
       >
         <span class="ccp-shine" aria-hidden="true" />
@@ -72,7 +72,7 @@ export default function CreditCardPromo() {
               New
             </span>
             <span class="text-[12px] font-semibold uppercase tracking-[0.12em] text-yellow-200">
-              Bihar Student Credit Card
+              Bihar Students BSCC Scheme
             </span>
           </span>
           <span class="mt-0.5 block truncate text-sm font-bold text-white sm:text-[15px]">

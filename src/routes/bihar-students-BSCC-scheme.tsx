@@ -14,7 +14,7 @@ import type { LeadPayload } from "~/lib/types";
  *
  * Ported 1:1 from a self-contained HTML/CSS design (railway-ticket theme). The
  * page ships its own masthead, marquee and footer, so app.tsx suppresses the
- * global site Header/Footer for the /credit-card-scheme route. All CSS is scoped under the
+ * global site Header/Footer for the /bihar-students-BSCC-scheme route. CSS is scoped under the
  * `.bihar` wrapper so the design's global-ish selectors (body, h1, .btn, .tag …)
  * never leak into the rest of the Tailwind-based site.
  */
@@ -411,7 +411,7 @@ export default function Bihar() {
       qualification: qualification(),
       // Integer when chosen; key omitted when blank (backend rejects "" and null).
       ...(intakeYear() ? { intake_year: Number(intakeYear()) } : {}),
-      source_page: "/credit-card-scheme",
+      source_page: "/bihar-students-BSCC-scheme",
       utm,
       consent: { checked: true, text_version: CONSENT_TEXT_VERSION },
       hp_field: "",
@@ -446,7 +446,7 @@ export default function Bihar() {
       <Seo
         title="Bihar Student Credit Card MBA Colleges | Top 10 NAAC A+ Colleges for Bihar Students | ACL Portal"
         description="For students of Bihar. Use your Bihar Student Credit Card (up to Rs 4 lakh, 0% interest) to study an MBA or PGDM at a NAAC A, A+ or A++ college in Varanasi, Lucknow and Delhi NCR."
-        canonical="/credit-card-scheme"
+        canonical="/bihar-students-BSCC-scheme"
       />
       <Link rel="preconnect" href="https://fonts.googleapis.com" />
       <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />

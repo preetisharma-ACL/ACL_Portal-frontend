@@ -36,10 +36,10 @@ export default function App() {
   return (
     <Router
       root={(props) => {
-        // The /credit-card-scheme landing page ships its own masthead + footer,
-        // so suppress the global site chrome there and let it render standalone.
+        // The /bihar-students-BSCC-scheme landing page ships its own masthead +
+        // footer, so suppress the global site chrome there and render standalone.
         const location = useLocation();
-        const bare = () => location.pathname === "/credit-card-scheme";
+        const bare = () => location.pathname === "/bihar-students-BSCC-scheme";
         return (
         <MetaProvider>
           {/* Keep the build out of search indexes site-wide while NOINDEX is on.

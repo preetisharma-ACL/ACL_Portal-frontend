@@ -117,10 +117,10 @@ export default function Header() {
             News &amp; Guides
           </A>
           <A
-            href="/credit-card-scheme"
+            href="/bihar-students-BSCC-scheme"
             class="px-3 py-2 rounded-[var(--radius-md)] font-semibold text-accent-700 hover:bg-accent-50 hover:text-accent-800"
           >
-            Credit Card Scheme
+            BSCC Scheme
           </A>
           <A
             href="/search"
@@ -203,9 +203,9 @@ export default function Header() {
                   <span class="flex-1">News &amp; Guides</span>
                   <ChevronRight />
                 </A>
-                <A href="/credit-card-scheme" class={drawerLink} onClick={close}>
+                <A href="/bihar-students-BSCC-scheme" class={drawerLink} onClick={close}>
                   <span class={drawerChip}><CreditCardIcon /></span>
-                  <span class="flex-1">Credit Card Scheme</span>
+                  <span class="flex-1">BSCC Scheme</span>
                   <ChevronRight />
                 </A>
                 <A href="/search" class={drawerLink} onClick={close}>
