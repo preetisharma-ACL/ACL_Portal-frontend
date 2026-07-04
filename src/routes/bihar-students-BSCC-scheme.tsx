@@ -779,7 +779,7 @@ export default function Bihar() {
                 </p>
                 <div class="datastrip">
                   <div class="ds"><div class="k">Entrance</div><div class="v">CAT/MAT/CMAT/CUET</div></div>
-                  <div class="ds"><div class="k">Total fee approx</div><div class="v">₹1,64,000</div></div>
+                  <div class="ds"><div class="k">Total fee approx</div><div class="v">₹4.24 Lacs</div></div>
                   <div class="ds"><div class="k">Courses</div><div class="v">MBA, MCA, BBA+</div></div>
                   <div class="ds"><div class="k">Standing</div><div class="v">Top 50 B-schools</div></div>
                 </div>
