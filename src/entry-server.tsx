@@ -8,6 +8,10 @@ export default createHandler(() => (
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta
+            name="google-site-verification"
+            content="hQaGawxCX_Vy6-kHO0z3ih3wqA6smBoHaOq-EuDtr7Q"
+          />
           <link rel="icon" href="/aajneeti-favicon.png" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
