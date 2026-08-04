@@ -44,6 +44,10 @@ export interface LeadFormProps {
   submitVariant?: "primary" | "accent";
   /** Tighter spacing for use inside compact dialogs. */
   dense?: boolean;
+  /** Hide the optional "Qualification" dropdown (submitted empty). */
+  hideQualification?: boolean;
+  /** Hide the optional "Intended Intake Year" dropdown (omitted from the payload). */
+  hideIntakeYear?: boolean;
   /** Called after a successful submission. */
   onSuccess?: () => void;
 }
@@ -415,8 +419,8 @@ export default function LeadForm(props: LeadFormProps) {
           </div>
         </div>
 
-        {/* Course + Qualification */}
-        <div class="grid gap-3 @sm:grid-cols-2">
+        {/* Course + Qualification (course spans the row when qualification is hidden) */}
+        <div class={`grid gap-3 ${props.hideQualification ? "" : "@sm:grid-cols-2"}`}>
           <div class="relative">
             <select
               id={fid("course")}
@@ -437,47 +441,51 @@ export default function LeadForm(props: LeadFormProps) {
             {chevronIcon()}
           </div>
 
-          <div class="relative">
-            <select
-              id={fid("qual")}
-              class={selectCtl}
-              value={qualification()}
-              onChange={(e) => setQualification(e.currentTarget.value)}
-            >
-              <option value="">Select</option>
-              {QUALIFICATIONS.map((q) => (
-                <option value={q}>{q}</option>
-              ))}
-            </select>
-            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-            </svg>
-            <label for={fid("qual")} class={floatLblStatic}>Qualification</label>
-            {chevronIcon()}
-          </div>
+          <Show when={!props.hideQualification}>
+            <div class="relative">
+              <select
+                id={fid("qual")}
+                class={selectCtl}
+                value={qualification()}
+                onChange={(e) => setQualification(e.currentTarget.value)}
+              >
+                <option value="">Select</option>
+                {QUALIFICATIONS.map((q) => (
+                  <option value={q}>{q}</option>
+                ))}
+              </select>
+              <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+              </svg>
+              <label for={fid("qual")} class={floatLblStatic}>Qualification</label>
+              {chevronIcon()}
+            </div>
+          </Show>
         </div>
 
         {/* Intake year */}
-        <div class="relative">
-          <select
-            id={fid("intake")}
-            class={selectCtl}
-            value={intakeYear()}
-            onChange={(e) => setIntakeYear(e.currentTarget.value)}
-          >
-            <option value="">Select</option>
-            {INTAKE_YEARS.map((y) => (
-              <option value={y}>{y}</option>
-            ))}
-          </select>
-          <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-          </svg>
-          <label for={fid("intake")} class={floatLblStatic}>Intended Intake Year</label>
-          {chevronIcon()}
-        </div>
+        <Show when={!props.hideIntakeYear}>
+          <div class="relative">
+            <select
+              id={fid("intake")}
+              class={selectCtl}
+              value={intakeYear()}
+              onChange={(e) => setIntakeYear(e.currentTarget.value)}
+            >
+              <option value="">Select</option>
+              {INTAKE_YEARS.map((y) => (
+                <option value={y}>{y}</option>
+              ))}
+            </select>
+            <svg class={iconCls} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+            <label for={fid("intake")} class={floatLblStatic}>Intended Intake Year</label>
+            {chevronIcon()}
+          </div>
+        </Show>
 
         {/* Honeypot: hidden from people and from browser autofill (no common
             field name or label), tempting only to naive bots. Must stay empty. */}
