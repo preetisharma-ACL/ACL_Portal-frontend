@@ -72,6 +72,24 @@ const QUALIFICATIONS = [
 
 const INTAKE_YEARS = ["2026", "2027", "2028"];
 
+/**
+ * Course families withdrawn from lead capture site-wide because the intake is
+ * full — we must not collect an enquiry for a course with no vacant seats.
+ * Matched as a whole family by slug prefix, so every variant goes with it:
+ * "bba" covers bba, bba-hons, bba-honours, bba-llb, bba-llb-hons and any
+ * bba-* added later. Courses stay visible everywhere else on the site
+ * (listings, course pages, fee tables); only this form hides them, and a
+ * closed slug arriving via courseSlug/courseInterest is dropped from the
+ * payload rather than submitted. Delete the entry when admissions reopen.
+ */
+const CLOSED_COURSE_PREFIXES = ["bba"];
+
+/** True when a course slug belongs to a withdrawn course family. */
+function isClosedCourse(slug: string | undefined): boolean {
+  const s = (slug ?? "").toLowerCase();
+  return CLOSED_COURSE_PREFIXES.some((p) => s === p || s.startsWith(`${p}-`));
+}
+
 /** Capture UTM params from the URL, persisted in sessionStorage across navigation. */
 function captureUtm(): Record<string, string> {
   if (isServer) return {};
@@ -105,8 +123,12 @@ export default function LeadForm(props: LeadFormProps) {
   // City is a free-text field (backend accepts any string). Prefill with a
   // readable name from context (defaultCity, or the citySlug humanised); editable.
   const [city, setCity] = createSignal(props.defaultCity ?? humanize(props.citySlug ?? ""));
-  // Course of interest is submitted as a backend course SLUG.
-  const [course, setCourse] = createSignal(props.courseSlug ?? "");
+  // Course of interest is submitted as a backend course SLUG. A closed course
+  // never pre-selects, so the field opens on "Select" instead of showing a
+  // course the visitor cannot be enrolled into.
+  const [course, setCourse] = createSignal(
+    props.courseSlug && !isClosedCourse(props.courseSlug) ? props.courseSlug : "",
+  );
   const [qualification, setQualification] = createSignal("");
   const [intakeYear, setIntakeYear] = createSignal("");
   const [consent, setConsent] = createSignal(false);
@@ -128,12 +150,14 @@ export default function LeadForm(props: LeadFormProps) {
   // site-wide course list. College offerings repeat a slug once per
   // specialization (e.g. six "MBA" rows), so we dedupe by slug and keep the
   // shortest label — typically the base course name without a specialisation.
+  // Courses with a closed intake are filtered from BOTH sources, so no form can
+  // offer them however its options were supplied.
   const courseList = () => {
     const opts = props.courseOptions;
-    if (!opts || !opts.length) return courses();
+    if (!opts || !opts.length) return courses().filter((c) => !isClosedCourse(c.slug));
     const bySlug = new Map<string, string>();
     for (const o of opts) {
-      if (!o.slug) continue;
+      if (!o.slug || isClosedCourse(o.slug)) continue;
       const existing = bySlug.get(o.slug);
       if (existing === undefined || o.name.length < existing.length) {
         bySlug.set(o.slug, o.name);
@@ -203,7 +227,9 @@ export default function LeadForm(props: LeadFormProps) {
     // Course still sends a backend-known slug only (or empty) to avoid a 400.
     // Accept any slug from the active option list (college-specific or global).
     const courseSlugs = new Set((courseList() ?? []).map((c) => c.slug));
-    if (props.courseSlug) courseSlugs.add(props.courseSlug);
+    if (props.courseSlug && !isClosedCourse(props.courseSlug)) {
+      courseSlugs.add(props.courseSlug);
+    }
     const safeCourse = courseSlugs.has(course()) ? course() : "";
 
     const payload: LeadPayload = {

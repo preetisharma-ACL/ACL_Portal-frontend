@@ -86,18 +86,6 @@ const FACILITY_CAT: Record<string, string> = {
 };
 const FACILITY_ORDER = Object.keys(FACILITY_CAT);
 
-/**
- * Courses withdrawn from THIS page's lead-form dropdown, per college, because
- * the intake is full — we must not capture enquiries for a course with no
- * vacant seats. Keyed by college id; values are backend course slugs. The
- * course still appears in the Courses & Fees tables (it is a real offering);
- * only the enquiry dropdown hides it. Delete the entry when admissions reopen.
- */
-const CLOSED_COURSE_SLUGS: Record<number, string[]> = {
-  // School of Management Sciences, Varanasi — BBA seats filled (Aug 2026).
-  168: ["bba"],
-};
-
 function Block(props: { id: string; title: string; children: JSX.Element }) {
   return (
     <section id={props.id} class="scroll-mt-28 border-b border-[var(--color-line)] py-8">
@@ -136,12 +124,11 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
       {(d) => {
         const h = () => d().header;
         // Lead-form course dropdown options, restricted to THIS college's
-        // offerings (name + backend slug), minus any course whose intake is
-        // full. LeadForm dedupes by slug.
-        const closedSlugs = () => CLOSED_COURSE_SLUGS[parsed().id] ?? [];
+        // offerings (name + backend slug). LeadForm dedupes by slug and drops
+        // any course whose intake is closed.
         const courseOptions = () =>
           d()
-            .courses_fees.filter((c) => c.course_slug && !closedSlugs().includes(c.course_slug))
+            .courses_fees.filter((c) => c.course_slug)
             .map((c) => ({ name: c.course, slug: c.course_slug }));
         const basePath = () => `/college/${props.slugId}`;
         const path = () =>
@@ -373,7 +360,6 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                   <LeadTrigger
                     sourcePage={path()}
                     courseInterest={d().courses_fees[0]?.course}
-                    courseOptions={courseOptions()}
                     defaultCity={h().city}
                     heading={`Get guidance for ${h().name}`}
                     label="Talk to an advisor"
@@ -530,7 +516,6 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                                 <LeadTrigger
                                   sourcePage={path()}
                                   courseInterest={c.course}
-                                  courseOptions={courseOptions()}
                                   defaultCity={h().city}
                                   heading={`Get fee details for ${c.course} at ${h().name}`}
                                   label="Get fee details"

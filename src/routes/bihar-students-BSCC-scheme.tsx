@@ -323,8 +323,10 @@ const UTM_KEYS = [
   "fbclid",
 ];
 
-// Course options offered on this BSCC scheme page.
-const COURSE_OPTIONS = ["BBA", "MBA", "B.Com", "M.Com", "B.A", "BCA"];
+// Course options offered on this BSCC scheme page. The BBA family is withheld
+// while its intake is full — see CLOSED_COURSE_PREFIXES in LeadForm, which does
+// the same for every other form on the site.
+const COURSE_OPTIONS = ["MBA", "B.Com", "M.Com", "B.A", "BCA"];
 
 // Counsellor phone number for the "Call Now" buttons on this page.
 const CALL_NUMBER = "9511050627";
