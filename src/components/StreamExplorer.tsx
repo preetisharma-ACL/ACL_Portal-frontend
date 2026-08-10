@@ -15,6 +15,14 @@ const TAGLINES: Record<string, string> = {
 };
 
 /**
+ * Streams pinned to the front of the rail, in this order, ahead of whatever
+ * order the API returns. The first one is also the tab selected on load, so
+ * pinning a stream here both moves it up and makes it the default view. Any
+ * slug not present in the API response is skipped.
+ */
+const PINNED_STREAMS = ["engineering"];
+
+/**
  * Browse by stream. Streams sit in a left rail; selecting one shows that
  * stream's courses on the right. All streams' courses are preloaded (passed in
  * via coursesByStream), so switching is instant on the client, with no server
@@ -24,7 +32,17 @@ export default function StreamExplorer(props: {
   streams: Stream[];
   coursesByStream: Record<string, CourseLite[]>;
 }) {
-  const [active, setActive] = createSignal(props.streams[0]?.slug ?? "mba");
+  // Rail order: pinned streams first, then the rest in API order. Only this
+  // component reorders — the hero/mobile stream grids keep the API order.
+  const orderedStreams = () => {
+    const pinned = PINNED_STREAMS.map((slug) =>
+      props.streams.find((s) => s.slug === slug),
+    ).filter((s): s is Stream => !!s);
+    const rest = props.streams.filter((s) => !PINNED_STREAMS.includes(s.slug));
+    return [...pinned, ...rest];
+  };
+
+  const [active, setActive] = createSignal(orderedStreams()[0]?.slug ?? PINNED_STREAMS[0]);
   const courses = () => props.coursesByStream[active()] ?? [];
   const activeStream = () => props.streams.find((s) => s.slug === active());
 
@@ -36,7 +54,7 @@ export default function StreamExplorer(props: {
         role="tablist"
         aria-label="Streams"
       >
-        <For each={props.streams}>
+        <For each={orderedStreams()}>
           {(s) => {
             const isActive = () => active() === s.slug;
             return (

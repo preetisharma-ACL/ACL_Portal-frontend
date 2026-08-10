@@ -240,16 +240,19 @@ export default function AboutPage() {
           alt="The team at AAJneeti Connect Ltd."
           class="h-72 w-full object-cover object-center md:h-[26rem]"
         />
+        {/* Symmetric scrim: the old left-heavy gradient existed to back
+            left-aligned text, and would leave centred text sitting on a washed
+            out right edge. */}
         <div
           aria-hidden="true"
-          class="absolute inset-0 bg-gradient-to-r from-accent-800/90 via-accent-700/65 to-accent-700/25"
+          class="absolute inset-0 bg-gradient-to-r from-accent-800/90 via-accent-700/70 to-accent-800/90"
         />
         <div class="absolute inset-0 flex items-center">
-          <div class="container-x">
-            <h2 class="max-w-xl text-2xl font-extrabold leading-tight text-white md:text-3xl">
+          <div class="container-x text-center">
+            <h2 class="mx-auto max-w-xl text-2xl font-extrabold leading-tight text-white md:text-3xl">
               So, who is behind {SITE_NAME}?
             </h2>
-            <p class="mt-3 max-w-xl text-sm text-white/85 md:text-base">
+            <p class="mx-auto mt-3 max-w-xl text-sm text-white/85 md:text-base">
               A team of educators, engineers and counsellors at AAJneeti Connect Ltd. building an
               honest, student-first education platform. We are not affiliated with the institutions
               we list, which keeps our guidance independent.
