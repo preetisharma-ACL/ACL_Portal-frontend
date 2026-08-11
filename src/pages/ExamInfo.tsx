@@ -49,16 +49,24 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
             />
 
             {/* Header */}
-            <section class="relative overflow-hidden bg-primary-900 text-white">
-              <div
+            <section class="relative overflow-hidden bg-black text-white">
+              {/* Photo backdrop. The darkening is a brightness filter on the
+                  image rather than a scrim element, so it can never be
+                  out-stacked by the image itself. */}
+              <img
+                src="/students-banner.webp"
+                alt=""
                 aria-hidden="true"
-                class="pointer-events-none absolute -top-24 right-0 w-96 h-96 rounded-full bg-accent-500/15 blur-3xl"
+                style={{ filter: "brightness(0.45)" }}
+                class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center"
               />
               <div class="container-x py-10 md:py-14 relative z-10">
                 <Breadcrumbs crumbs={crumbs()} light />
                 <div class="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                   <div class="max-w-2xl">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-accent-400">
+                    {/* Light tint — the dark navy accent disappears against
+                        the photo backdrop. */}
+                    <span class="text-xs font-semibold uppercase tracking-wider text-accent-100">
                       Entrance exam
                     </span>
                     <h1 class="mt-2 text-3xl md:text-4xl font-extrabold text-white leading-tight">
