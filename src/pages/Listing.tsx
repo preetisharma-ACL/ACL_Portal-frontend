@@ -8,7 +8,7 @@ import Faq from "~/components/Faq";
 import LeadForm from "~/components/LeadForm";
 import StreamIcon from "~/components/StreamIcon";
 import { Card, Section } from "~/components/ui";
-import { EmptyState, LoadingBlock } from "~/components/states";
+import { EmptyState, LoadingBlock, NotFound } from "~/components/states";
 import { citiesQuery, listingQuery, streamsQuery } from "~/lib/queries";
 import { cityCollegesAction } from "~/lib/actions";
 import { cityCollegesPath, humanize, listingPath, parseListingSlug } from "~/lib/slug";
@@ -172,12 +172,39 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
           setSp({ page: p > 1 ? String(p) : undefined });
         }
 
+        // The API answers an unknown city with 200 + city: null, so without this
+        // a mistyped or retired slug would render an empty listing under a 200
+        // and read as a soft 404. Retired slugs never reach here — middleware
+        // 301s those to the city that absorbed them; this is everything else.
+        if (!m().city_known) {
+          return (
+            <>
+              <Seo
+                title="Page not found"
+                description="The page you requested could not be found."
+                noindex
+              />
+              <NotFound
+                title="City not found"
+                message="We do not have a colleges page for that city. Browse the cities we cover from the home page."
+              />
+            </>
+          );
+        }
+
         return (
           <>
+            {/* A listing with no colleges has no content of its own: every empty
+                combination renders the same shell, which is how two spellings of
+                the same city (…-colleges-ahmedabad and …-colleges-ahmedabad-gujarat)
+                end up as byte-identical pages both claiming to be canonical.
+                Keep empty listings out of the index; they earn their way back in
+                as soon as the city has a college. */}
             <Seo
               title={`${Cc()} in ${m().city}: Fees, Admission and Ranking`}
               description={`Compare ${m().total_colleges} ${cc()} in ${m().city}${m().fee_range ? ` by fees (${m().fee_range})` : ""}, by approvals, accepted exams and student rating. Filter by course, type and budget to shortlist the right institute.`}
               canonical={path()}
+              noindex={total() === 0}
               jsonLd={
                 d().faqs.length
                   ? [breadcrumbLd(crumbs()), faqLd(d().faqs)]

@@ -784,6 +784,8 @@ export function buildListing(course: string, city: string): ListingResponse {
     meta: {
       course: courseLabel,
       city: cityLabel,
+      // Fixtures invent a city for any slug asked for, so one always resolves.
+      city_known: true,
       total_colleges: total,
       fee_range: total ? p.metaFeeRange : "Not available yet",
       popular_courses: p.popularCourses.map((name) => ({ name, slug: slugify(name) })),

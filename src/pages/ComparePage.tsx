@@ -205,10 +205,15 @@ export default function ComparePage() {
 
   return (
     <>
+      {/* The bare /compare landing page is indexable. A comparison URL carries
+          the picked colleges in ?ids=, which is user-generated and effectively
+          unbounded, so those permutations are kept out of the index and the
+          canonical still points at the bare page. */}
       <Seo
         title="Compare Colleges"
         description="Compare colleges side by side on fees, placements, ranking, approvals and more."
         canonical="/compare"
+        noindex={ids().length > 0}
       />
 
       <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">

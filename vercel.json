@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/robots.txt", "destination": "https://api.edu.aajneeti.social/robots.txt" },
+    { "source": "/sitemap.xml", "destination": "https://api.edu.aajneeti.social/sitemap.xml" },
+    { "source": "/sitemap-:section.xml", "destination": "https://api.edu.aajneeti.social/sitemap-:section.xml" }
+  ]
+}

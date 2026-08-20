@@ -11,6 +11,11 @@ export interface SeoProps {
   og?: string;
   /** One or more JSON-LD objects injected as ld+json scripts. */
   jsonLd?: object | object[];
+  /**
+   * Keep this page out of search indexes. Pages are indexable by default; set
+   * this only where indexing is genuinely unwanted (auth/account pages,
+   * post-conversion pages, on-site search and compare result URLs, 404s).
+   */
   noindex?: boolean;
 }
 
@@ -37,9 +42,7 @@ export default function Seo(props: SeoProps) {
     <>
       <Title>{fullTitle()}</Title>
       <Meta name="description" content={props.description} />
-      <Show when={props.noindex}>
-        <Meta name="robots" content="noindex,nofollow" />
-      </Show>
+      <Meta name="robots" content={props.noindex ? "noindex,nofollow" : "index,follow"} />
       <Show when={canonical()}>
         <Link rel="canonical" href={canonical()!} />
       </Show>

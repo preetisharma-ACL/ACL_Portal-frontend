@@ -144,6 +144,7 @@ function mapListing(r: any): ListingResponse {
     meta: {
       course: m.course?.name ?? String(m.course ?? ""),
       city: m.city?.name ?? String(m.city ?? ""),
+      city_known: m.city != null,
       total_colleges: m.total_colleges ?? (r.results ?? []).length,
       fee_range: formatFeeRange(m.fee_range),
       popular_courses: (m.popular_courses ?? []).map((p: any) =>

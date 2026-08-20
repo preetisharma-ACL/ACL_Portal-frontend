@@ -122,6 +122,12 @@ export interface Faq {
 export interface ListingMeta {
   course: string;
   city: string;
+  /**
+   * Whether the API resolved the requested city to a real record. It answers an
+   * unknown slug with 200 + `city: null` rather than a 404, so this is what
+   * separates "city exists, no colleges yet" from "no such city".
+   */
+  city_known: boolean;
   total_colleges: number;
   fee_range: string;
   /** Courses available in this listing/city, with backend slugs for filtering. */

@@ -1,4 +1,4 @@
-import { Meta, MetaProvider } from "@solidjs/meta";
+import { MetaProvider } from "@solidjs/meta";
 import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { ErrorBoundary, Show, Suspense, onMount } from "solid-js";
@@ -12,8 +12,9 @@ import LeadPopup from "~/components/LeadPopup";
 import FloatingCall from "~/components/FloatingCall";
 import Analytics from "~/components/Analytics";
 import { ErrorState, LoadingBlock, NotFound } from "~/components/states";
+import Seo from "~/components/Seo";
 import { citiesQuery, coursesQuery } from "~/lib/queries";
-import { USE_MOCK, NOINDEX } from "~/lib/config";
+import { USE_MOCK } from "~/lib/config";
 
 export default function App() {
   // Warm the lead-form data (course list + cities, used to map the typed city to
@@ -43,12 +44,6 @@ export default function App() {
         const bare = () => location.pathname === "/bihar-students-BSCC-scheme";
         return (
         <MetaProvider>
-          {/* Keep the build out of search indexes site-wide while NOINDEX is on.
-              Decoupled from USE_MOCK so the site can run on real data and stay
-              unindexed until public launch sets VITE_NOINDEX=false. */}
-          <Show when={NOINDEX}>
-            <Meta name="robots" content="noindex,nofollow" />
-          </Show>
           <a
             href="#main"
             class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:bg-white focus:text-primary-700 focus:px-3 focus:py-2 focus:rounded"
@@ -66,7 +61,17 @@ export default function App() {
               fallback={(err, reset) =>
                 err?.status === 404 ? (
                   // Same 404 page as the catch-all route (consistent everywhere).
-                  <NotFound />
+                  // A 404 raised here (e.g. an unknown college id) is a real URL
+                  // a crawler can reach, so it carries the same noindex as the
+                  // catch-all route rather than falling back to index,follow.
+                  <>
+                    <Seo
+                      title="Page not found"
+                      description="The page you requested could not be found."
+                      noindex
+                    />
+                    <NotFound />
+                  </>
                 ) : (
                   <ErrorState reset={reset} />
                 )
