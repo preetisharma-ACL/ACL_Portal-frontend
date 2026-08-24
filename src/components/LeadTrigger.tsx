@@ -4,7 +4,7 @@ import LeadForm, { type LeadFormProps } from "./LeadForm";
 import { buttonClass } from "./ui";
 import { track } from "~/lib/analytics";
 
-type Variant = "primary" | "accent" | "outline" | "ghost";
+type Variant = "primary" | "accent" | "brand" | "outline" | "ghost";
 
 /**
  * Button that opens the shared lead form in a modal. Used for the global

@@ -3,6 +3,7 @@ import { For, Show, createSignal, onMount } from "solid-js";
 import type { CityLite, CollegeCard } from "~/lib/types";
 import CollegeLogo from "./CollegeLogo";
 import BrochureModal, { type BrochureTarget } from "./BrochureModal";
+import LeadTrigger from "./LeadTrigger";
 
 /**
  * Real campus photos downloaded into /public/colleges (keyed by college slug).
@@ -91,30 +92,41 @@ export default function TopCollegesCarousel(props: {
   onMount(update);
 
   return (
-    <section class="bg-[var(--color-surface)] py-14 md:py-16">
+    <section class="bg-[var(--color-warm)] py-14 md:py-16">
       <div class="container-x">
-        <div class="mb-8 max-w-3xl">
-          <span class="inline-flex items-center gap-2 font-medium text-[var(--color-muted)]">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-5 w-5 text-primary-600"
-              aria-hidden="true"
-            >
-              <path d="m3 9 9-6 9 6" />
-              <path d="M4 10v9h16v-9" />
-              <path d="M9 19v-5h6v5" />
-            </svg>
-            {props.collegeCount}+ colleges listed
-          </span>
-          <h2 class="mt-2 text-2xl md:text-3xl font-extrabold leading-tight">
-            <span class="text-primary-700">Top colleges,</span> verified by us and reviewed by
-            learners
-          </h2>
+        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div class="max-w-3xl">
+            <span class="inline-flex items-center gap-2 font-medium text-[var(--color-muted)]">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-5 w-5 text-primary-600"
+                aria-hidden="true"
+              >
+                <path d="m3 9 9-6 9 6" />
+                <path d="M4 10v9h16v-9" />
+                <path d="M9 19v-5h6v5" />
+              </svg>
+              {props.collegeCount}+ colleges listed
+            </span>
+            <h2 class="mt-2 text-2xl md:text-3xl font-extrabold leading-tight">
+              <span class="text-primary-700">Top colleges,</span> verified by us and reviewed by
+              learners
+            </h2>
+          </div>
+
+          {/* Section-level guidance CTA, right-aligned beside the heading. */}
+          <LeadTrigger
+            sourcePage="/"
+            heading="Get admission guidance"
+            label="Get admission guidance"
+            variant="brand"
+            class="shrink-0 self-start sm:self-auto"
+          />
         </div>
 
         <div class="relative">

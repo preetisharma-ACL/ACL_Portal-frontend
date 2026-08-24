@@ -88,7 +88,9 @@ export default function App() {
           <Show when={!bare()}>
             <CompareTray />
             <LoginModal />
-            <LeadPopup />
+            {/* College detail pages render their own college-specific popup,
+                so the generic one stands down there. */}
+            <LeadPopup skipPaths={["/thank-you", "/college/"]} />
             <FloatingCall />
           </Show>
           <Analytics />

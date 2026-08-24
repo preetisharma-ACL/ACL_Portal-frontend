@@ -5,6 +5,7 @@ import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import LeadForm from "~/components/LeadForm";
 import LeadTrigger from "~/components/LeadTrigger";
+import LeadPopup from "~/components/LeadPopup";
 import ReviewsBlock from "~/components/ReviewsBlock";
 import QABlock from "~/components/QABlock";
 import CompareToggle from "~/components/CompareToggle";
@@ -220,6 +221,22 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               canonical={path()}
               og={h().cover}
               jsonLd={[breadcrumbLd(crumbs()), collegeLd(d(), basePath()), ...collegeCoursesLd(d(), basePath())]}
+            />
+
+            {/* Same guidance form as the "Get admission guidance" CTA, opened on
+                its own 3s in and carrying this page's college context.
+                Session-keyed per college; the site-wide popup skips /college/. */}
+            <LeadPopup
+              shownKey={`acl_popup_shown:college:${parsed().id}`}
+              delayMs={3_000}
+              sourcePage={`${path()}#popup`}
+              heading={`Get admission guidance for ${h().name}`}
+              subtitle={`Courses, fees and admission help for ${h().name}, ${h().city}`}
+              courseInterest={d().courses_fees[0]?.course}
+              courseOptions={courseOptions()}
+              defaultCity={h().city}
+              hideQualification
+              hideIntakeYear
             />
 
             {/* Hero: cover slider + profile header */}
@@ -956,12 +973,13 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 </p>
               </div>
 
-              {/* Sticky side rail: guidance form, then the compare CTA */}
-              <aside class="hidden lg:block">
+              {/* Side rail: the interest tracker scrolls with the page, while the
+                  guidance form below it sticks so the whole form stays in view. */}
+              <aside class="hidden lg:block space-y-6">
+                <Card class="p-5">
+                  <TrackStatus collegeId={parsed().id} />
+                </Card>
                 <div class="lg:sticky lg:top-32 space-y-6">
-                  <Card class="p-5">
-                    <TrackStatus collegeId={parsed().id} />
-                  </Card>
                   <Card class="p-5 bg-primary-50 border-primary-100">
                     <LeadForm
                       sourcePage={path()}

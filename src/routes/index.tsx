@@ -128,11 +128,20 @@ export default function Home() {
 
             {/* Browse by stream: streams on the left, their courses on the right */}
             <Section bg="surface">
-              <div class="flex items-end justify-between mb-6">
-                <h2 class="text-2xl font-bold">Browse by stream</h2>
-                <p class="text-sm text-[var(--color-muted)] hidden sm:block">
-                  Pick a stream to see its courses
-                </p>
+              <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 class="text-2xl font-bold">Browse by stream</h2>
+                  <p class="mt-1 text-sm text-[var(--color-muted)] hidden sm:block">
+                    Pick a stream to see its courses
+                  </p>
+                </div>
+                <LeadTrigger
+                  sourcePage="/"
+                  heading="Get admission guidance"
+                  label="Get admission guidance"
+                  variant="brand"
+                  class="shrink-0 self-start sm:self-auto"
+                />
               </div>
               <StreamExplorer streams={d().streams} coursesByStream={d().coursesByStream} />
             </Section>

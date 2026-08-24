@@ -1,7 +1,7 @@
 import { A } from "@solidjs/router";
 import { splitProps, type JSX, type ParentProps } from "solid-js";
 
-type Variant = "primary" | "accent" | "outline" | "ghost";
+type Variant = "primary" | "accent" | "brand" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";
 
 const base =
@@ -10,6 +10,8 @@ const base =
 const variants: Record<Variant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700",
   accent: "bg-accent-500 text-white hover:bg-accent-400",
+  /* Brand crimson (#9e0718) solid fill. */
+  brand: "bg-primary-700 text-white hover:bg-primary-900",
   outline: "border border-primary-600 text-primary-700 hover:bg-primary-50",
   ghost: "text-primary-700 hover:bg-primary-50",
 };
