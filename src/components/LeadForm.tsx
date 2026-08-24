@@ -77,12 +77,13 @@ const INTAKE_YEARS = ["2026", "2027", "2028"];
  * full — we must not collect an enquiry for a course with no vacant seats.
  * Matched as a whole family by slug prefix, so every variant goes with it:
  * "bba" covers bba, bba-hons, bba-honours, bba-llb, bba-llb-hons and any
- * bba-* added later. Courses stay visible everywhere else on the site
+ * bba-* added later, and "bca" likewise covers bca, bca-hons and every other
+ * bca-* variant. Courses stay visible everywhere else on the site
  * (listings, course pages, fee tables); only this form hides them, and a
  * closed slug arriving via courseSlug/courseInterest is dropped from the
  * payload rather than submitted. Delete the entry when admissions reopen.
  */
-const CLOSED_COURSE_PREFIXES = ["bba"];
+const CLOSED_COURSE_PREFIXES = ["bba", "bca"];
 
 /** True when a course slug belongs to a withdrawn course family. */
 function isClosedCourse(slug: string | undefined): boolean {
