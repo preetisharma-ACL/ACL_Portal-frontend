@@ -154,7 +154,7 @@ export default function Home() {
             />
 
             {/* Popular courses */}
-            <Section>
+            <Section bg="surface">
               <div class="mb-8 max-w-2xl">
                 <span class="text-xs font-semibold uppercase tracking-wider text-accent-600">
                   Trending now

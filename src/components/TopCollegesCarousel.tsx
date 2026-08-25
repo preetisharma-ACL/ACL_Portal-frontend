@@ -92,7 +92,7 @@ export default function TopCollegesCarousel(props: {
   onMount(update);
 
   return (
-    <section class="bg-[var(--color-warm)] py-14 md:py-16">
+    <section class="bg-[var(--color-canvas)] py-14 md:py-16">
       <div class="container-x">
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div class="max-w-3xl">
