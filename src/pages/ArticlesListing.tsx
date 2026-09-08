@@ -10,7 +10,10 @@ import { breadcrumbLd } from "~/lib/jsonld";
 import { humanize } from "~/lib/slug";
 import type { ArticleQuery } from "~/lib/types";
 
-export default function ArticlesListing(props: { category?: string; author?: string }) {
+export default function ArticlesListing(props: {
+  category?: string;
+  author?: string;
+}) {
   const [sp, setSp] = useSearchParams();
   const page = () => Math.max(1, parseInt((sp.page as string) ?? "1", 10) || 1);
   const isMain = () => !props.category && !props.author;
@@ -27,18 +30,25 @@ export default function ArticlesListing(props: { category?: string; author?: str
 
   const results = () => data()?.results ?? [];
   const hero = () =>
-    isMain() && page() === 1 ? results().find((a) => a.featured) ?? results()[0] : undefined;
+    isMain() && page() === 1
+      ? (results().find((a) => a.featured) ?? results()[0])
+      : undefined;
   const gridItems = () => {
     const h = hero();
     return h ? results().filter((a) => a.id !== h.id) : results();
   };
 
   const categoryName = () =>
-    (categories() ?? []).find((c) => c.slug === props.category)?.name ?? humanize(props.category);
+    (categories() ?? []).find((c) => c.slug === props.category)?.name ??
+    humanize(props.category);
   const authorName = () => results()[0]?.author.name ?? humanize(props.author);
 
   const heading = () =>
-    props.category ? categoryName() : props.author ? `Articles by ${authorName()}` : "News & Guides";
+    props.category
+      ? categoryName()
+      : props.author
+        ? `Articles by ${authorName()}`
+        : "News & Guides";
   const path = () =>
     props.category
       ? `/articles/category/${props.category}`
@@ -63,20 +73,32 @@ export default function ArticlesListing(props: { category?: string; author?: str
   return (
     <>
       <Seo
-        title={isMain() ? "News and Guides on Colleges, Courses and Exams" : `${heading()} | Articles`}
+        title={
+          isMain()
+            ? "News and Guides on Colleges, Courses and Exams"
+            : `${heading()} | Articles`
+        }
         description="Editorial guides, news and explainers on colleges, courses, exams and careers, from the ACL editorial team."
         canonical={path()}
         jsonLd={[breadcrumbLd(crumbs())]}
       />
 
       <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">
-        <SlotImage slot="articles_header" overlay />
-        <div class="container-x py-8 md:py-10 relative z-10">
+        <SlotImage slot="articles_header" fallback="/breadcrumb-area.png" />
+        {/* Left-weighted scrim: heavy on the text side so the banner artwork
+            does not read through the heading. */}
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 z-0 bg-gradient-to-r from-black/90 via-black/75 to-black/45"
+        />
+        <div class="container-x py-12 md:py-16 relative z-10">
           <Breadcrumbs crumbs={crumbs()} light />
-          <h1 class="mt-3 text-2xl md:text-3xl font-extrabold text-white">{heading()}</h1>
+          <h1 class="mt-3 text-2xl md:text-3xl font-extrabold text-white">
+            {heading()}
+          </h1>
           <p class="mt-2 max-w-2xl text-white/80">
-            Practical, neutral guidance on choosing colleges, preparing for exams and planning a
-            career.
+            Practical, neutral guidance on choosing colleges, preparing for
+            exams and planning a career.
           </p>
         </div>
       </section>
@@ -92,7 +114,8 @@ export default function ArticlesListing(props: { category?: string; author?: str
             class="whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
             classList={{
               "border-primary-600 bg-primary-600 text-white": isMain(),
-              "border-[var(--color-line)] hover:border-primary-300 hover:text-primary-700": !isMain(),
+              "border-[var(--color-line)] hover:border-primary-300 hover:text-primary-700":
+                !isMain(),
             }}
           >
             All
@@ -103,7 +126,8 @@ export default function ArticlesListing(props: { category?: string; author?: str
                 href={`/articles/category/${c.slug}`}
                 class="whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium transition-colors"
                 classList={{
-                  "border-primary-600 bg-primary-600 text-white": props.category === c.slug,
+                  "border-primary-600 bg-primary-600 text-white":
+                    props.category === c.slug,
                   "border-[var(--color-line)] hover:border-primary-300 hover:text-primary-700":
                     props.category !== c.slug,
                 }}
@@ -122,7 +146,10 @@ export default function ArticlesListing(props: { category?: string; author?: str
             <EmptyState title="No articles yet">
               <p>There are no articles in this section yet. Check back soon.</p>
               <div class="mt-4">
-                <A href="/articles" class="font-semibold text-primary-700 hover:underline">
+                <A
+                  href="/articles"
+                  class="font-semibold text-primary-700 hover:underline"
+                >
                   Browse all articles
                 </A>
               </div>
@@ -133,13 +160,15 @@ export default function ArticlesListing(props: { category?: string; author?: str
           <Show when={hero()}>
             {(h) => (
               <div class="mb-8">
-                <ArticleCard article={h()} featured />
+                <ArticleCard article={h()} featured index={0} />
               </div>
             )}
           </Show>
 
           <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <For each={gridItems()}>{(a) => <ArticleCard article={a} />}</For>
+            <For each={gridItems()}>
+              {(a, i) => <ArticleCard article={a} index={i() + 1} />}
+            </For>
           </div>
 
           {/* Pagination (DRF next/previous) */}
@@ -153,7 +182,9 @@ export default function ArticlesListing(props: { category?: string; author?: str
               >
                 Previous
               </button>
-              <span class="text-sm text-[var(--color-muted)]">Page {page()}</span>
+              <span class="text-sm text-[var(--color-muted)]">
+                Page {page()}
+              </span>
               <button
                 type="button"
                 disabled={!data()?.has_next}

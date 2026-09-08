@@ -27,9 +27,13 @@ export default function RelatedArticles(props: {
   return (
     <Show when={items().length}>
       <section class="mt-10">
-        <h2 class="mb-4 text-2xl font-bold">{props.heading ?? "Related articles"}</h2>
+        <h2 class="mb-4 text-2xl font-bold">
+          {props.heading ?? "Related articles"}
+        </h2>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <For each={items()}>{(a) => <ArticleCard article={a} />}</For>
+          <For each={items()}>
+            {(a, i) => <ArticleCard article={a} index={i()} />}
+          </For>
         </div>
       </section>
     </Show>

@@ -12,7 +12,9 @@ export default function ArticleDetailPage(props: { slug: string }) {
   // deferStream so SSR waits for the article before flushing the document head:
   // the title, canonical, OG/Twitter and Article JSON-LD must be in the
   // server-rendered HTML (the whole point of editorial), not applied on hydrate.
-  const data = createAsync(() => articleQuery(props.slug), { deferStream: true });
+  const data = createAsync(() => articleQuery(props.slug), {
+    deferStream: true,
+  });
 
   return (
     <Show when={data()} fallback={<LoadingBlock label="Loading article" />}>
@@ -21,7 +23,10 @@ export default function ArticleDetailPage(props: { slug: string }) {
         const crumbs = () => [
           { name: "Home", path: "/" },
           { name: "Articles", path: "/articles" },
-          { name: a().category.name, path: `/articles/category/${a().category.slug}` },
+          {
+            name: a().category.name,
+            path: `/articles/category/${a().category.slug}`,
+          },
           { name: a().title, path: path() },
         ];
 
@@ -44,12 +49,19 @@ export default function ArticleDetailPage(props: { slug: string }) {
               >
                 {a().category.name}
               </A>
-              <h1 class="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">{a().title}</h1>
-              <p class="mt-3 text-lg text-[var(--color-muted)]">{a().excerpt}</p>
+              <h1 class="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">
+                {a().title}
+              </h1>
+              <p class="mt-3 text-lg text-[var(--color-muted)]">
+                {a().excerpt}
+              </p>
 
               {/* Byline */}
               <div class="mt-5 flex items-center gap-3 border-y border-[var(--color-line)] py-4">
-                <A href={`/articles/author/${a().author.slug}`} class="shrink-0">
+                <A
+                  href={`/articles/author/${a().author.slug}`}
+                  class="shrink-0"
+                >
                   <Show
                     when={a().author.photo}
                     fallback={
@@ -66,15 +78,24 @@ export default function ArticleDetailPage(props: { slug: string }) {
                   </Show>
                 </A>
                 <div class="min-w-0 text-sm">
-                  <A href={`/articles/author/${a().author.slug}`} class="font-semibold hover:text-primary-700">
+                  <A
+                    href={`/articles/author/${a().author.slug}`}
+                    class="font-semibold hover:text-primary-700"
+                  >
                     {a().author.name}
                   </A>
                   <Show when={a().author.role}>
-                    <span class="text-[var(--color-muted)]"> · {a().author.role}</span>
+                    <span class="text-[var(--color-muted)]">
+                      {" "}
+                      · {a().author.role}
+                    </span>
                   </Show>
                   <p class="text-xs text-[var(--color-muted)]">
                     {fmtArticleDate(a().published_at)}
-                    <Show when={a().reading_time}> · {a().reading_time} min read</Show>
+                    <Show when={a().reading_time}>
+                      {" "}
+                      · {a().reading_time} min read
+                    </Show>
                   </p>
                 </div>
               </div>
@@ -99,7 +120,9 @@ export default function ArticleDetailPage(props: { slug: string }) {
             {/* Related entities (internal linking) */}
             <Show
               when={
-                a().related_colleges.length || a().related_courses.length || a().related_exams.length
+                a().related_colleges.length ||
+                a().related_courses.length ||
+                a().related_exams.length
               }
             >
               <section class="border-t border-[var(--color-line)] bg-[var(--color-canvas)]">
@@ -117,10 +140,19 @@ export default function ArticleDetailPage(props: { slug: string }) {
                             href={`/college/${c.slug}-${c.id}`}
                             class="flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] p-3 hover:border-primary-300"
                           >
-                            <CollegeLogo name={c.name} logo={c.logo} id={c.id} class="h-9 w-9 rounded-[var(--radius-md)] text-xs" />
+                            <CollegeLogo
+                              name={c.name}
+                              logo={c.logo}
+                              id={c.id}
+                              class="h-9 w-9 rounded-[var(--radius-md)] text-xs"
+                            />
                             <span class="min-w-0">
-                              <span class="block truncate text-sm font-semibold">{c.name}</span>
-                              <span class="block text-xs text-[var(--color-muted)]">{c.city}</span>
+                              <span class="block truncate text-sm font-semibold">
+                                {c.name}
+                              </span>
+                              <span class="block text-xs text-[var(--color-muted)]">
+                                {c.city}
+                              </span>
                             </span>
                           </A>
                         )}
@@ -172,7 +204,9 @@ export default function ArticleDetailPage(props: { slug: string }) {
               <section class="container-x max-w-5xl py-10">
                 <h2 class="mb-4 text-2xl font-bold">Related articles</h2>
                 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  <For each={a().related_articles}>{(r) => <ArticleCard article={r} />}</For>
+                  <For each={a().related_articles}>
+                    {(r, i) => <ArticleCard article={r} index={i()} />}
+                  </For>
                 </div>
               </section>
             </Show>
