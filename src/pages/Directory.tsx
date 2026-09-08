@@ -12,7 +12,9 @@ import type { CollegeCard } from "~/lib/types";
 
 /** No backend "university vs college" field exists, so classify by name. */
 const isUniversity = (c: CollegeCard) =>
-  /\buniversity\b|vishwavidyalaya|vidyapeeth|vidyapith|vishwa vidyalaya/i.test(c.name);
+  /\buniversity\b|vishwavidyalaya|vidyapeeth|vidyapith|vishwa vidyalaya/i.test(
+    c.name,
+  );
 
 const uniqueSorted = (xs: string[]) =>
   Array.from(new Set(xs.map((x) => x?.trim()).filter(Boolean))).sort((a, b) =>
@@ -36,6 +38,19 @@ function sortList(list: CollegeCard[], mode: string): CollegeCard[] {
 const selectClass =
   "h-10 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-ink)] outline-none transition-colors hover:border-[var(--color-muted)]/50 focus:border-primary-500 cursor-pointer";
 
+/** Mobile-only tabs that swap the two panels. */
+const tabClass = (active: boolean) =>
+  `flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-md)] border px-3 py-2.5 text-sm font-semibold transition-colors ${
+    active
+      ? "border-primary-600 bg-primary-600 text-white"
+      : "border-[var(--color-line)] bg-[var(--color-surface)] text-[var(--color-ink)]"
+  }`;
+
+const tabCountClass = (active: boolean) =>
+  `rounded-full px-2 py-0.5 text-xs font-bold ${
+    active ? "bg-white/20 text-white" : "bg-primary-100 text-primary-700"
+  }`;
+
 /** One institution row, as a standalone card that flows on the page. */
 function Row(props: { c: CollegeCard }) {
   const c = props.c;
@@ -51,13 +66,15 @@ function Row(props: { c: CollegeCard }) {
         class="h-12 w-12 shrink-0 rounded-[var(--radius-md)] text-sm"
       />
       <div class="min-w-0 flex-1">
-        <div class="flex items-center gap-2">
-          <h3 class="truncate text-[15px] font-semibold text-[var(--color-ink)] group-hover:text-primary-700">
+        {/* Wraps rather than overflowing: agency names like "Competition
+            Success Review" are far too wide to sit beside a name on mobile. */}
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <h3 class="min-w-0 grow basis-auto truncate text-[15px] font-semibold text-[var(--color-ink)] group-hover:text-primary-700">
             {c.name}
           </h3>
           <Show when={c.nirf_rank}>
             {(r) => (
-              <span class="shrink-0 rounded-full bg-accent-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-600">
+              <span class="max-w-full shrink-0 truncate rounded-full bg-accent-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-600">
                 {r().agency} #{r().rank}
               </span>
             )}
@@ -65,7 +82,14 @@ function Row(props: { c: CollegeCard }) {
         </div>
         <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--color-muted)]">
           <span class="inline-flex items-center gap-1">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-3.5 w-3.5" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              class="h-3.5 w-3.5"
+              aria-hidden="true"
+            >
               <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
               <circle cx="12" cy="10" r="2.5" />
             </svg>
@@ -77,7 +101,7 @@ function Row(props: { c: CollegeCard }) {
           </Show>
           <For each={c.key_courses.slice(0, 3)}>
             {(k) => (
-              <span class="rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-medium text-primary-700">
+              <span class="max-w-full truncate rounded-full bg-primary-50 px-2 py-0.5 text-[11px] font-medium text-primary-700">
                 {k}
               </span>
             )}
@@ -87,13 +111,27 @@ function Row(props: { c: CollegeCard }) {
       <div class="flex shrink-0 items-center gap-2">
         <Show when={c.rating > 0}>
           <span class="inline-flex items-center gap-1 rounded-md bg-[var(--color-canvas)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)]">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5 text-[var(--color-warning)]" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="h-3.5 w-3.5 text-[var(--color-warning)]"
+              aria-hidden="true"
+            >
               <path d="m12 17.3 6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
             </svg>
             {c.rating.toFixed(1)}
           </span>
         </Show>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-[var(--color-muted)] transition-transform group-hover:translate-x-0.5 group-hover:text-primary-600" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4 text-[var(--color-muted)] transition-transform group-hover:translate-x-0.5 group-hover:text-primary-600"
+          aria-hidden="true"
+        >
           <path d="m9 18 6-6-6-6" />
         </svg>
       </div>
@@ -108,29 +146,54 @@ function Panel(props: {
   count: number;
   icon: "uni" | "college";
   items: CollegeCard[];
+  /** Extra classes, used to show/hide the panel behind the mobile tabs. */
+  class?: string;
 }) {
   return (
-    <section>
-      {/* Sticky on desktop, parked just under the filter toolbar (nav 64px +
+    // min-w-0: as a grid item this defaults to min-width:auto, which sizes the
+    // track to the rows' content and pushes the whole page wider than a phone.
+    <section class={`min-w-0 ${props.class ?? ""}`}>
+      {/* Hidden on mobile, where the tab bar already names the visible list.
+          Sticky on desktop, parked just under the filter toolbar (nav 64px +
           toolbar ~89px). Opaque page-colour bg so rows scroll cleanly under. */}
-      <header class="mb-4 flex items-center justify-between gap-3 border-b-2 border-primary-600 pb-3 lg:sticky lg:top-[153px] lg:z-20 lg:bg-[var(--color-canvas)] lg:pt-3">
+      <header class="mb-4 hidden items-center justify-between gap-3 border-b-2 border-primary-600 pb-3 lg:sticky lg:top-[153px] lg:z-20 lg:flex lg:bg-[var(--color-canvas)] lg:pt-3">
         <div class="flex items-center gap-2.5">
           <span class="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] bg-primary-600 text-white">
             <Show
               when={props.icon === "uni"}
               fallback={
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-5 w-5"
+                  aria-hidden="true"
+                >
                   <path d="M22 10 12 5 2 10l10 5 10-5Z" />
                   <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
                 </svg>
               }
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-5 w-5"
+                aria-hidden="true"
+              >
                 <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4M9 11h.01M15 11h.01M9 14h.01M15 14h.01" />
               </svg>
             </Show>
           </span>
-          <h2 class="text-lg font-extrabold tracking-tight text-[var(--color-ink)]">{props.title}</h2>
+          <h2 class="text-lg font-extrabold tracking-tight text-[var(--color-ink)]">
+            {props.title}
+          </h2>
         </div>
         <span class="rounded-full bg-primary-100 px-2.5 py-1 text-xs font-bold text-primary-700">
           {props.count}
@@ -160,10 +223,14 @@ export default function Directory() {
   const [course, setCourse] = createSignal("");
   const [type, setType] = createSignal("");
   const [sort, setSort] = createSignal("rank");
+  /** Which panel the mobile tabs show; ignored from lg up, where both show. */
+  const [tab, setTab] = createSignal<"uni" | "college">("uni");
 
   const all = () => data() ?? [];
   const cityOptions = createMemo(() => uniqueSorted(all().map((c) => c.city)));
-  const courseOptions = createMemo(() => uniqueSorted(all().flatMap((c) => c.key_courses)));
+  const courseOptions = createMemo(() =>
+    uniqueSorted(all().flatMap((c) => c.key_courses)),
+  );
   const typeOptions = createMemo(() => uniqueSorted(all().map((c) => c.type)));
 
   const hasFilters = () => !!(q().trim() || city() || course() || type());
@@ -179,7 +246,10 @@ export default function Directory() {
     const list = all().filter((c) => {
       if (city() && c.city !== city()) return false;
       if (type() && c.type !== type()) return false;
-      if (course() && !c.key_courses.some((k) => k.toLowerCase() === course().toLowerCase()))
+      if (
+        course() &&
+        !c.key_courses.some((k) => k.toLowerCase() === course().toLowerCase())
+      )
         return false;
       if (term) {
         const hit =
@@ -210,7 +280,10 @@ export default function Directory() {
         jsonLd={breadcrumbLd(crumbs())}
       />
 
-      <Show when={data()} fallback={<LoadingBlock label="Loading institutions" />}>
+      <Show
+        when={data()}
+        fallback={<LoadingBlock label="Loading institutions" />}
+      >
         {/* Hero with banner image */}
         <section class="relative overflow-hidden bg-black text-white">
           <img
@@ -220,21 +293,27 @@ export default function Directory() {
             class="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Neutral (black) readability overlay, stronger on the text side */}
-          <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30" />
+          <div
+            aria-hidden="true"
+            class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30"
+          />
           <div class="container-x relative z-10 py-10 md:py-14">
             <Breadcrumbs crumbs={crumbs()} light />
             <h1 class="mt-4 max-w-3xl text-3xl font-extrabold leading-tight text-white [text-shadow:_0_2px_10px_rgb(0_0_0_/_55%)] md:text-4xl">
               Explore universities and colleges
             </h1>
             <p class="mt-3 max-w-2xl text-white/90 [text-shadow:_0_1px_6px_rgb(0_0_0_/_50%)]">
-              Every institution in one place. Search by name or course, and filter by city, course
-              and type. Guidance is free for students.
+              Every institution in one place. Search by name or course, and
+              filter by city, course and type. Guidance is free for students.
             </p>
             <div class="mt-6 flex flex-wrap gap-2.5">
               <For
                 each={[
                   { k: "Institutions", v: String(all().length) },
-                  { k: "Universities", v: String(all().filter(isUniversity).length) },
+                  {
+                    k: "Universities",
+                    v: String(all().filter(isUniversity).length),
+                  },
                   { k: "Cities", v: String(cityOptions().length) },
                 ]}
               >
@@ -255,7 +334,15 @@ export default function Directory() {
             <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
               {/* Search */}
               <div class="relative flex-1">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]"
+                  aria-hidden="true"
+                >
                   <circle cx="11" cy="11" r="7" />
                   <path d="m21 21-4.3-4.3" />
                 </svg>
@@ -269,19 +356,41 @@ export default function Directory() {
               </div>
               {/* Selects */}
               <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex">
-                <select class={selectClass} value={city()} onChange={(e) => setCity(e.currentTarget.value)}>
+                <select
+                  class={selectClass}
+                  value={city()}
+                  onChange={(e) => setCity(e.currentTarget.value)}
+                >
                   <option value="">All cities</option>
-                  <For each={cityOptions()}>{(o) => <option value={o}>{o}</option>}</For>
+                  <For each={cityOptions()}>
+                    {(o) => <option value={o}>{o}</option>}
+                  </For>
                 </select>
-                <select class={selectClass} value={course()} onChange={(e) => setCourse(e.currentTarget.value)}>
+                <select
+                  class={selectClass}
+                  value={course()}
+                  onChange={(e) => setCourse(e.currentTarget.value)}
+                >
                   <option value="">All courses</option>
-                  <For each={courseOptions()}>{(o) => <option value={o}>{o}</option>}</For>
+                  <For each={courseOptions()}>
+                    {(o) => <option value={o}>{o}</option>}
+                  </For>
                 </select>
-                <select class={selectClass} value={type()} onChange={(e) => setType(e.currentTarget.value)}>
+                <select
+                  class={selectClass}
+                  value={type()}
+                  onChange={(e) => setType(e.currentTarget.value)}
+                >
                   <option value="">All types</option>
-                  <For each={typeOptions()}>{(o) => <option value={o}>{o}</option>}</For>
+                  <For each={typeOptions()}>
+                    {(o) => <option value={o}>{o}</option>}
+                  </For>
                 </select>
-                <select class={selectClass} value={sort()} onChange={(e) => setSort(e.currentTarget.value)}>
+                <select
+                  class={selectClass}
+                  value={sort()}
+                  onChange={(e) => setSort(e.currentTarget.value)}
+                >
                   <option value="rank">Sort: NIRF rank</option>
                   <option value="rating">Sort: Rating</option>
                   <option value="name">Sort: Name (A-Z)</option>
@@ -298,7 +407,10 @@ export default function Directory() {
               </Show>
             </div>
             <p class="mt-2 text-xs text-[var(--color-muted)]">
-              Showing <span class="font-semibold text-[var(--color-ink)]">{filtered().length}</span>{" "}
+              Showing{" "}
+              <span class="font-semibold text-[var(--color-ink)]">
+                {filtered().length}
+              </span>{" "}
               of {all().length} institutions
             </p>
           </div>
@@ -306,22 +418,69 @@ export default function Directory() {
 
         {/* Two panels */}
         <div class="container-x py-8">
+          {/* On mobile the panels stack, so the colleges list would sit below
+              every university. Tabs switch between them; lg shows both. */}
+          <div class="mb-4 flex gap-2 lg:hidden">
+            <button
+              type="button"
+              aria-pressed={tab() === "uni"}
+              onClick={() => setTab("uni")}
+              class={tabClass(tab() === "uni")}
+            >
+              Universities
+              <span class={tabCountClass(tab() === "uni")}>
+                {universities().length}
+              </span>
+            </button>
+            <button
+              type="button"
+              aria-pressed={tab() === "college"}
+              onClick={() => setTab("college")}
+              class={tabClass(tab() === "college")}
+            >
+              Colleges
+              <span class={tabCountClass(tab() === "college")}>
+                {colleges().length}
+              </span>
+            </button>
+          </div>
+
           <div class="grid items-start gap-6 lg:grid-cols-2">
-            <Panel title="Universities" icon="uni" count={universities().length} items={universities()} />
-            <Panel title="Colleges and institutes" icon="college" count={colleges().length} items={colleges()} />
+            <Panel
+              title="Universities"
+              icon="uni"
+              count={universities().length}
+              items={universities()}
+              class={tab() === "uni" ? "lg:block" : "hidden lg:block"}
+            />
+            <Panel
+              title="Colleges and institutes"
+              icon="college"
+              count={colleges().length}
+              items={colleges()}
+              class={tab() === "college" ? "lg:block" : "hidden lg:block"}
+            />
           </div>
 
           {/* CTA */}
           <div class="mt-10 overflow-hidden rounded-[var(--radius-lg)] bg-gradient-to-br from-primary-900 to-primary-700 p-6 text-white sm:p-8">
             <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 class="text-xl font-extrabold">Not sure which institute fits you?</h2>
+                {/* text-white explicitly: the global h1-h4 colour rule beats
+                    the white inherited from this crimson panel. */}
+                <h2 class="text-xl font-extrabold text-white">
+                  Not sure which institute fits you?
+                </h2>
                 <p class="mt-1 max-w-xl text-white/80">
-                  Get free, independent guidance on courses, fees and admissions. We do not charge
-                  students.
+                  Get free, independent guidance on courses, fees and
+                  admissions. We do not charge students.
                 </p>
               </div>
-              <LeadTrigger sourcePage="/university" label="Get free guidance" size="lg" />
+              <LeadTrigger
+                sourcePage="/university"
+                label="Get free guidance"
+                size="lg"
+              />
             </div>
           </div>
         </div>
