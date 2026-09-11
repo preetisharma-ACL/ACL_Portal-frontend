@@ -11,7 +11,8 @@
     "smoke": "node scripts/smoke.mjs",
     "images": "node scripts/optimize-images.mjs",
     "images:check": "node scripts/optimize-images.mjs --check",
-    "check:images": "node scripts/check-image-budget.mjs"
+    "check:images": "node scripts/check-image-budget.mjs",
+    "fonts": "node scripts/fetch-fonts.mjs"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
