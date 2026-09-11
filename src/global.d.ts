@@ -15,3 +15,11 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/**
+ * True when the build targets Vercel, where /_vercel/image is available to
+ * resize remote Payload media at the edge. Injected by app.config.ts so the
+ * check compiles away to a constant rather than branching at runtime; on the
+ * node-server preset it is false and remote URLs pass through untouched.
+ */
+declare const __IMAGE_OPTIMIZER__: boolean;

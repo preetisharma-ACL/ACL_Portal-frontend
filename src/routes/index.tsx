@@ -2,7 +2,7 @@ import { A, createAsync, type RouteDefinition } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import HeroSearch from "~/components/HeroSearch";
-import HeroSlider from "~/components/HeroSlider";
+import HeroSlider, { HeroPreload } from "~/components/HeroSlider";
 import CreditCardPromo from "~/components/CreditCardPromo";
 import SlotImage from "~/components/SlotImage";
 import StreamIcon from "~/components/StreamIcon";
@@ -64,6 +64,10 @@ export default function Home() {
         canonical="/"
         jsonLd={[organizationLd(), websiteLd()]}
       />
+
+      {/* Starts the hero's first frame from the initial document, ahead of
+          anything the parser reaches later. */}
+      <HeroPreload />
 
       {/* Hero. No overflow-hidden on the section (it would clip the search
           suggestions dropdown); the slider is clipped by its own wrapper. z-20

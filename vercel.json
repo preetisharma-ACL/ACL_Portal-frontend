@@ -3,5 +3,29 @@
     { "source": "/robots.txt", "destination": "https://api.edu.aajneeti.social/robots.txt" },
     { "source": "/sitemap.xml", "destination": "https://api.edu.aajneeti.social/sitemap.xml" },
     { "source": "/sitemap-:section.xml", "destination": "https://api.edu.aajneeti.social/sitemap-:section.xml" }
+  ],
+  "images": {
+    "sizes": [96, 128, 256, 320, 384, 480, 640, 750, 828, 960, 1080, 1200, 1440, 1920, 2048],
+    "formats": ["image/avif", "image/webp"],
+    "minimumCacheTTL": 2678400,
+    "remotePatterns": [
+      { "protocol": "https", "hostname": "api.edu.aajneeti.social", "pathname": "/media/**" }
+    ]
+  },
+  "headers": [
+    {
+      "source": "/opt/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*\\.(?:png|jpe?g|webp|avif|gif|svg|ico|woff2?|txt|xml|json|mp4|webm))",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
+    }
   ]
 }
