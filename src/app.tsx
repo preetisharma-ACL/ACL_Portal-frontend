@@ -77,7 +77,7 @@ export default function App() {
                 )
               }
             >
-              <Suspense fallback={<LoadingBlock label="Loading page" />}>
+              <Suspense fallback={<LoadingBlock label="Loading page" reserve />}>
                 {props.children}
               </Suspense>
             </ErrorBoundary>

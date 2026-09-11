@@ -29,10 +29,21 @@ export function NotFound(props: { title?: string; message?: string }) {
  * first-visit page loader), instead of a grey skeleton. The carriage/keyboard
  * use the brand primary gradient (styles live in app.css under `.typewriter`).
  */
-export function LoadingBlock(props: { label?: string }) {
+export function LoadingBlock(props: { label?: string; reserve?: boolean }) {
   return (
     <div
-      class="container-x flex min-h-[55vh] flex-col items-center justify-center gap-10 py-16 text-center"
+      class="container-x flex flex-col items-center justify-center gap-10 py-16 text-center"
+      classList={{
+        // Inline placeholders keep their original height.
+        "min-h-[55vh]": !props.reserve,
+        // `reserve` is for the route-level Suspense fallback, which is what the
+        // footer sits under during streaming SSR. At 55vh the footer painted
+        // around 570px down a 915px viewport and was then pushed ~5,000px when
+        // the route content arrived — one shift, and the whole of the measured
+        // 0.243 CLS. A full viewport keeps the footer off-screen until the real
+        // content has replaced the placeholder, so nothing visible moves.
+        "min-h-screen": props.reserve,
+      }}
       role="status"
       aria-live="polite"
     >
