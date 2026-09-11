@@ -86,6 +86,27 @@ export const OPTIMIZED: Record<string, OptimizedImage> = {
       2560
     ]
   },
+  "@card-fallback": {
+    "width": 8256,
+    "height": 5504,
+    "sources": [
+      {
+        "type": "image/avif",
+        "srcset": "/opt/card-fallback-320.84e319ce.avif 320w, /opt/card-fallback-640.0723c696.avif 640w, /opt/card-fallback-960.601d730b.avif 960w"
+      },
+      {
+        "type": "image/webp",
+        "srcset": "/opt/card-fallback-320.c98c64b1.webp 320w, /opt/card-fallback-640.2eb738b9.webp 640w, /opt/card-fallback-960.2871611a.webp 960w"
+      }
+    ],
+    "src": "/opt/card-fallback-960.a1309a7c.jpg",
+    "srcset": "/opt/card-fallback-320.71e43040.jpg 320w, /opt/card-fallback-640.4370c8c1.jpg 640w, /opt/card-fallback-960.a1309a7c.jpg 960w",
+    "widths": [
+      320,
+      640,
+      960
+    ]
+  },
   "/varanasi.jpg": {
     "width": 1600,
     "height": 800,
@@ -345,19 +366,20 @@ export const OPTIMIZED: Record<string, OptimizedImage> = {
     "sources": [
       {
         "type": "image/avif",
-        "srcset": "/opt/customer-support-64.3d6f8580.avif 64w, /opt/customer-support-128.8a66a609.avif 128w, /opt/customer-support-192.4067502e.avif 192w"
+        "srcset": "/opt/customer-support-128.8a66a609.avif 128w, /opt/customer-support-256.ae2189d6.avif 256w, /opt/customer-support-384.2bbde80e.avif 384w, /opt/customer-support-612.376a3493.avif 612w"
       },
       {
         "type": "image/webp",
-        "srcset": "/opt/customer-support-64.c3f195ab.webp 64w, /opt/customer-support-128.63f61f7a.webp 128w, /opt/customer-support-192.698c13cf.webp 192w"
+        "srcset": "/opt/customer-support-128.63f61f7a.webp 128w, /opt/customer-support-256.59db18d7.webp 256w, /opt/customer-support-384.c8f3a216.webp 384w, /opt/customer-support-612.403053cc.webp 612w"
       }
     ],
-    "src": "/opt/customer-support-192.13391284.png",
-    "srcset": "/opt/customer-support-64.1408a4bc.png 64w, /opt/customer-support-128.b1ce54cd.png 128w, /opt/customer-support-192.13391284.png 192w",
+    "src": "/opt/customer-support-612.61ce8255.png",
+    "srcset": "/opt/customer-support-128.b1ce54cd.png 128w, /opt/customer-support-256.62cc318c.png 256w, /opt/customer-support-384.7f5e60b9.png 384w, /opt/customer-support-612.61ce8255.png 612w",
     "widths": [
-      64,
       128,
-      192
+      256,
+      384,
+      612
     ]
   },
   "/logo.png": {

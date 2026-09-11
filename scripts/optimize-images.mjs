@@ -50,6 +50,17 @@ const ENTRIES = [
   { src: "bg-image2.jpg", widths: [640, 960, 1280, 1920, 2560], formats: ["avif", "webp", "jpeg"] },
   { src: "bg-image3.jpg", widths: [640, 960, 1280, 1920, 2560], formats: ["avif", "webp", "jpeg"] },
 
+  // Card cover of last resort, for a city/college/article with no photo of its
+  // own. Same crop as the hero (bg-cover bg-center over the source's 3:2 frame),
+  // so it looks exactly as it always has — but sized for a 288px card instead of
+  // handing every card the 8256px original.
+  {
+    src: "bg-image.jpg",
+    as: "card-fallback",
+    widths: [320, 640, 960],
+    formats: ["avif", "webp", "jpeg"],
+  },
+
   // --- City cards in CityCarousel. Displayed 288x160 CSS px. ---
   { src: "varanasi.jpg", widths: [320, 640, 960], formats: ["avif", "webp", "jpeg"] },
   { src: "lucknow.jpg", widths: [320, 640, 960], formats: ["avif", "webp", "jpeg"] },
@@ -67,7 +78,7 @@ const ENTRIES = [
   // --- Transparent artwork. PNG fallback so the alpha channel survives. ---
   { src: "vector.png", widths: [505, 1010], formats: ["avif", "webp", "png"] },
   { src: "sms.webp", widths: [240, 480, 958], formats: ["avif", "webp", "png"] },
-  { src: "customer-support.png", widths: [64, 128, 192], formats: ["avif", "webp", "png"] },
+  { src: "customer-support.png", widths: [128, 256, 384, 612], formats: ["avif", "webp", "png"] },
 
   // --- Logos. Small, but the header logo is above the fold on every page. ---
   { src: "logo.png", widths: [200, 400, 865], formats: ["avif", "webp", "png"] },
@@ -110,7 +121,11 @@ async function buildEntry(entry, { write }) {
   const srcPath = path.join(PUBLIC, entry.src);
   const image = sharp(srcPath, { failOn: "none" });
   const meta = await image.metadata();
-  const name = entry.src.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase();
+  // `as` renames the output and keys the manifest under "@name" instead of the
+  // source path, so one source can produce more than one logical asset.
+  const name = (entry.as ?? entry.src.replace(/\.[^.]+$/, ""))
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .toLowerCase();
 
   // Never upscale: drop requested widths above the source, but always keep at
   // least one (the source's own width) so small sources still get re-encoded.
@@ -157,7 +172,7 @@ async function buildEntry(entry, { write }) {
   }
 
   return {
-    key: `/${entry.src}`,
+    key: entry.as ? `@${entry.as}` : `/${entry.src}`,
     value: {
       width: meta.width,
       height: meta.height,
