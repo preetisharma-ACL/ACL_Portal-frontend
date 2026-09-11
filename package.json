@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "vinxi build",
+    "build": "node scripts/check-image-budget.mjs && vinxi build",
     "start": "vinxi start",
     "typecheck": "tsc --noEmit",
     "smoke": "node scripts/smoke.mjs",
