@@ -1,5 +1,5 @@
 import { A } from "@solidjs/router";
-import { For, createSignal, onMount } from "solid-js";
+import { For, createSignal, onCleanup, onMount } from "solid-js";
 import Img from "./Img";
 import type { CityLite } from "~/lib/types";
 import { cityCollegesPath } from "~/lib/slug";
@@ -23,13 +23,24 @@ const cityImage = (slug: string) => CITY_IMAGES[slug] ?? FALLBACK_COVER;
 const CARD_SIZES = "288px";
 
 /**
+ * Cards rendered up front. At 288px plus a 20px gap that is ~2,460px of track —
+ * over 1.5 viewports on the widest layout — so the rail looks and scrolls
+ * exactly the same from the first frame. The remaining cities are appended on
+ * idle (or the moment the rail is touched), which is a rendering-schedule
+ * change only: every city is still in the rail, in the same order.
+ */
+const INITIAL_CARDS = 8;
+
+/**
  * "Browse by city" as a manually-controlled carousel: a horizontal snap track
  * with left/right arrows (no auto-scroll). Each city is an image-led card.
  */
+
 export default function CityCarousel(props: { cities: CityLite[] }) {
   let track: HTMLDivElement | undefined;
   const [atStart, setAtStart] = createSignal(true);
   const [atEnd, setAtEnd] = createSignal(false);
+  const [full, setFull] = createSignal(false);
 
   const update = () => {
     if (!track) return;
@@ -45,12 +56,38 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
     return [list[idx], ...list.slice(0, idx), ...list.slice(idx + 1)];
   };
 
+  const rendered = () => (full() ? orderedCities() : orderedCities().slice(0, INITIAL_CARDS));
+
+  // Appending is idempotent and cheap, so every path that could reach the tail
+  // of the rail calls it: idle, a scroll/swipe, or an arrow.
+  const expand = () => setFull(true);
+
   const scroll = (dir: number) => {
+    expand();
     if (!track) return;
     track.scrollBy({ left: dir * track.clientWidth * 0.85, behavior: "smooth" });
   };
 
-  onMount(update);
+  const onScroll = () => {
+    expand();
+    update();
+  };
+
+  onMount(() => {
+    update();
+    const idle = (window as Window & {
+      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+    }).requestIdleCallback;
+    const handle = idle ? idle(expand, { timeout: 2000 }) : setTimeout(expand, 1200);
+    onCleanup(() => {
+      if (!idle) clearTimeout(handle as ReturnType<typeof setTimeout>);
+    });
+  });
+
+  // The arrows are driven by scroll position, which is only meaningful once the
+  // full list is in the DOM. Until then the track is deliberately short, so
+  // report "not at the end" rather than disabling the next arrow.
+  const nextDisabled = () => full() && atEnd();
 
   const ArrowBtn = (p: { dir: number; label: string; disabled: boolean }) => (
     <button
@@ -84,17 +121,17 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
           </div>
           <div class="hidden shrink-0 items-center gap-2 sm:flex">
             <ArrowBtn dir={-1} label="Previous cities" disabled={atStart()} />
-            <ArrowBtn dir={1} label="Next cities" disabled={atEnd()} />
+            <ArrowBtn dir={1} label="Next cities" disabled={nextDisabled()} />
           </div>
         </div>
 
         {/* Snap track. Hidden scrollbar; arrows (and touch swipe) drive it. */}
         <div
           ref={track}
-          onScroll={update}
+          onScroll={onScroll}
           class="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          <For each={orderedCities()}>
+          <For each={rendered()}>
             {(city) => (
               <A
                 href={cityCollegesPath(city.slug)}
@@ -159,7 +196,7 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
         {/* Mobile arrows below the track (no header space on small screens). */}
         <div class="mt-5 flex items-center justify-center gap-3 sm:hidden">
           <ArrowBtn dir={-1} label="Previous cities" disabled={atStart()} />
-          <ArrowBtn dir={1} label="Next cities" disabled={atEnd()} />
+          <ArrowBtn dir={1} label="Next cities" disabled={nextDisabled()} />
         </div>
       </div>
     </section>
