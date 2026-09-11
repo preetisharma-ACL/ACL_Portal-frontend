@@ -1,5 +1,6 @@
 import { A } from "@solidjs/router";
 import { For, createSignal, onMount } from "solid-js";
+import Img from "./Img";
 import type { CityLite } from "~/lib/types";
 import { cityCollegesPath } from "~/lib/slug";
 
@@ -11,9 +12,15 @@ const CITY_IMAGES: Record<string, string> = {
   noida: "/noida.jpg",
   bengaluru: "/banglore.jpg",
 };
-/** Fallback cover for any city without a dedicated photo. */
-const FALLBACK_COVER = "/bg-image.jpg";
+/**
+ * Fallback cover for any city without a dedicated photo. Points at the
+ * card-sized derivative, not the 8256x5504 hero original this used to reuse.
+ */
+const FALLBACK_COVER = "@card-fallback";
 const cityImage = (slug: string) => CITY_IMAGES[slug] ?? FALLBACK_COVER;
+
+/** Cards are a fixed 18rem wide at every breakpoint. */
+const CARD_SIZES = "288px";
 
 /**
  * "Browse by city" as a manually-controlled carousel: a horizontal snap track
@@ -94,11 +101,12 @@ export default function CityCarousel(props: { cities: CityLite[] }) {
                 class="flex w-[18rem] shrink-0 snap-start flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)]"
               >
                 <div class="relative h-40">
-                  <img
+                  <Img
                     src={cityImage(city.slug)}
                     alt={`${city.name} city`}
-                    loading="lazy"
-                    decoding="async"
+                    sizes={CARD_SIZES}
+                    width={288}
+                    height={160}
                     class="absolute inset-0 h-full w-full object-cover"
                   />
                   <div

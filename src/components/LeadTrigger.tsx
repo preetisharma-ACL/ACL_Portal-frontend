@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import Modal from "./Modal";
 import LeadForm, { type LeadFormProps } from "./LeadForm";
+import Img from "./Img";
 import { buttonClass } from "./ui";
 import { track } from "~/lib/analytics";
 
@@ -46,7 +47,14 @@ export default function LeadTrigger(
         {/* Rich header (logo + title + subtitle + tagline). The form renders with
             hideHeading so the heading is not duplicated. */}
         <div class="bg-gradient-to-b from-primary-50 via-primary-50/40 to-[var(--color-surface)] px-5 pt-5 pb-3 text-center sm:px-6">
-          <img src="/acl-logo.png" alt="ACL Education" class="mx-auto h-9 w-auto" />
+          <Img
+            src="/acl-logo.png"
+            alt="ACL Education"
+            sizes="79px"
+            width={79}
+            height={36}
+            class="mx-auto h-9 w-auto"
+          />
           <h2 class="mt-3 text-xl font-extrabold leading-tight tracking-tight text-[var(--color-ink)]">
             {props.heading ?? "Get free admission guidance"}
           </h2>

@@ -1,6 +1,7 @@
 import { createAsync } from "@solidjs/router";
 import { Show } from "solid-js";
 import { siteImagesQuery } from "~/lib/queries";
+import Img from "./Img";
 
 /**
  * Renders a backend-managed site-image slot as an absolute cover image, with a
@@ -19,6 +20,14 @@ export default function SlotImage(props: {
   alt?: string;
   overlay?: boolean;
   class?: string;
+  /**
+   * The slot sits in the first viewport. Slot images are full-bleed section
+   * banners, so where one is above the fold it is usually the LCP element —
+   * `loading="lazy"` on it would delay the very thing being measured.
+   */
+  priority?: boolean;
+  /** CSS `sizes`. Banners are full-bleed, hence the default. */
+  sizes?: string;
 }) {
   const images = createAsync(() => siteImagesQuery());
   const match = () => {
@@ -31,11 +40,12 @@ export default function SlotImage(props: {
 
   return (
     <Show when={url()}>
-      <img
+      <Img
         src={url()!}
         alt={match()?.alt ?? props.alt ?? ""}
-        loading="lazy"
-        decoding="async"
+        sizes={props.sizes ?? "100vw"}
+        maxWidth={1920}
+        priority={props.priority}
         class={props.class ?? "absolute inset-0 z-0 h-full w-full object-cover"}
       />
       <Show when={props.overlay}>

@@ -2,6 +2,7 @@ import { createAsync } from "@solidjs/router";
 import { A } from "@solidjs/router";
 import { For, Show, createMemo, createSignal } from "solid-js";
 import Seo from "~/components/Seo";
+import Img from "~/components/Img";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeLogo from "~/components/CollegeLogo";
 import LeadTrigger from "~/components/LeadTrigger";
@@ -286,10 +287,11 @@ export default function Directory() {
       >
         {/* Hero with banner image */}
         <section class="relative overflow-hidden bg-black text-white">
-          <img
+          <Img
             src="/bg-image.jpg"
             alt=""
-            aria-hidden="true"
+            sizes="100vw"
+            priority
             class="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Neutral (black) readability overlay, stronger on the text side */}

@@ -1,6 +1,7 @@
 import { A, createAsync, useParams, useSearchParams } from "@solidjs/router";
 import { For, Show, createSignal, onMount } from "solid-js";
 import Seo from "~/components/Seo";
+import Img from "~/components/Img";
 import CollegeListRow from "~/components/CollegeListRow";
 import CollegeLogo from "~/components/CollegeLogo";
 import FilterRail from "~/components/FilterRail";
@@ -217,16 +218,19 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                 scrim and centered content overlaid. */}
             <section class="relative overflow-hidden sm:bg-[#fbe9ee]">
               {/* Mobile: full image, not cropped */}
-              <img
+              <Img
                 src={bannerSrc()}
                 alt=""
+                sizes="100vw"
+                priority
                 class="block w-full sm:hidden"
               />
               {/* Desktop: image as cover background */}
-              <img
+              <Img
                 src={bannerSrc()}
                 alt=""
-                aria-hidden="true"
+                sizes="100vw"
+                priority
                 class="absolute inset-0 hidden h-full w-full object-cover object-center sm:block"
               />
               {/* Soft scrim for the default banner only; city artwork shows clean. */}
@@ -640,11 +644,10 @@ export default function Listing(props: { city?: string; cityMode?: boolean }) {
                   {/* Glassmorphism recommendations card with illustration */}
                   <div class="sticky top-20 overflow-hidden rounded-[var(--radius-xl)] border border-white/60 bg-white/55 p-6 text-center shadow-2xl shadow-primary-900/10 ring-1 ring-black/5 backdrop-blur-2xl">
                     <div aria-hidden="true" class="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary-200/40 blur-2xl" />
-                    <img
+                    <Img
                       src="/vector.png"
                       alt=""
-                      loading="lazy"
-                      decoding="async"
+                      sizes="198px"
                       onError={(e) => (e.currentTarget.style.display = "none")}
                       class="relative mx-auto h-36 w-auto object-contain"
                     />

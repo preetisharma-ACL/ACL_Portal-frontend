@@ -3,6 +3,7 @@ import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import SlotImage from "~/components/SlotImage";
+import Img from "~/components/Img";
 import { Section } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { streamQuery } from "~/lib/queries";
@@ -38,7 +39,7 @@ export default function StreamLanding(props: { slug: string }) {
             <section class="relative overflow-hidden bg-neutral-900 text-white">
               {/* Managed stream banner slot (exact backend key), falling back to
                   the bundled image. */}
-              <SlotImage slot={`stream_${props.slug}_banner`} fallback="/bg-image2.jpg" />
+              <SlotImage slot={`stream_${props.slug}_banner`} fallback="/bg-image2.jpg" priority />
               <div
                 aria-hidden="true"
                 class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/40"
@@ -70,11 +71,10 @@ export default function StreamLanding(props: { slug: string }) {
                   {(c, i) => (
                     <article class="flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm">
                       <A href={`/${c.slug}-course`} aria-label={c.name} class="relative block h-32">
-                        <img
+                        <Img
                           src={COVERS[i() % COVERS.length]}
                           alt=""
-                          loading="lazy"
-                          decoding="async"
+                          sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
                           class="absolute inset-0 h-full w-full object-cover"
                         />
                         <div

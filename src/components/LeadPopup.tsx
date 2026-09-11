@@ -3,6 +3,7 @@ import { isServer } from "solid-js/web";
 import { useLocation } from "@solidjs/router";
 import Modal from "./Modal";
 import LeadForm from "./LeadForm";
+import Img from "./Img";
 import { track } from "~/lib/analytics";
 
 /**
@@ -131,7 +132,14 @@ export default function LeadPopup(props: LeadPopupProps = {}) {
   return (
     <Modal open={open()} onClose={handleClose} title={heading()} hideHeader>
       <div class="bg-gradient-to-b from-primary-50 via-primary-50/40 to-[var(--color-surface)] px-5 pt-5 pb-3 text-center sm:px-6">
-        <img src="/acl-logo.png" alt="ACL Education" class="mx-auto h-9 w-auto" />
+        <Img
+          src="/acl-logo.png"
+          alt="ACL Education"
+          sizes="79px"
+          width={79}
+          height={36}
+          class="mx-auto h-9 w-auto"
+        />
         <h2 class="mt-3 text-xl font-extrabold leading-tight tracking-tight text-[var(--color-ink)]">
           {heading()}
         </h2>

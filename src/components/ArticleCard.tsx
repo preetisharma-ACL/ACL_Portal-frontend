@@ -1,6 +1,7 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
 import { formatDate } from "~/lib/format";
+import Img from "./Img";
 import type { ArticleCard as ArticleCardT } from "~/lib/types";
 
 /** Deterministic (SSR-safe) date format; re-exported for the article pages. */
@@ -8,7 +9,7 @@ export const fmtArticleDate = formatDate;
 
 /** Cover photos shipped in /public, used when an article has no featured image. */
 const COVERS = [
-  "/bg-image.jpg",
+  "@card-fallback",
   "/delhi.jpg",
   "/bg-image3.jpg",
   "/varanasi.jpg",
@@ -16,6 +17,9 @@ const COVERS = [
   "/lucknow.jpg",
   "/banglore.jpg",
 ];
+
+/** Card art is a full-width column on mobile, half of it from sm up. */
+const CARD_SIZES = "(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw";
 
 /**
  * Pick a cover. Lists pass their position so neighbouring cards never repeat a
@@ -55,11 +59,10 @@ export default function ArticleCard(props: {
           when={a.featured_image}
           fallback={
             <div class="relative grid h-full min-h-[10rem] w-full place-items-center p-4 text-center">
-              <img
+              <Img
                 src={coverFor(a.slug, props.index)}
                 alt=""
-                loading="lazy"
-                decoding="async"
+                sizes={CARD_SIZES}
                 class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div
@@ -72,11 +75,11 @@ export default function ArticleCard(props: {
             </div>
           }
         >
-          <img
+          <Img
             src={a.featured_image!}
             alt={a.title}
-            loading="lazy"
-            decoding="async"
+            sizes={CARD_SIZES}
+            maxWidth={828}
             class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </Show>

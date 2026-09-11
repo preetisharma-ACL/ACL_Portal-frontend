@@ -4,6 +4,7 @@ import type { CollegeCard } from "~/lib/types";
 import { track } from "~/lib/analytics";
 import { Badge } from "./ui";
 import CollegeLogo from "./CollegeLogo";
+import Img from "./Img";
 import CompareToggle from "./CompareToggle";
 import SaveButton from "./SaveButton";
 
@@ -42,11 +43,16 @@ export default function CollegeCardItem(props: {
           when={c.hero_image}
           fallback={<div class={`absolute inset-0 bg-gradient-to-br ${grad}`} />}
         >
-          <img
+          {/* Payload serves whatever was uploaded — Institute_bird_eye_view2.jpg
+              is 5472x2437 for a box that is never wider than ~520 CSS px. The
+              srcset caps the request at 2x the widest layout column. */}
+          <Img
             src={c.hero_image!}
             alt=""
-            loading="lazy"
-            decoding="async"
+            sizes="(min-width: 1024px) 520px, (min-width: 640px) 50vw, 100vw"
+            maxWidth={1080}
+            width={520}
+            height={160}
             class="absolute inset-0 h-full w-full object-cover"
           />
         </Show>

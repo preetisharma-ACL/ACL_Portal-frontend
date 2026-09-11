@@ -1,6 +1,7 @@
 import { For, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import HeroSlider from "./HeroSlider";
+import Img from "./Img";
 import type { MediaItem } from "~/lib/types";
 
 const INTERVAL_MS = 5000;
@@ -25,29 +26,45 @@ export default function CollegeCover(props: { media: MediaItem[]; name: string }
   };
 
   const [active, setActive] = createSignal(0);
+  // Only the first frame is rendered up front. The rest mount on idle, so a
+  // college with eight gallery photos does not put eight requests on the
+  // critical path of its own cover.
+  const [showRest, setShowRest] = createSignal(false);
+  const visible = () => (showRest() ? images() : images().slice(0, 1));
 
   onMount(() => {
     if (isServer) return;
-    const list = images();
-    if (list.length < 2) return;
-    list.slice(1).forEach((m) => {
-      const img = new Image();
-      img.src = m.url;
-    });
+    if (images().length < 2) return;
+
+    // Previously this warmed the remaining slides with `new Image()`, which now
+    // would fetch the untransformed Payload originals behind <Img>'s back. The
+    // deferred elements load themselves once mounted, so the warm is gone.
+    const mountRest = () => setShowRest(true);
+    const idle = (window as Window & {
+      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+    }).requestIdleCallback;
+    const handle = idle ? idle(mountRest, { timeout: 2000 }) : setTimeout(mountRest, 1200);
+
     const timer = setInterval(() => setActive((i) => (i + 1) % images().length), INTERVAL_MS);
-    onCleanup(() => clearInterval(timer));
+    onCleanup(() => {
+      clearInterval(timer);
+      if (!idle) clearTimeout(handle as ReturnType<typeof setTimeout>);
+    });
   });
 
   return (
     <Show when={images().length} fallback={<HeroSlider />}>
       <div class="absolute inset-0 z-0 overflow-hidden bg-neutral-900">
-        <For each={images()}>
+        <For each={visible()}>
           {(m, i) => (
-            <img
+            <Img
               src={m.url}
               alt={m.caption || `${props.name} campus`}
-              decoding="async"
-              loading={i() === 0 ? "eager" : "lazy"}
+              sizes="100vw"
+              maxWidth={1920}
+              // The cover is the LCP element on a college page, so the first
+              // frame is eager + high priority; the rest stay lazy as before.
+              priority={i() === 0}
               onError={(e) => (e.currentTarget.style.display = "none")}
               class="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ease-in-out motion-reduce:transition-none"
               classList={{ "opacity-100": active() === i(), "opacity-0": active() !== i() }}

@@ -1,6 +1,7 @@
 import { Show } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import { CONTACT_PHONE, CONTACT_PHONE_TEL } from "~/lib/config";
+import Img from "./Img";
 
 /**
  * Click-to-call button for the School of Management Sciences, Varanasi college
@@ -32,12 +33,12 @@ export default function FloatingCall() {
 
       {/* Circular icon with the customer-support illustration */}
       <span class="relative grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-[#d7eef5] shadow-xl ring-2 ring-white transition-transform duration-150 group-hover:scale-105 group-active:scale-95">
-        <img
+        <Img
           src="/customer-support.png"
           alt=""
-          aria-hidden="true"
-          loading="lazy"
-          decoding="async"
+          sizes="64px"
+          width={64}
+          height={64}
           class="h-full w-full scale-110 object-cover object-top"
         />
         {/* Pulsing ring to draw the eye */}

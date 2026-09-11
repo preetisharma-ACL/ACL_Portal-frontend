@@ -39,6 +39,8 @@ export default function Img(props: {
    */
   priority?: boolean;
   class?: string;
+  /** Reactive class toggles, same shape Solid gives a plain <img>. */
+  classList?: Record<string, boolean | undefined>;
   /** Applied to the <picture> wrapper when one is rendered. */
   wrapperClass?: string;
   onError?: (e: Event & { currentTarget: HTMLImageElement }) => void;
@@ -71,6 +73,7 @@ export default function Img(props: {
           fetchpriority={fetchpriority()}
           decoding="async"
           class={p.class}
+          classList={p.classList}
           onError={p.onError}
         />
       }
@@ -91,6 +94,7 @@ export default function Img(props: {
             fetchpriority={fetchpriority()}
             decoding="async"
             class={p.class}
+            classList={p.classList}
             onError={p.onError}
           />
         </picture>

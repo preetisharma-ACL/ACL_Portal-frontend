@@ -3,6 +3,7 @@ import { Portal, isServer } from "solid-js/web";
 import type { CollegeCard } from "~/lib/types";
 import LeadForm from "./LeadForm";
 import CollegeLogo from "./CollegeLogo";
+import Img from "./Img";
 
 export interface BrochureTarget {
   college: CollegeCard;
@@ -59,7 +60,13 @@ export default function BrochureModal(props: {
 
             {/* Left: campus photo + college identity (hidden on small screens) */}
             <div class="relative hidden md:col-span-2 md:block">
-              <img src={t().cover} alt="" class="absolute inset-0 h-full w-full object-cover" />
+              <Img
+                src={t().cover}
+                alt=""
+                sizes="40vw"
+                maxWidth={960}
+                class="absolute inset-0 h-full w-full object-cover"
+              />
               <div
                 aria-hidden="true"
                 class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/25"

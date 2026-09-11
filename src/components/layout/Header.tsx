@@ -2,6 +2,7 @@ import { A, createAsync } from "@solidjs/router";
 import { createEffect, createSignal, For, onCleanup, Show } from "solid-js";
 import { Portal, isServer } from "solid-js/web";
 import { SITE_NAME } from "~/lib/config";
+import Img from "~/components/Img";
 import { streamsQuery } from "~/lib/queries";
 import AccountMenu from "~/components/AccountMenu";
 import StreamIcon from "~/components/StreamIcon";
@@ -96,7 +97,16 @@ export default function Header() {
     <header class="sticky top-0 z-40 bg-[var(--color-surface)] border-b border-[var(--color-line)]">
       <div class="container-x flex items-center gap-4 h-16">
         <A href="/" class="flex items-center shrink-0" aria-label={`${SITE_NAME} home`}>
-          <img src="/acl-logo.png" alt={SITE_NAME} class="h-13 w-auto" />
+          {/* Above the fold on every page, so eager + high priority. */}
+          <Img
+            src="/acl-logo.png"
+            alt={SITE_NAME}
+            sizes="114px"
+            width={114}
+            height={52}
+            priority
+            class="h-13 w-auto"
+          />
         </A>
 
         <nav class="hidden lg:flex items-center gap-1 text-sm ml-auto" aria-label="Primary">
@@ -165,7 +175,14 @@ export default function Header() {
               {/* Brand accent + header */}
               <div class="h-1 w-full shrink-0 bg-gradient-to-r from-primary-600 via-accent-500 to-primary-700" />
               <div class="flex items-center justify-between border-b border-[var(--color-line)] px-4 py-3.5">
-                <img src="/acl-logo.png" alt={SITE_NAME} class="h-10 w-auto" />
+                <Img
+                  src="/acl-logo.png"
+                  alt={SITE_NAME}
+                  sizes="88px"
+                  width={88}
+                  height={40}
+                  class="h-10 w-auto"
+                />
                 <button
                   type="button"
                   onClick={close}

@@ -1,6 +1,7 @@
 import { A, revalidate, useSearchParams } from "@solidjs/router";
 import { Show, createSignal, onMount } from "solid-js";
 import Modal from "./Modal";
+import Img from "./Img";
 import { Button } from "./ui";
 import { loginOpen, openLogin, closeLogin, runPendingAfterLogin } from "~/lib/authUi";
 import { loginRequestOtp, loginVerify } from "~/lib/account";
@@ -112,7 +113,14 @@ export default function LoginModal() {
     <Modal open={loginOpen()} onClose={onClose} title="Log in or sign up" hideHeader>
       {/* Branded header */}
       <div class="bg-gradient-to-b from-primary-50 via-primary-50/40 to-[var(--color-surface)] px-5 pt-5 pb-4 sm:px-6">
-        <img src="/acl-logo.png" alt="ACL Education" class="h-9 w-auto" />
+        <Img
+          src="/acl-logo.png"
+          alt="ACL Education"
+          sizes="79px"
+          width={79}
+          height={36}
+          class="h-9 w-auto"
+        />
         <h2 class="mt-3 pr-9 text-xl font-extrabold leading-tight tracking-tight text-[var(--color-ink)]">
           Log in or sign up
         </h2>

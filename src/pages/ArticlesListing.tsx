@@ -84,7 +84,7 @@ export default function ArticlesListing(props: {
       />
 
       <section class="relative overflow-hidden bg-gradient-to-br from-primary-900 to-primary-700 text-white">
-        <SlotImage slot="articles_header" fallback="/breadcrumb-area.png" />
+        <SlotImage slot="articles_header" fallback="/breadcrumb-area.png" priority />
         {/* Left-weighted scrim: heavy on the text side so the banner artwork
             does not read through the heading. */}
         <div

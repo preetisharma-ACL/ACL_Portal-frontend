@@ -1,5 +1,6 @@
 import { A } from "@solidjs/router";
 import { For } from "solid-js";
+import Img from "~/components/Img";
 import {
   COMPLIANCE_DISCLAIMER,
   CONTACT_EMAIL,
@@ -57,7 +58,14 @@ export default function Footer() {
           <div>
             <div class="mb-3">
               <span class="inline-flex  py-2">
-                <img src="/V2-aajneeti-logo.png" alt={SITE_NAME} class="h-14 w-auto" />
+                <Img
+                  src="/V2-aajneeti-logo.png"
+                  alt={SITE_NAME}
+                  sizes="187px"
+                  width={187}
+                  height={56}
+                  class="h-14 w-auto"
+                />
               </span>
             </div>
             <p class="text-sm text-white/70">

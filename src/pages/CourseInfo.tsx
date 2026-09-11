@@ -1,6 +1,7 @@
 import { A, createAsync } from "@solidjs/router";
 import { For, Show, createSignal } from "solid-js";
 import Seo from "~/components/Seo";
+import Img from "~/components/Img";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeLogo from "~/components/CollegeLogo";
 import LeadForm from "~/components/LeadForm";
@@ -208,11 +209,10 @@ export default function CourseInfo(props: { slug: string }) {
                         <For each={[...HERO_LOGOS, ...HERO_LOGOS, ...HERO_LOGOS, ...HERO_LOGOS]}>
                           {(src) => (
                             <div class="grid place-items-center h-14 w-28 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-line)] bg-white p-2">
-                              <img
+                              <Img
                                 src={src}
                                 alt=""
-                                loading="lazy"
-                                decoding="async"
+                                sizes="112px"
                                 class="max-h-9 max-w-full object-contain"
                               />
                             </div>

@@ -1,5 +1,6 @@
 import { For, type JSX } from "solid-js";
 import Seo from "~/components/Seo";
+import Img from "~/components/Img";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import { Section } from "~/components/ui";
 import { breadcrumbLd } from "~/lib/jsonld";
@@ -117,7 +118,10 @@ export default function AboutPage() {
               <img
                 src="/Online%20Exam.svg"
                 alt=""
-                loading="eager"
+                width={411}
+                height={288}
+                loading="lazy"
+                decoding="async"
                 class="h-72 w-auto object-contain xl:h-80"
               />
             </div>
@@ -168,10 +172,10 @@ export default function AboutPage() {
       <Section>
         <div class="text-center">
           <Label>{SITE_NAME} for students</Label>
-          <img
+          <Img
             src="/vector.png"
             alt=""
-            loading="lazy"
+            sizes="286px"
             class="mx-auto mt-6 h-44 w-auto object-contain md:h-52"
           />
           <p class="mx-auto mt-6 max-w-3xl text-[15px] leading-relaxed text-[var(--color-ink)]/80">
@@ -187,7 +191,15 @@ export default function AboutPage() {
       <Section bg="canvas">
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col items-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-7 text-center shadow-sm">
-            <img src="/3D%20Digital%20Marketing.svg" alt="" loading="lazy" class="h-28 w-auto" />
+            <img
+              src="/3D%20Digital%20Marketing.svg"
+              alt=""
+              width={112}
+              height={112}
+              loading="lazy"
+              decoding="async"
+              class="h-28 w-auto"
+            />
             <h2 class="mt-4 text-base font-bold uppercase tracking-wider text-accent-600">
               {SITE_NAME} for institutions
             </h2>
@@ -198,7 +210,15 @@ export default function AboutPage() {
             </p>
           </div>
           <div class="flex flex-col items-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-7 text-center shadow-sm">
-            <img src="/Study%20Abroad.svg" alt="" loading="lazy" class="h-28 w-auto" />
+            <img
+              src="/Study%20Abroad.svg"
+              alt=""
+              width={112}
+              height={112}
+              loading="lazy"
+              decoding="async"
+              class="h-28 w-auto"
+            />
             <h2 class="mt-4 text-base font-bold uppercase tracking-wider text-accent-600">
               {SITE_NAME} for parents
             </h2>
@@ -235,9 +255,10 @@ export default function AboutPage() {
 
       {/* Who's behind us — full banner */}
       <section class="relative overflow-hidden">
-        <img
+        <Img
           src="/aajneeti-banner.webp"
           alt="The team at AAJneeti Connect Ltd."
+          sizes="100vw"
           class="h-72 w-full object-cover object-center md:h-[26rem]"
         />
         {/* Symmetric scrim: the old left-heavy gradient existed to back

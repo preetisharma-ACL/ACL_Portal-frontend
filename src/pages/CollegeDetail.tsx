@@ -13,6 +13,7 @@ import RelatedArticles from "~/components/RelatedArticles";
 import SaveButton from "~/components/SaveButton";
 import TrackStatus from "~/components/TrackStatus";
 import CollegeCover from "~/components/CollegeCover";
+import Img from "~/components/Img";
 import Lightbox from "~/components/Lightbox";
 import CollegeLogo from "~/components/CollegeLogo";
 import { Badge, Card, buttonClass } from "~/components/ui";
@@ -825,11 +826,11 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                           aria-label={`View image ${i() + 1}`}
                           class="group relative block aspect-[4/3] overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)]"
                         >
-                          <img
+                          <Img
                             src={m.url || "/placeholders/campus-cover.svg"}
                             alt={m.caption || `${h().name} photo ${i() + 1}`}
-                            loading="lazy"
-                            decoding="async"
+                            sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 50vw"
+                            maxWidth={640}
                             onError={(e) =>
                               (e.currentTarget.src = "/placeholders/campus-cover.svg")
                             }
@@ -996,12 +997,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                       illustration's sky-blue / teal palette. */}
                   <Card class="overflow-hidden border-[#bfe1ec] bg-gradient-to-b from-[#e6f4f9] to-[#f4fbfd] p-0">
                     <div class="flex items-center justify-center bg-[#d7eef5] px-5 pt-5">
-                      <img
+                      <Img
                         src="/customer-support.png"
                         alt=""
-                        aria-hidden="true"
-                        loading="lazy"
-                        decoding="async"
+                        sizes="192px"
                         onError={(e) => (e.currentTarget.style.display = "none")}
                         class="h-32 w-auto object-contain"
                       />

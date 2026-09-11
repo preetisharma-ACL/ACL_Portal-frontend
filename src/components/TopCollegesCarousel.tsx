@@ -2,6 +2,7 @@ import { A } from "@solidjs/router";
 import { For, Show, createSignal, onMount } from "solid-js";
 import type { CityLite, CollegeCard } from "~/lib/types";
 import CollegeLogo from "./CollegeLogo";
+import Img from "./Img";
 import BrochureModal, { type BrochureTarget } from "./BrochureModal";
 import LeadTrigger from "./LeadTrigger";
 
@@ -59,7 +60,10 @@ const CITY_IMAGES: Record<string, string> = {
 };
 
 const coverFor = (c: CollegeCard) =>
-  c.hero_image ?? COLLEGE_COVERS[c.slug] ?? CITY_IMAGES[c.city] ?? "/bg-image.jpg";
+  c.hero_image ?? COLLEGE_COVERS[c.slug] ?? CITY_IMAGES[c.city] ?? "@card-fallback";
+
+/** Cards are a fixed 18rem column at every breakpoint. */
+const CARD_SIZES = "288px";
 
 const feesLacs = (range: string) => range.match(/([\d.]+)\s*L/i)?.[1] ?? null;
 
@@ -146,11 +150,13 @@ export default function TopCollegesCarousel(props: {
                   <article class="group flex snap-start flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm transition-shadow hover:shadow-md">
                     {/* Cover: campus photo + score badge + logo/name overlay */}
                     <A href={href} aria-label={c.name} class="relative block h-32">
-                      <img
+                      <Img
                         src={coverFor(c)}
                         alt=""
-                        loading="lazy"
-                        decoding="async"
+                        sizes={CARD_SIZES}
+                        maxWidth={640}
+                        width={288}
+                        height={128}
                         class="absolute inset-0 h-full w-full object-cover"
                       />
                       <div

@@ -1,6 +1,7 @@
 import { A, createAsync } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import Seo from "~/components/Seo";
+import Img from "~/components/Img";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeLogo from "~/components/CollegeLogo";
 import ArticleCard, { fmtArticleDate } from "~/components/ArticleCard";
@@ -70,9 +71,13 @@ export default function ArticleDetailPage(props: { slug: string }) {
                       </span>
                     }
                   >
-                    <img
+                    <Img
                       src={a().author.photo!}
                       alt={a().author.name}
+                      sizes="44px"
+                      maxWidth={128}
+                      width={44}
+                      height={44}
                       class="h-11 w-11 rounded-full object-cover"
                     />
                   </Show>
@@ -102,9 +107,12 @@ export default function ArticleDetailPage(props: { slug: string }) {
 
               {/* Featured image */}
               <Show when={a().featured_image}>
-                <img
+                <Img
                   src={a().featured_image!}
                   alt={a().title}
+                  sizes="(min-width: 1024px) 760px, 100vw"
+                  maxWidth={1440}
+                  priority
                   class="mt-6 w-full rounded-[var(--radius-lg)] object-cover"
                 />
               </Show>

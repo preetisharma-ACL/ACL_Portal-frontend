@@ -1,6 +1,7 @@
 import { A, createAsync } from "@solidjs/router";
 import { For, Show, createSignal } from "solid-js";
 import Seo from "~/components/Seo";
+import Img from "~/components/Img";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import CollegeCardItem from "~/components/CollegeCardItem";
 import LeadForm from "~/components/LeadForm";
@@ -53,12 +54,12 @@ export default function ExamInfo(props: { stream: string; slug: string }) {
               {/* Photo backdrop. The darkening is a brightness filter on the
                   image rather than a scrim element, so it can never be
                   out-stacked by the image itself. */}
-              <img
+              <Img
                 src="/students-banner.webp"
                 alt=""
-                aria-hidden="true"
-                style={{ filter: "brightness(0.45)" }}
-                class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center"
+                sizes="100vw"
+                priority
+                class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center brightness-[0.45]"
               />
               <div class="container-x py-10 md:py-14 relative z-10">
                 <Breadcrumbs crumbs={crumbs()} light />

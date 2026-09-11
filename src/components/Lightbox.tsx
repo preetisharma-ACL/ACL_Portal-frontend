@@ -1,5 +1,6 @@
 import { Show, createEffect, onCleanup } from "solid-js";
 import { Portal, isServer } from "solid-js/web";
+import Img from "./Img";
 
 export interface LightboxImage {
   url: string;
@@ -77,9 +78,12 @@ export default function Lightbox(props: {
           </Show>
 
           <figure class="max-h-[90vh] max-w-[92vw]" onClick={(e) => e.stopPropagation()}>
-            <img
+            <Img
               src={current()!.url}
               alt={current()!.caption ?? "College image"}
+              sizes="92vw"
+              maxWidth={1920}
+              priority
               class="mx-auto max-h-[84vh] max-w-[92vw] rounded-[var(--radius-md)] object-contain"
             />
             <figcaption class="mt-3 text-center text-sm text-white/80">

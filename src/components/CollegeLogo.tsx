@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import Img from "./Img";
 
 /**
  * College logo with a graceful fallback. When the API provides a real logo it is
@@ -45,11 +46,11 @@ export default function CollegeLogo(props: {
         </span>
       }
     >
-      <img
-        src={props.logo}
+      <Img
+        src={props.logo!}
         alt={`${props.name} logo`}
-        loading="lazy"
-        decoding="async"
+        sizes="96px"
+        maxWidth={256}
         onError={(e) => (e.currentTarget.src = "/placeholders/college-logo.svg")}
         class={`object-contain ${size()}`}
       />
