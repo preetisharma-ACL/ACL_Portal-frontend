@@ -155,10 +155,11 @@ export const searchQuery = query(async (q: string) => {
  */
 export const homeQuery = query(async () => {
   "use server";
-  const [streams, cities, topColleges] = await Promise.all([
+  const [streams, cities, topColleges, collegeTotal] = await Promise.all([
     api.getStreams(),
     api.getCities(),
     api.getTopColleges(),
+    api.getCollegeTotal(),
   ]);
 
   // Fetch every stream's courses once so the Browse-by-stream explorer switches
@@ -176,7 +177,12 @@ export const homeQuery = query(async () => {
     )
     .slice(0, 10);
 
-  const totalColleges = cities.reduce((n, c) => n + c.college_count, 0);
+  // Distinct colleges, from the listings meta. Summing city college_count counts
+  // a multi-campus institution once per city (Amity alone spans a dozen), which
+  // inflated the headline well past the number the directory actually shows.
+  // Fall back to the city sum only if the listings call failed.
+  const totalColleges =
+    collegeTotal || cities.reduce((n, c) => n + c.college_count, 0);
   const totalCourses = streams.reduce((n, s) => n + s.course_count, 0);
   return {
     streams,

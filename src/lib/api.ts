@@ -421,6 +421,20 @@ export function getExam(slug: string): Promise<ExamDetail> {
 
 /* ------------------------------------------------------------------- listings */
 
+/**
+ * Distinct number of listed colleges, for headline counts. The cities taxonomy
+ * counts a college once per city it has a campus in, so summing city
+ * college_count double-counts multi-campus institutions (388 city rows for 264
+ * colleges); the listings meta total is the de-duplicated figure. Asks for the
+ * smallest possible page since only the meta is used.
+ */
+export function getCollegeTotal(): Promise<number> {
+  if (USE_MOCK) return Promise.resolve(mock.buildListing("mba", "varanasi").meta.total_colleges);
+  return get<any>("/listings/", { page_size: "1" })
+    .then((r) => r.meta?.total_colleges ?? 0)
+    .catch(() => 0);
+}
+
 export function getListing(query: ListingQuery): Promise<ListingResponse> {
   if (USE_MOCK) {
     const base = mock.buildListing(query.course ?? "mba", query.city ?? "varanasi");
