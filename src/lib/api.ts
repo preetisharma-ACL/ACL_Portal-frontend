@@ -207,6 +207,9 @@ function mapCollege(r: any): CollegeDetail {
   // is the full programme fee, so it carries no per-period suffix.
   const feePeriodSuffix = (p: string) =>
     p === "YEAR" ? " / year" : p === "SEMESTER" ? " / semester" : "";
+  // Exam entries arrive as plain strings or {name,slug} objects depending on
+  // the endpoint; reduce both to the display name.
+  const examName = (x: any) => (typeof x === "string" ? x : (x?.name ?? x?.exam ?? "")).trim();
   const courses_fees = (r.courses_fees ?? []).map((x: any) => ({
     course: x.specialization ? `${x.course} (${x.specialization})` : x.course,
     course_slug: x.course_slug ?? "",
@@ -215,10 +218,21 @@ function mapCollege(r: any): CollegeDetail {
       ? `${inrShort(Number(x.fees_amount))}${feePeriodSuffix(x.fees_period)}`
       : "",
     eligibility: x.eligibility ?? "",
-    exams_accepted: x.exams_accepted ?? [],
+    exams_accepted: (x.exams_accepted ?? []).map(examName).filter(Boolean),
   }));
+  // Exams come from two places: the college-level list (`admissions.
+  // accepted_exams`, set on the college itself) and the per-course links. Take
+  // both — a college can have exams set without any course rows yet, and the
+  // course rows can name an exam the college-level list misses.
   const accepted_exams = Array.from(
-    new Set(courses_fees.flatMap((x: { exams_accepted: string[] }) => x.exams_accepted)),
+    new Set(
+      [
+        ...(r.admissions?.accepted_exams ?? []),
+        ...courses_fees.flatMap((x: { exams_accepted: string[] }) => x.exams_accepted),
+      ]
+        .map(examName)
+        .filter(Boolean),
+    ),
   ) as string[];
   return {
     header: {

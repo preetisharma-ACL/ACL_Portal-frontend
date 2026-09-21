@@ -63,3 +63,77 @@ export function titleCaseType(type: string | null | undefined): string {
   if (!type) return "";
   return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 }
+
+/** One step of a text block: its own line plus any indented lines under it. */
+export interface TextStep {
+  text: string;
+  details: string[];
+}
+
+export interface TextBlock {
+  /** "ordered" when the source numbered its steps, "unordered" for bullets,
+   *  "text" for plain prose (render as paragraphs, never as a list). */
+  kind: "ordered" | "unordered" | "text";
+  steps: TextStep[];
+}
+
+const NUMBER_MARKER = /^\s*\(?(\d{1,2})[.)]\s+/;
+const BULLET_MARKER = /^\s*[-–—•*]\s+/;
+
+/**
+ * Split a free-text field (admission process, eligibility) into steps.
+ *
+ * The CMS stores these as plain text with one step per line, each usually
+ * prefixed "1." / "2.". HTML collapses those newlines, so rendering the raw
+ * string drops every step into a single paragraph with the numbers running
+ * into the sentences. Indented lines continue the step above them (sub-options
+ * such as "NEET PG – MD/MS") instead of starting a new one.
+ */
+export function splitSteps(text: string | null | undefined): TextBlock {
+  const raw = (text ?? "").replace(/\r\n?/g, "\n").trim();
+  if (!raw) return { kind: "text", steps: [] };
+
+  const steps: TextStep[] = [];
+  let numbered = 0;
+  let bulleted = 0;
+
+  for (const line of raw.includes("\n") ? raw.split("\n") : splitInlineMarkers(raw)) {
+    if (!line.trim()) continue;
+    const number = line.match(NUMBER_MARKER);
+    const marker = number ?? line.match(BULLET_MARKER);
+    if (marker) {
+      if (number) numbered++;
+      else bulleted++;
+    } else if (/^\s/.test(line) && steps.length) {
+      steps[steps.length - 1].details.push(line.trim());
+      continue;
+    }
+    steps.push({ text: line.slice(marker?.[0].length ?? 0).trim(), details: [] });
+  }
+
+  return {
+    kind: numbered ? "ordered" : bulleted ? "unordered" : "text",
+    steps: steps.filter((s) => s.text || s.details.length),
+  };
+}
+
+/**
+ * Fallback for rows saved with every step on one line ("1. … 2. …"): split on
+ * the markers, but only when the text opens with "1." and the markers run in
+ * sequence, so a sentence that merely contains "2." is left intact. Returns the
+ * line untouched when it is ordinary prose.
+ */
+function splitInlineMarkers(line: string): string[] {
+  const marks: { start: number; end: number }[] = [];
+  const re = /(^|\s)(\d{1,2})[.)]\s+/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(line))) {
+    if (Number(m[2]) === marks.length + 1) {
+      marks.push({ start: m.index + m[1].length, end: m.index + m[0].length });
+    }
+  }
+  if (marks.length < 2 || marks[0].start !== 0) return [line];
+  return marks
+    .map((mk, i) => line.slice(mk.start, marks[i + 1]?.start).trim())
+    .filter(Boolean);
+}

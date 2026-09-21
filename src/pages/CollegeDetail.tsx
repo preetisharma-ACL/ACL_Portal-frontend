@@ -20,6 +20,7 @@ import { Badge, Card, buttonClass } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { collegeQuery } from "~/lib/queries";
 import { listingPath, parseSlugId } from "~/lib/slug";
+import { splitSteps } from "~/lib/format";
 import { breadcrumbLd, collegeLd, collegeCoursesLd } from "~/lib/jsonld";
 
 export type CollegeTab = "overview" | "courses-fees" | "placements" | "admission" | "reviews";
@@ -94,6 +95,46 @@ function Block(props: { id: string; title: string; children: JSX.Element }) {
       <h2 class="text-2xl font-bold mb-4">{props.title}</h2>
       {props.children}
     </section>
+  );
+}
+
+/**
+ * Renders a free-text field that the CMS stores as one step per line. Numbered
+ * or bulleted sources become a real list (the markers in the text are dropped
+ * in favour of the list's own); plain prose stays as paragraphs.
+ */
+function StepList(props: { text: string }) {
+  const block = () => splitSteps(props.text);
+  const item = (s: { text: string; details: string[] }) => (
+    <li>
+      {s.text}
+      <Show when={s.details.length}>
+        <span class="mt-1 block space-y-0.5 pl-1 text-[var(--color-muted)]">
+          <For each={s.details}>{(x) => <span class="block">{x}</span>}</For>
+        </span>
+      </Show>
+    </li>
+  );
+  return (
+    <div class="text-sm text-[var(--color-ink)]/90">
+      <Show
+        when={block().kind !== "text"}
+        fallback={<For each={block().steps}>{(s) => <p class="mb-2 last:mb-0">{s.text}</p>}</For>}
+      >
+        <Show
+          when={block().kind === "ordered"}
+          fallback={
+            <ul class="list-disc space-y-1.5 pl-5 marker:text-[var(--color-muted)]">
+              <For each={block().steps}>{item}</For>
+            </ul>
+          }
+        >
+          <ol class="list-decimal space-y-1.5 pl-5 marker:font-semibold marker:text-primary-700">
+            <For each={block().steps}>{item}</For>
+          </ol>
+        </Show>
+      </Show>
+    </div>
   );
 }
 
@@ -555,21 +596,31 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                 {/* Admissions */}
                 <Show when={visible.admissions()}>
                 <Block id="admissions" title="Admissions">
-                  <div class="grid gap-6 md:grid-cols-2">
+                  {/* Single column when there are no dates, so the process text
+                      doesn't sit beside an empty half. */}
+                  <div
+                    class="grid gap-6"
+                    classList={{ "md:grid-cols-2": !!d().admissions.important_dates.length }}
+                  >
                     <div>
-                      <h3 class="font-semibold mb-1">Process</h3>
-                      <p class="text-sm text-[var(--color-ink)]/90">{d().admissions.process}</p>
-                      <h3 class="font-semibold mt-4 mb-1">Eligibility</h3>
-                      <p class="text-sm text-[var(--color-ink)]/90">
-                        {d().admissions.eligibility}
-                      </p>
+                      <Show when={d().admissions.process}>
+                        <h3 class="font-semibold mb-2">Process</h3>
+                        <StepList text={d().admissions.process} />
+                      </Show>
+                      <Show when={d().admissions.eligibility}>
+                        <h3 class="font-semibold mt-4 mb-2">Eligibility</h3>
+                        <StepList text={d().admissions.eligibility} />
+                      </Show>
+                      <Show when={d().admissions.accepted_exams.length}>
                       <div class="mt-4 flex flex-wrap items-center gap-1.5">
                         <span class="text-sm text-[var(--color-muted)]">Accepted exams:</span>
                         <For each={d().admissions.accepted_exams}>
                           {(e) => <Badge tone="primary">{e}</Badge>}
                         </For>
                       </div>
+                      </Show>
                     </div>
+                    <Show when={d().admissions.important_dates.length}>
                     <div>
                       <h3 class="font-semibold mb-2">Important dates</h3>
                       <ul class="space-y-2 text-sm">
@@ -583,6 +634,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                         </For>
                       </ul>
                     </div>
+                    </Show>
                   </div>
                 </Block>
                 </Show>
