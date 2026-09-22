@@ -817,16 +817,23 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                           <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
                             {FACILITY_CAT[g.category] ?? g.category}
                           </h3>
-                          <div class="flex flex-wrap gap-2">
+                          <div class="grid gap-3 sm:grid-cols-2">
                             <For each={g.items}>
                               {(f) => (
-                                <span
-                                  title={f.description || undefined}
-                                  class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-line)] bg-[var(--color-canvas)] px-3 py-1.5 text-sm"
-                                >
-                                  <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-primary-500" />
-                                  {f.name}
-                                </span>
+                                <div class="rounded-[var(--radius-md)] border border-[var(--color-line)] bg-[var(--color-canvas)] p-3.5">
+                                  <p class="flex items-center gap-1.5 font-semibold text-[var(--color-ink)]">
+                                    <span
+                                      aria-hidden="true"
+                                      class="h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500"
+                                    />
+                                    {f.name}
+                                  </p>
+                                  <Show when={f.description}>
+                                    <p class="mt-1 text-sm text-[var(--color-muted)]">
+                                      {f.description}
+                                    </p>
+                                  </Show>
+                                </div>
                               )}
                             </For>
                           </div>
