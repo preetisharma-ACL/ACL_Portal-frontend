@@ -647,6 +647,16 @@ export function buildCourseDetail(slug: string): CourseDetail {
     specializations: p.specializations,
     related_exams: p.relatedExams,
     top_colleges: generateColleges(streamSlug, cityDefault, 4),
+    faqs: [
+      {
+        q: `How long is a ${c.name} course?`,
+        a: `A ${c.name} typically takes ${c.duration ?? "2 years"} to complete.`,
+      },
+      {
+        q: `Who is eligible for ${c.name}?`,
+        a: "A qualifying degree or examination as specified by each institute, with the minimum aggregate the institute sets.",
+      },
+    ],
   };
 }
 
@@ -1105,6 +1115,16 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
       { category: "WIFI", name: "Campus Wi-Fi", description: "" },
     ],
     hostel: { available: true, boys: true, girls: true, fee: "₹60K - ₹90K" },
+    faqs: [
+      {
+        q: `When was ${name} established?`,
+        a: `${name} was established in 1995. It is a ${found.type.toLowerCase()} institution.`,
+      },
+      {
+        q: `What are the fees at ${name}?`,
+        a: `Fees at ${name} depend on the programme. See the Courses & Fees section above for the full list.`,
+      },
+    ],
     brochure_url: "https://example.edu/brochure.pdf",
     operator_disclosure:
       "This page is maintained by AAJneeti Connect Ltd. as part of an independent education discovery platform. We are not affiliated with this institution unless explicitly stated. Information is compiled for comparison and should be verified with the institute.",
@@ -1138,6 +1158,7 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
     detail.facilities = [];
     detail.hostel = { available: null, boys: null, girls: null, fee: "" };
     detail.brochure_url = "";
+    detail.faqs = [];
     detail.contact = {
       address: "",
       city: found.city,

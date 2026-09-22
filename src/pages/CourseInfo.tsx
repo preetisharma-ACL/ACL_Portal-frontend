@@ -9,9 +9,10 @@ import LeadTrigger from "~/components/LeadTrigger";
 import { Card, Section } from "~/components/ui";
 import { EmptyState, LoadingBlock } from "~/components/states";
 import { courseQuery } from "~/lib/queries";
-import { breadcrumbLd, courseLd } from "~/lib/jsonld";
+import { breadcrumbLd, courseLd, faqLd } from "~/lib/jsonld";
 import { formatFeeRange } from "~/lib/format";
 import RelatedArticles from "~/components/RelatedArticles";
+import Faq from "~/components/Faq";
 import type { CollegeCard } from "~/lib/types";
 
 const TABS = [
@@ -171,6 +172,9 @@ export default function CourseInfo(props: { slug: string }) {
           { name: "Home", path: "/" },
           { name: c().name, path: path() },
         ];
+        // FAQs earn a tab only when the API returned any.
+        const tabs = () =>
+          d().faqs.length ? [...TABS, { id: "faqs", label: "FAQs" }] : TABS;
         const highlights = () => [
           `${c().duration} ${c().level.toLowerCase()} programme`,
           `Specialise in ${d().specializations[0]?.name ?? "multiple areas"} and more`,
@@ -186,7 +190,11 @@ export default function CourseInfo(props: { slug: string }) {
               title={`${c().name} Course: Eligibility, Fees, Specialisations and Top Colleges`}
               description={`${c().name}: ${overview().slice(0, 140)}`}
               canonical={path()}
-              jsonLd={[breadcrumbLd(crumbs()), courseLd(d(), path())]}
+              jsonLd={
+                d().faqs.length
+                  ? [breadcrumbLd(crumbs()), courseLd(d(), path()), faqLd(d().faqs)]
+                  : [breadcrumbLd(crumbs()), courseLd(d(), path())]
+              }
             />
 
             {/* Hero: comparison panel + enquiry form */}
@@ -286,7 +294,7 @@ export default function CourseInfo(props: { slug: string }) {
               class="sticky top-16 z-30 bg-[var(--color-surface)] border-b border-[var(--color-line)] overflow-x-auto"
             >
               <div class="container-x flex gap-1">
-                <For each={TABS}>
+                <For each={tabs()}>
                   {(t) => (
                     <a
                       href={`#${t.id}`}
@@ -537,6 +545,16 @@ export default function CourseInfo(props: { slug: string }) {
                 </div>
               </Show>
             </Section>
+
+            {/* FAQs. Server-rendered <details>, so every Q and A is in the
+                initial HTML; hidden entirely when the API returns none. */}
+            <Show when={d().faqs.length}>
+              <Section>
+                <div id="faqs" class="scroll-mt-28 max-w-3xl">
+                  <Faq items={d().faqs} heading={`${c().name} FAQs`} />
+                </div>
+              </Section>
+            </Show>
 
             <div class="container-x pb-2">
               <RelatedArticles course={props.slug} />

@@ -357,6 +357,7 @@ function mapCollege(r: any): CollegeDetail {
         fee,
       };
     })(),
+    faqs: r.faqs ?? [],
     brochure_url: r.brochure_url ?? "",
     operator_disclosure:
       r.operator_disclosure ??
@@ -418,6 +419,7 @@ export function getCourse(slug: string): Promise<CourseDetail> {
     specializations: r.specializations ?? [],
     related_exams: r.related_exams ?? [],
     top_colleges: (r.top_colleges ?? []).map(mapCard),
+    faqs: r.faqs ?? [],
   }));
 }
 

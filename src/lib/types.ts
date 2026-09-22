@@ -94,6 +94,8 @@ export interface CourseDetail {
   specializations: Specialization[];
   related_exams: ExamLite[];
   top_colleges: CollegeCard[];
+  /** Backend-generated Q&A for the course. Empty array when there is none. */
+  faqs: Faq[];
 }
 
 export interface ExamDetail {
@@ -292,6 +294,8 @@ export interface CollegeDetail {
   /** Brochure PDF URL, "" when none (button hidden). */
   brochure_url: string;
   operator_disclosure: string;
+  /** Backend-generated Q&A for the college. Empty array when there is none. */
+  faqs: Faq[];
 }
 
 export interface SearchResults {

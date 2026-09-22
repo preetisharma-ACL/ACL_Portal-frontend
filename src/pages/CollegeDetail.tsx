@@ -16,12 +16,13 @@ import CollegeCover from "~/components/CollegeCover";
 import Img from "~/components/Img";
 import Lightbox from "~/components/Lightbox";
 import CollegeLogo from "~/components/CollegeLogo";
+import Faq from "~/components/Faq";
 import { Badge, Card, buttonClass } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { collegeQuery } from "~/lib/queries";
 import { listingPath, parseSlugId } from "~/lib/slug";
 import { splitSteps } from "~/lib/format";
-import { breadcrumbLd, collegeLd, collegeCoursesLd } from "~/lib/jsonld";
+import { breadcrumbLd, collegeLd, collegeCoursesLd, faqLd } from "~/lib/jsonld";
 
 export type CollegeTab = "overview" | "courses-fees" | "placements" | "admission" | "reviews";
 
@@ -55,6 +56,7 @@ const SECTIONS: { id: string; label: string }[] = [
   { id: "qa", label: "Q&A" },
   { id: "news", label: "News" },
   { id: "contact", label: "Contact" },
+  { id: "faqs", label: "FAQs" },
 ];
 
 /** Maps a sub-route tab onto the in-page section it should scroll to. */
@@ -226,6 +228,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
           qa: () => true,
           news: () => true,
           contact: () => hasAnyContact(),
+          faqs: () => d().faqs.length > 0,
         };
         const navSections = () => SECTIONS.filter((s) => visible[s.id]?.());
 
@@ -262,7 +265,12 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               description={`${h().name}, ${h().city}. ${h().type} institute${h().established ? ` established ${h().established}` : ""}. Courses, fees, admission process, placements, rankings and cutoffs, compiled for comparison.`}
               canonical={path()}
               og={h().cover}
-              jsonLd={[breadcrumbLd(crumbs()), collegeLd(d(), basePath()), ...collegeCoursesLd(d(), basePath())]}
+              jsonLd={[
+                breadcrumbLd(crumbs()),
+                collegeLd(d(), basePath()),
+                ...collegeCoursesLd(d(), basePath()),
+                ...(d().faqs.length ? [faqLd(d().faqs)] : []),
+              ]}
             />
 
             {/* Same guidance form as the "Get admission guidance" CTA, opened on
@@ -1007,6 +1015,15 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                     </Card>
                   </div>
                 </Block>
+                </Show>
+
+                {/* FAQs. Server-rendered <details> so every Q and A is in the
+                    initial HTML; the whole section drops out when the API
+                    returns an empty array. FAQPage schema emitted via Seo. */}
+                <Show when={visible.faqs()}>
+                  <Block id="faqs" title="Frequently asked questions">
+                    <Faq items={d().faqs} heading="" />
+                  </Block>
                 </Show>
 
                 {/* Mobile guidance form when Contact is hidden (no contact data),
