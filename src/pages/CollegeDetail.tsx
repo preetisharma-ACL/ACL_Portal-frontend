@@ -612,7 +612,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                   >
                     <div>
                       <Show when={d().admissions.process}>
-                        <h3 class="font-semibold mb-2">Process</h3>
+                        <h3 class="font-semibold mb-2">Process & Eligibility</h3>
                         <StepList text={d().admissions.process} />
                       </Show>
                       <Show when={d().admissions.eligibility}>
