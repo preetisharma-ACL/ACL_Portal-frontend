@@ -77,24 +77,41 @@ const assetHeaderRoutes = [
   },
 ];
 
+// export default defineConfig({
+//   ssr: true,
+//   middleware: "./src/middleware.ts",
+//   server: {
+//     preset,
+//     vercel: {
+//       config: {
+//         routes: [...sitemapRoutes, ...assetHeaderRoutes],
+//         images: imagesConfig,
+//       },
+//     },
+//   },
+//   vite: {
+//     plugins: [tailwindcss()],
+//     define: {
+//       // Remote media only goes through /_vercel/image on Vercel; the
+//       // node-server preset has no such endpoint, so the branch compiles out.
+//       __IMAGE_OPTIMIZER__: JSON.stringify(Boolean(env?.VERCEL)),
+//     },
+//   },
+// });
+
+
 export default defineConfig({
   ssr: true,
   middleware: "./src/middleware.ts",
   server: {
-    preset,
-    vercel: {
-      config: {
-        routes: [...sitemapRoutes, ...assetHeaderRoutes],
-        images: imagesConfig,
-      },
-    },
+    preset: "cloudflare-pages",
   },
   vite: {
     plugins: [tailwindcss()],
     define: {
-      // Remote media only goes through /_vercel/image on Vercel; the
-      // node-server preset has no such endpoint, so the branch compiles out.
-      __IMAGE_OPTIMIZER__: JSON.stringify(Boolean(env?.VERCEL)),
+      // No image optimizer endpoint on Cloudflare Pages, so remote media
+      // loads directly from its source and the optimizer branch compiles out.
+      __IMAGE_OPTIMIZER__: JSON.stringify(false),
     },
   },
 });
