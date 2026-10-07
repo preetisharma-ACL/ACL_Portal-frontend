@@ -45,4 +45,11 @@ export default createHandler(() => (
       </html>
     )}
   />
-));
+), {
+  // "async" renders the whole page before responding. In the default "stream"
+  // mode the Response is built as soon as rendering starts, so on Cloudflare
+  // Pages a status set mid-render by <HttpStatusCode> (e.g. a 404 for an
+  // unknown stream) is lost and every page goes out as 200 — a soft 404. Pages
+  // already wait for their data via deferStream, so this costs little TTFB.
+  mode: "async",
+});
