@@ -1066,8 +1066,8 @@ export function buildCollegeDetail(slug: string, id: number): CollegeDetail {
       ],
     },
     rankings: [
-      { agency: "Sample Rankings", rank: "#34", category: `${profileFor(streamSlug).courses[0].name} institutes`, year: "2025" },
-      { agency: "Demo Survey", rank: "#12", category: "North India", year: "2025" },
+      { agency: "Sample Rankings", rank: "#34", score: "61.2", category: `${profileFor(streamSlug).courses[0].name} institutes`, year: "2025" },
+      { agency: "Demo Survey", rank: "#12", score: "", category: "North India", year: "2025" },
     ],
     cutoffs: p.relatedExams.slice(0, 2).map((e, i) => ({
       exam: e.name,

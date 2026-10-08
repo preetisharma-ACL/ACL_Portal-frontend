@@ -295,6 +295,7 @@ function mapCollege(r: any): CollegeDetail {
     rankings: (r.rankings ?? []).map((x: any) => ({
       agency: x.agency ?? "",
       rank: x.rank != null ? `#${x.rank}` : "",
+      score: x.score != null ? String(x.score) : "",
       category: x.category ?? "",
       year: x.year != null ? String(x.year) : "",
     })),

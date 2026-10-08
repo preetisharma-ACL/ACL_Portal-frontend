@@ -208,6 +208,8 @@ export interface PlacementsBlock {
 export interface RankingRow {
   agency: string;
   rank: string;
+  /** Agency score (e.g. NIRF's 41.95); empty when the admin left it blank. */
+  score: string;
   category: string;
   year: string;
 }

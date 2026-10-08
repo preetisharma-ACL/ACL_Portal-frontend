@@ -64,6 +64,19 @@ export function titleCaseType(type: string | null | undefined): string {
   return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 }
 
+/**
+ * Split CMS prose into paragraphs at blank lines. The admin textarea stores
+ * paragraph breaks as "\r\n\r\n", which HTML collapses into a space, so the
+ * raw string renders as one run-on paragraph.
+ */
+export function splitParagraphs(text: string | null | undefined): string[] {
+  return (text ?? "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
 /** One step of a text block: its own line plus any indented lines under it. */
 export interface TextStep {
   text: string;

@@ -21,7 +21,7 @@ import { Badge, Card, buttonClass } from "~/components/ui";
 import { LoadingBlock } from "~/components/states";
 import { collegeQuery } from "~/lib/queries";
 import { listingPath, parseSlugId } from "~/lib/slug";
-import { splitSteps } from "~/lib/format";
+import { splitParagraphs, splitSteps } from "~/lib/format";
 import { breadcrumbLd, collegeLd, collegeCoursesLd, faqLd } from "~/lib/jsonld";
 
 export type CollegeTab = "overview" | "courses-fees" | "placements" | "admission" | "reviews";
@@ -214,6 +214,7 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               s.median_package ||
               s.placement_percentage != null ||
               s.students_placed != null ||
+              s.recruiters_count != null ||
               p.recruiters.length ||
               p.highlights.length
             );
@@ -242,6 +243,8 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
             (ct().latitude != null && ct().longitude != null)
           );
         const hasCoords = () => ct().latitude != null && ct().longitude != null;
+        // Score is optional per ranking; the column only shows when one has it.
+        const hasRankingScore = () => d().rankings.some((r) => r.score);
         const hostelHasInfo = () => {
           const ho = d().hostel;
           return ho.available != null || ho.boys != null || ho.girls != null || !!ho.fee;
@@ -468,12 +471,20 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
               <div class="min-w-0">
                 {/* Overview */}
                 <Block id="overview" title="Overview">
-                  <p class="text-[var(--color-ink)]/90 max-w-3xl">
-                    {d().overview.description ||
-                      `${h().name} is a ${h().type.toLowerCase()} institution in ${h().city}${
-                        h().established ? `, established in ${h().established}` : ""
-                      }${h().affiliation ? `, affiliated to ${h().affiliation}` : ""}.`}
-                  </p>
+                  {/* One <p> per paragraph; pre-line keeps any single line breaks
+                      within a paragraph. */}
+                  <div class="space-y-3 text-[var(--color-ink)]/90 max-w-3xl">
+                    <For
+                      each={splitParagraphs(
+                        d().overview.description ||
+                          `${h().name} is a ${h().type.toLowerCase()} institution in ${h().city}${
+                            h().established ? `, established in ${h().established}` : ""
+                          }${h().affiliation ? `, affiliated to ${h().affiliation}` : ""}.`,
+                      )}
+                    >
+                      {(para) => <p class="whitespace-pre-line">{para}</p>}
+                    </For>
+                  </div>
                   {/* Key facts (render only what exists, so a sparse record still
                       looks intentional). */}
                   <dl class="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
@@ -666,6 +677,10 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                           label: "Students placed",
                           value: s().students_placed != null ? String(s().students_placed) : "",
                         },
+                        {
+                          label: "Recruiters",
+                          value: s().recruiters_count != null ? String(s().recruiters_count) : "",
+                        },
                       ].filter((x) => x.value);
                     return (
                       <>
@@ -734,6 +749,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                         <tr class="text-left text-[var(--color-muted)] border-b border-[var(--color-line)]">
                           <th class="py-2 pr-4 font-medium">Agency</th>
                           <th class="py-2 pr-4 font-medium">Rank</th>
+                          <Show when={hasRankingScore()}>
+                            <th class="py-2 pr-4 font-medium">Score</th>
+                          </Show>
                           <th class="py-2 pr-4 font-medium">Category</th>
                           <th class="py-2 pr-4 font-medium">Year</th>
                         </tr>
@@ -744,6 +762,9 @@ export default function CollegeDetail(props: { slugId: string; tab?: CollegeTab 
                             <tr class="border-b border-[var(--color-line)]">
                               <td class="py-2 pr-4">{r.agency}</td>
                               <td class="py-2 pr-4 font-semibold">{r.rank}</td>
+                              <Show when={hasRankingScore()}>
+                                <td class="py-2 pr-4">{r.score || "–"}</td>
+                              </Show>
                               <td class="py-2 pr-4">{r.category}</td>
                               <td class="py-2 pr-4">{r.year}</td>
                             </tr>
