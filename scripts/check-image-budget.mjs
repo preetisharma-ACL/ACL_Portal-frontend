@@ -82,9 +82,9 @@ const OPTIMISER_SOURCES = new Set([
  * source with fewer embedded frames, not by rasterising here.
  */
 const ACCEPTED_OVERSIZE = new Set([
-  "3D Digital Marketing.svg",
-  "Online Exam.svg",
-  "Study Abroad.svg",
+  "3d-digital-marketing.svg",
+  "online-exam.svg",
+  "study-abroad.svg",
 ]);
 
 const isOptimiserInput = (rel) =>

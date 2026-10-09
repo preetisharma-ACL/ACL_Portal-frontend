@@ -42,7 +42,7 @@ export default function TrackStatus(props: { collegeId: number }) {
       <div class="flex flex-col items-center text-center">
         <div class="flex h-32 w-full items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-b from-primary-50 to-transparent">
           <img
-            src="/Study%20Abroad.svg"
+            src="/study-abroad.svg"
             alt=""
             aria-hidden="true"
             loading="lazy"

@@ -116,7 +116,7 @@ export default function AboutPage() {
             </div>
             <div class="hidden justify-self-center lg:block">
               <img
-                src="/Online%20Exam.svg"
+                src="/online-exam.svg"
                 alt=""
                 width={411}
                 height={288}
@@ -192,7 +192,7 @@ export default function AboutPage() {
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col items-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-7 text-center shadow-sm">
             <img
-              src="/3D%20Digital%20Marketing.svg"
+              src="/3d-digital-marketing.svg"
               alt=""
               width={112}
               height={112}
@@ -211,7 +211,7 @@ export default function AboutPage() {
           </div>
           <div class="flex flex-col items-center rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-[var(--color-surface)] p-7 text-center shadow-sm">
             <img
-              src="/Study%20Abroad.svg"
+              src="/study-abroad.svg"
               alt=""
               width={112}
               height={112}

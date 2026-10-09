@@ -494,7 +494,7 @@ export default function CourseInfo(props: { slug: string }) {
                   <Card class="p-5 bg-primary-50 border-primary-100 text-center">
                     <div class="flex h-48 w-full items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-b from-white/70 to-transparent">
                       <img
-                        src="/Online%20Exam.svg"
+                        src="/online-exam.svg"
                         alt=""
                         aria-hidden="true"
                         loading="lazy"
